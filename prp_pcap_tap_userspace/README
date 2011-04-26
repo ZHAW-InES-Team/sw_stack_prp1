@@ -1,0 +1,92 @@
+Copyright (c) 2010, Institute of Embedded Systems at 
+                      Zurich University of Applied Sciences 
+                      (http://ines.zhaw.ch)
+
+
+### Overview ###
+
+This is the PRP software stack. PRP is the parallel redundancy protocol.
+This OS adaptation is using tap (a virtual Ethernet driver 
+available on most platforms) for the virtual device and pcap 
+(a layer 2 packet sniffer/ injector library available on most platforms)
+for layer 2 access.
+
+
+
+
+
+
+                    ----------------------
+                    |   PRP STACK        |
+                    ----------------------
+ PRP_T_timer()                    ^    |  PRP_NetItf_T_transmit(data,len,lanID)
+ PRP_T_transmit(data,len)         |    |
+ PRP_T_receive(data,len,lanID)    |    |
+                                  |    |
+                                  |    V
+[eth0] <--pcap-->   ------------------------
+                    |prp_pcap_tap_userspace|  <--tap--> [prp0]
+[eth1] <--pcap-->   ------------------------
+
+
+--- pseudo code ---
+
+setup the pcap devices 
+setup the tap device   
+
+while(running){
+    if user pressed q {
+        running = False
+    }
+    
+    if timer expires{
+         PRP_T_timer() 
+    }
+    
+    if new data on the pcap interfaces {
+        PRP_T_receive(data,len,lanID)
+        if prp tag has not been seen{
+            pass it to the tun interface
+        }
+    }
+    
+    if new data on the tun interface {
+         PRP_T_transmit(data,len)
+    }
+    
+}
+/* callback */
+PRP_NetItf_T_transmit(data,len,lanID)
+    send data on the send port with lanID
+}
+-----
+
+
+
+
+### required dependencies ###
+#   libpcap-dev
+
+#   for debian/ubuntu/etc:
+apt-get install libpcap-dev
+
+#   for redhead based systems:
+yum install libpcap-dev
+
+
+
+### Build the project ###
+make
+
+### run it ###
+sudo ./prp_pcap_tap_userspace eth0 eth1
+# IT WON'T WORK IF lanA and lanB of multiple DANs are mixed !  
+
+# to check if one interface is on lanA or lanB use 
+# tcpdump -i <interface> -x -x -v and watch for b0 or a0 in the
+# trailer of the packet
+
+
+# on another terminal:
+# (replace 192.168.1.100 with an ip address of your choice)
+sudo ifconfig prp0 192.168.1.100
