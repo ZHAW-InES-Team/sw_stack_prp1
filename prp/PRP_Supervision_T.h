@@ -77,6 +77,7 @@ struct PRP_Supervision_T
 	uinteger16 life_check_interval_;
 	uinteger16 node_forget_time_;
 	uinteger16 link_time_out_;
+	uinteger16 supervision_seqno_;
 };
 
 void PRP_Supervision_T_print(PRP_Supervision_T* const me, uinteger32 level);

@@ -109,11 +109,15 @@
 #define PRP_MAX_SKEW_TIME				10 /* in ms */
 
 
-#define PRP_ETHERTYPE					0x88FB
+/*
+#define SUPERVISION_ETHERTYPE			0x88FB
 #define PRP_VERSION						0x0000
+*/
+/*
 #define PRP_TYPE_DUPLICATE_DISCARD		0x14
 #define PRP_TYPE_DUPLICATE_ACCEPT		0x15
-#define PRP_LENGTH						0x0C
+*/
+/*#define PRP_LENGTH						0x0C*/
 
 
 #define PRP_SECOND_IN_NANOSECONDS		1000000000
@@ -136,9 +140,6 @@ typedef struct PRP_Timer_T PRP_Timer_T;
 
 struct PRP_Trailer_T; 
 typedef struct PRP_Trailer_T PRP_Trailer_T;
-
-struct PRP_SupervisionFrame_T; 
-typedef struct PRP_SupervisionFrame_T PRP_SupervisionFrame_T;
 
 struct PRP_Supervision_T; 
 typedef struct PRP_Supervision_T PRP_Supervision_T;

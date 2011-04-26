@@ -66,7 +66,6 @@ OBJ += ../prp/PRP_Node_T.o
 OBJ += ../prp/PRP_NodeTable_T.o
 OBJ += ../prp/PRP_RedundancyControlTrailer_T.o
 OBJ += ../prp/PRP_Supervision_T.o
-OBJ += ../prp/PRP_SupervisionFrame_T.o
 OBJ += ../prp/PRP_Bridging_T.o
 OBJ += ../prp/PRP_BridgingFrame_T.o
 OBJ += ../prp/PRP_T.o
