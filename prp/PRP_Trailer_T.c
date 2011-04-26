@@ -65,6 +65,8 @@
 *  17.12.07 | mesv     | file created
 ************|**********|*********************************************
 *  14.01.08 | mesv     | added some comments
+*********************************************************************
+*  13.04.11 | reld     | update to PRP-1
 *********************************************************************/
 
 #include "PRP_Trailer_T.h"
@@ -88,19 +90,27 @@ void PRP_Trailer_T_add_trailer(PRP_Trailer_T* const me, octet* data, uinteger32*
 	if((data[12] == 0x81) && (data[13] == 0x00))
 	{
 		// calculate LSDU_size for VLAN-Tagged frame
-		size = *length - 18 + PRP_RCT_LENGTH;
+		size = *length - 16 + PRP_RCT_LENGTH;
 	}
 	else
 	{
 		// calculate LSDU_size for not VLAN-Tagged frame
-		size = *length - 14 + PRP_RCT_LENGTH;
+		size = *length - 12 + PRP_RCT_LENGTH;
+	}
+	
+	// pad such that length would be >=60 bytes (without CRC, without VLAN tag, without PRP trailer)
+	while (size < 60-12) {
+		data[(*length)++] = 0;
+		size++;
 	}
 	
 	/* can only be done because frame is in a much bigger buffer */
-	*((uinteger16*)(&(data[(*length)]))) = prp_htons(trailer->seq_);
-	*((uinteger16*)(&(data[((*length) + 2)]))) = prp_htons((((trailer->lan_id_ & 0x000F) << 12) | (size & 0x0FFF)));
-	
-	*length = *length + PRP_RCT_LENGTH;
+	data[(*length)++] = trailer->seq_ >> 8;
+	data[(*length)++] = trailer->seq_;
+	data[(*length)++] = (trailer->lan_id_ << 4) | (size >> 8);
+	data[(*length)++] = size;
+	data[(*length)++] = 0x88;
+	data[(*length)++] = 0xFB;
 }
 
 /************************************************************/
@@ -108,9 +118,10 @@ void PRP_Trailer_T_add_trailer(PRP_Trailer_T* const me, octet* data, uinteger32*
 /************************************************************/
 PRP_RedundancyControlTrailer_T* PRP_Trailer_T_get_trailer(PRP_Trailer_T* const me, octet* data, uinteger32* length) 
 {
-	integer32 i;
 	uinteger16 size_offset;
 	uinteger32 trailer_offset;
+	octet lan_id;
+	uinteger16 lsdu_size;
 	
 	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 	
@@ -119,52 +130,44 @@ PRP_RedundancyControlTrailer_T* PRP_Trailer_T_get_trailer(PRP_Trailer_T* const m
 		return(NULL_PTR);
 	}
 			
-	if(*length < ((2*PRP_ETH_ADDR_LENGTH)+2))
+	// PRP-1 frames are not allowed to be shorter than 60 bytes (without CRC)
+	if(*length < 60)
 	{
+		PRP_PRP_LOGOUT(2, "%s\n", "short frame");
+		return(NULL_PTR);
+	}
+
+	if (data[*length-1] != 0x88 || data[*length] != 0xFB) {
+		PRP_PRP_LOGOUT(2, "%s\n", "frame without PRP-1 suffix 0x88FB");
 		return(NULL_PTR);
 	}
 	
-	if((data[12] == 0x81) && (data[13] == 0x00)) /* VLAN tagged LSDU starts at offset 18 */
+	if((data[12] == 0x81) && (data[13] == 0x00))
 	{
 		PRP_PRP_LOGOUT(2, "%s\n", "vlan tagged frame");
-		size_offset = 18;
+		size_offset = 16;
 	}
-	else /* otherwise at offset 14 */
+	else
 	{
 		PRP_PRP_LOGOUT(2, "%s\n", "no vlan tagged frame");
-		size_offset = 14;
+		size_offset = 12;
 	}
 	
 	trailer_offset = 0;
 	
-	if(*length <= 64) /* for small frames the trailer probably is not at the end */
+	lan_id = data[*length-3] >> 4;
+	lsdu_size = ((data[*length-3] & 0xF) << 8) | data[*length-2];
+
+	if((lan_id == 0xA || lan_id == 0xB) && (lsdu_size == *length-size_offset))
 	{
-		for(i=*length; i>=(size_offset+PRP_RCT_LENGTH); i--)  /* search trailer */
-		{
-			if((*((uinteger16*)(&(data[(i-2)]))) == prp_htons((0xA000 | ((i-size_offset) & 0x0FFF)))) ||
-			   (*((uinteger16*)(&(data[(i-2)]))) == prp_htons((0xB000 | ((i-size_offset) & 0x0FFF)))))
-			{
-				trailer_offset = i;
-			}	
-		}
-	}
-	else if(*length > 64)
-	{
-		if((*((uinteger16*)(&(data[(*length-2)]))) == prp_htons((0xA000 | ((*length-size_offset) & 0x0FFF)))) ||
-		   (*((uinteger16*)(&(data[(*length-2)]))) == prp_htons((0xB000 | ((*length-size_offset) & 0x0FFF)))))
-		{
-			trailer_offset = *length;
-		}	
-	}
-		
-	if(trailer_offset != 0)
-	{
-		me->redundancy_control_trailer_.seq_ = prp_ntohs((*((uinteger16*)(&(data[(trailer_offset-4)])))));
-		me->redundancy_control_trailer_.lan_id_ = (0xf000 & prp_ntohs((*((uinteger16*)(&(data[(trailer_offset-2)])))))) >> 12;
+		PRP_PRP_LOGOUT(2, "frame with PRP-1 trailer, last 6 bytes: %x %x %x %x\n", data[(*length-6)],data[(*length-5)], data[(*length-4)],data[(*length-3)], data[(*length-2)], data[(*length-1)]);
+
+		me->redundancy_control_trailer_.seq_ = (data[*length-5] << 8) | data[*length-4];
+		me->redundancy_control_trailer_.lan_id_ = lan_id;
 		return(&(me->redundancy_control_trailer_)); 
 	}
 		
-	PRP_PRP_LOGOUT(2, "frame had no trailer, last 4 byte: %x %x %x %x\n", data[(*length-4)],data[(*length-3)], data[(*length-2)], data[(*length-1)]);
+	PRP_PRP_LOGOUT(2, "frame with PRP-1 suffix, but no valid PRP-1 trailer, last 6 bytes: %x %x %x %x\n", data[(*length-6)],data[(*length-5)], data[(*length-4)],data[(*length-3)], data[(*length-2)], data[(*length-1)]);
 	return(NULL_PTR); /* No trailer found */
 }
 
@@ -173,45 +176,16 @@ PRP_RedundancyControlTrailer_T* PRP_Trailer_T_get_trailer(PRP_Trailer_T* const m
 /************************************************************/
 void PRP_Trailer_T_remove_trailer(PRP_Trailer_T* const me, octet* data, uinteger32* length) 
 {
-	integer32 i;
-	uinteger16 size_offset;
-	
 	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(me == NULL_PTR)
+
+	if (PRP_Trailer_T_get_trailer(me, data, length)) 
 	{
-		return;
+		// just set length field to new value
+		*length -= 6;
+		// we don't do padding here if length goes below 60 bytes
+	} else {
+		PRP_PRP_LOGOUT(2, "%s\n", "BUG? remove_trailer was called but there is no trailer.");
 	}
-		
-	if(*length < ((2*PRP_ETH_ADDR_LENGTH)+2))
-	{
-		return;
-	}
-	
-	if((data[12] == 0x81) && (data[13] == 0x00)) /* VLAN tagged LSDU starts at offset 18 */
-	{
-		size_offset = 18;
-	}
-	else /* otherwise at offset 14 */
-	{
-		size_offset = 14;
-	}
-	
-	for(i=*length; i>=(size_offset+PRP_RCT_LENGTH); i--) /* search trailer */
-	{
-		if(*((uinteger16*)(&(data[(i-2)]))) == prp_htons((0xA000 | ((i-size_offset) & 0x0FFF)))) /* redundancy control trailer with identifier LAN_A */
-		{
-			*length = i-PRP_RCT_LENGTH; /* just set length field to new value */
-			return; 
-		}
-		else if(*((uinteger16*)(&(data[(i-2)]))) == prp_htons((0xB000 | ((i-size_offset) & 0x0FFF)))) /* redundancy control trailer with identifier LAN_B */
-		{
-			*length = i-PRP_RCT_LENGTH; /* just set length field to new value */
-			return; 
-		}
-	}
-		
-	return; /* No trailer found */
 }
 
 /************************************************************/
