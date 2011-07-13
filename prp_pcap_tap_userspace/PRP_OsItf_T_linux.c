@@ -149,7 +149,7 @@ int prp_printf(const char *format, ...)
  	vsnprintf(buffer, sizeof(buffer), (const char*)format, args);
  	va_end(args);
 	
- 	return printf(buffer);
+ 	return printf("%s",buffer);
 }
 
 

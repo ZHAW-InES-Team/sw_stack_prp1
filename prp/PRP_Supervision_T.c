@@ -65,6 +65,8 @@
 *  17.12.07 | mesv     | file created
 ************|**********|*********************************************
 *  14.01.08 | mesv     | added some comments
+*********************************************************************
+*  13.07.11 | itin     | supervision tx for PRP1: only send one mac
 *********************************************************************/
 
 #include "PRP_Supervision_T.h"
@@ -481,15 +483,15 @@ integer32 PRP_Supervision_T_supervision_tx(PRP_Supervision_T* const me)
 		// FIXME: duplicate discard is expected to disappear in PRP-1
 		supervision_frame_[length++] = 21; // duplicate discard
 	}
-	supervision_frame_[length++] = 2*PRP_ETH_ADDR_LENGTH;
+	supervision_frame_[length++] = PRP_ETH_ADDR_LENGTH;
 	for(i=0; i<PRP_ETH_ADDR_LENGTH; i++)
 	{
 		supervision_frame_[length++] = me->environment_->environment_configuration_.mac_address_A_[i];
 	}
-	for(i=0; i<PRP_ETH_ADDR_LENGTH; i++)
+	/*for(i=0; i<PRP_ETH_ADDR_LENGTH; i++)
 	{
 		supervision_frame_[length++] = me->environment_->environment_configuration_.mac_address_B_[i];
-	}
+	}*/
 	
 	// Supervision TLV2 (only for RedBox)
 	// We are not a RedBox.
@@ -523,6 +525,7 @@ void PRP_Supervision_T_init(PRP_Supervision_T* const me, PRP_Environment_T* cons
 	prp_memset(supervision_frame_, 0, sizeof(supervision_frame_));
 	me->environment_ = environment;
 	me->life_check_interval_ = PRP_LIFE_CHECK_INTERVAL;
+	me->check_interval_aging_ = PRP_CHECK_INTERVAL_AGING;
 	me->link_time_out_ = PRP_LINK_TIME_OUT;
 	me->node_forget_time_ = PRP_NODE_FORGET_TIME;
 	
@@ -551,6 +554,7 @@ void PRP_Supervision_T_cleanup(PRP_Supervision_T* const me)
 	prp_memset(supervision_frame_, 0, sizeof(supervision_frame_));
 	me->environment_ = NULL_PTR;
 	me->life_check_interval_ = PRP_LIFE_CHECK_INTERVAL;
+	me->check_interval_aging_ = PRP_LIFE_CHECK_INTERVAL;
 	me->link_time_out_ = PRP_LINK_TIME_OUT;
 	me->node_forget_time_ = PRP_NODE_FORGET_TIME;
 	prp_memset(me->supervision_address_, 0, PRP_ETH_ADDR_LENGTH);

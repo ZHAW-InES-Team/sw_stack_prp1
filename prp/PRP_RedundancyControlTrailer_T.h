@@ -74,6 +74,7 @@ struct PRP_RedundancyControlTrailer_T
 {
 	octet lan_id_;
 	uinteger16 seq_;
+	octet seq_octet_[2];
 };
 
 

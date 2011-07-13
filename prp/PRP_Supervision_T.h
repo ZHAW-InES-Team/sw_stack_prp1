@@ -75,6 +75,7 @@ struct PRP_Supervision_T
 	PRP_Environment_T* environment_;
 	octet supervision_address_[PRP_ETH_ADDR_LENGTH];
 	uinteger16 life_check_interval_;
+	uinteger16 check_interval_aging_;
 	uinteger16 node_forget_time_;
 	uinteger16 link_time_out_;
 	uinteger16 supervision_seqno_;

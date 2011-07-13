@@ -54,9 +54,10 @@ all: clean $(TARGET)
 
 OBJ = PRP_NetItf_T_linux.o
 OBJ += PRP_OsItf_T_linux.o
-OBJ += ../prp/PRP_DiscardAlgorithm_T.o
-OBJ += ../prp/PRP_DropWindow_T.o
-OBJ += ../prp/PRP_DropWindowTable_T.o
+#OBJ += ../prp/PRP_DiscardAlgorithm_T.o
+OBJ += ../prp/PRP_DiscardAlgorithm_PRP1_T.o
+#OBJ += ../prp/PRP_DropWindow_T.o
+#OBJ += ../prp/PRP_DropWindowTable_T.o
 OBJ += ../prp/PRP_Environment_T.o
 OBJ += ../prp/PRP_EnvironmentConfiguration_T.o
 OBJ += ../prp/PRP_Frames_T.o

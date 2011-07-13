@@ -72,6 +72,7 @@
 #include "PRP_OsItf_T.h"
 
 #define DRV_NAME "prp_dev"
+//#define PRP_DEBUG_LOG
 
 /* log a line to kernel log */
 #ifdef PRP_DEBUG_LOG_SRC

@@ -72,7 +72,6 @@
 #include "PRP_Trailer_T.h"
 #include "PRP_LogItf_T.h"
 
-
 /************************************************************/
 /*       PRP_Trailer_T_add_trailer                          */
 /************************************************************/
@@ -137,7 +136,7 @@ PRP_RedundancyControlTrailer_T* PRP_Trailer_T_get_trailer(PRP_Trailer_T* const m
 		return(NULL_PTR);
 	}
 
-	if (data[*length-1] != 0x88 || data[*length] != 0xFB) {
+	if (data[*length-2] != 0x88 || data[*length-1] != 0xFB) {
 		PRP_PRP_LOGOUT(2, "%s\n", "frame without PRP-1 suffix 0x88FB");
 		return(NULL_PTR);
 	}
@@ -145,28 +144,29 @@ PRP_RedundancyControlTrailer_T* PRP_Trailer_T_get_trailer(PRP_Trailer_T* const m
 	if((data[12] == 0x81) && (data[13] == 0x00))
 	{
 		PRP_PRP_LOGOUT(2, "%s\n", "vlan tagged frame");
-		size_offset = 16;
+		size_offset = 18;
 	}
 	else
 	{
 		PRP_PRP_LOGOUT(2, "%s\n", "no vlan tagged frame");
-		size_offset = 12;
+		size_offset = 14;
 	}
-	
+
 	trailer_offset = 0;
 	
-	lan_id = data[*length-3] >> 4;
-	lsdu_size = ((data[*length-3] & 0xF) << 8) | data[*length-2];
+	lan_id = data[*length-4] >> 4;
+	lsdu_size = ((data[*length-4] & 0xF) << 8) | data[*length-3];
 
 	if((lan_id == 0xA || lan_id == 0xB) && (lsdu_size == *length-size_offset))
 	{
-		PRP_PRP_LOGOUT(2, "frame with PRP-1 trailer, last 6 bytes: %x %x %x %x\n", data[(*length-6)],data[(*length-5)], data[(*length-4)],data[(*length-3)], data[(*length-2)], data[(*length-1)]);
+		PRP_PRP_LOGOUT(2, "frame with PRP-1 trailer, last 6 bytes: %02x %02x %02x %02x %02x %02x\n", data[(*length-6)],data[(*length-5)], data[(*length-4)],data[(*length-3)], data[(*length-2)], data[(*length-1)]);
 
-		me->redundancy_control_trailer_.seq_ = (data[*length-5] << 8) | data[*length-4];
+		me->redundancy_control_trailer_.seq_ = (data[*length-6] << 8) | data[*length-5];
+		me->redundancy_control_trailer_.seq_octet_[0] = data[*length-6];
+		me->redundancy_control_trailer_.seq_octet_[1] = data[*length-5];
 		me->redundancy_control_trailer_.lan_id_ = lan_id;
 		return(&(me->redundancy_control_trailer_)); 
 	}
-		
 	PRP_PRP_LOGOUT(2, "frame with PRP-1 suffix, but no valid PRP-1 trailer, last 6 bytes: %x %x %x %x\n", data[(*length-6)],data[(*length-5)], data[(*length-4)],data[(*length-3)], data[(*length-2)], data[(*length-1)]);
 	return(NULL_PTR); /* No trailer found */
 }

@@ -65,6 +65,8 @@
 *  17.12.07 | mesv     | file created, this is the core
 ************|**********|*********************************************
 *  14.01.08 | mesv     | added some comments
+************|**********|*********************************************
+*  13.07.11 | itin     | integration of discard algorithm for PRP1
 *********************************************************************/
 
 #include "PRP_Frames_T.h"
@@ -73,7 +75,6 @@
 #include "PRP_Trailer_T.h"
 #include "PRP_Node_T.h"
 #include "PRP_NodeTable_T.h"
-#include "PRP_DropWindow_T.h"
 #include "PRP_RedundancyControlTrailer_T.h"
 #include "PRP_Environment_T.h"
 #include "PRP_EnvironmentConfiguration_T.h"
@@ -169,18 +170,13 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
 {
 	PRP_Node_T* node;
 	PRP_Node_T temp_node;
-	PRP_DropWindow_T* drop_window;
-	PRP_DropWindow_T temp_drop_window;
 	PRP_RedundancyControlTrailer_T* trailer;
 	octet real_lan_id;
-	
-	integer32 res;
-	integer32 i;
+	integer32 i, ret;
 	octet temp_mac[6];
 	octet src_mac[6];
 	octet dest_mac[6];
-	
-	
+
 	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 	
 	if(me == NULL_PTR)
@@ -251,7 +247,6 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
 		}		
 	}	
 	
-	
 	trailer = PRP_Trailer_T_get_trailer(&(me->trailer_rx_), data, length);
 	if(trailer != NULL_PTR) /* lan id out of the trailer */
 	{
@@ -275,7 +270,7 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
 			return(-PRP_ERROR_NULL_PTR);
 		}
 	}	
-		
+
 	PRP_PRP_LOGOUT(2, "%s\n", "node before reception");
 	PRP_Node_T_print(node, 2);
 	
@@ -327,7 +322,6 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
 		}
 	}
 
-	
 	/* substitute remote mac */
 	if(((node->san_A_ == TRUE) && (node->san_B_ == TRUE)) ||
 	   ((node->san_A_ == FALSE) && (node->san_B_ == FALSE))) /* dual attached node */
@@ -342,7 +336,7 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
 			}
 		}
 	}
-	
+
 	if((trailer == NULL_PTR) || ((node->san_A_ == TRUE) || (node->san_B_ == TRUE)))/* there was no trailer -> keep frame */
 	{
 		PRP_PRP_LOGOUT(2, "%s\n", "frame had no trailer");		
@@ -354,104 +348,25 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
 		{
 			node->cnt_keept_B_++; 
 		}
-		
 		return(PRP_KEEP);
 	}	
-	
+
 	if(me->frame_analyser_->environment_->environment_configuration_.transparent_reception_ == FALSE) /* transparent mode? */
 	{
 		PRP_PRP_LOGOUT(2, "%s\n", "removing trailer");
 		PRP_Trailer_T_remove_trailer(&(me->trailer_rx_), data, length); /* remove trailer */
 	}
-	
-	
-	if(me->frame_analyser_->environment_->environment_configuration_.duplicate_discard_ == TRUE) /* discard modus */
-	{
-		drop_window = PRP_DropWindowTable_T_get_drop_window(&(node->drop_window_table_), dest_mac);
-		if(drop_window == NULL_PTR) /* drop window not in table */
-		{
-			PRP_PRP_LOGOUT(2, "%s\n", "drop window for this node was not in table, adding drop window");
-			PRP_DropWindow_T_init(&temp_drop_window);
-			drop_window = PRP_DropWindowTable_T_add_drop_window(&(node->drop_window_table_), &temp_drop_window);
-			if(drop_window == NULL_PTR) /* drop window generation failed */
-			{
-				return(-PRP_ERROR_NULL_PTR);
-			}
-			drop_window->start_seq_A_ = trailer->seq_;
-			drop_window->start_seq_B_ = trailer->seq_;
-			drop_window->expected_seq_A_ = trailer->seq_;
-			drop_window->expected_seq_B_ = trailer->seq_;
-			prp_memcpy(drop_window->mac_address_, dest_mac, PRP_ETH_ADDR_LENGTH); /* copy MAC */
-		}		
-		
-		PRP_PRP_LOGOUT(2, "%s\n", "trailer and drop window before decision");		
-		PRP_RedundancyControlTrailer_T_print(trailer, 2);
-		PRP_DropWindow_T_print(drop_window, 2);
-	
-		res = PRP_DiscardAlgorithm_T_drop_window_decision(&(me->frame_analyser_->environment_->discard_algorithm_), trailer, drop_window);
-		
-		if(res == PRP_KEEP_OUT_OF_ORDER)
-		{
-			if(lan_id == PRP_ID_LAN_A)
-			{
-				me->frame_analyser_->environment_->environment_configuration_.cnt_total_errors_A_++;
-				node->cnt_err_out_of_sequence_A_++; 
-				node->cnt_keept_A_++; 
-			}
-			else
-			{
-				me->frame_analyser_->environment_->environment_configuration_.cnt_total_errors_B_++;
-				node->cnt_err_out_of_sequence_B_++; 
-				node->cnt_keept_B_++; 
-			}
-			
-			return(PRP_KEEP);
-		}
-		else if(res == PRP_KEEP_IN_ORDER)
-		{
-			if(lan_id == PRP_ID_LAN_A)
-			{
-				node->cnt_keept_A_++; 
-			}
-			else
-			{
-				node->cnt_keept_B_++; 
-			}
-			
-			return(PRP_KEEP);
-		}
-		else if(res == PRP_DROP)
-		{
-			return(PRP_DROP);			
-		}
-		else
-		{
-			if(lan_id == PRP_ID_LAN_A)
-			{
-				node->cnt_keept_A_++; 
-			}
-			else
-			{
-				node->cnt_keept_B_++; 
-			}
-			
-			return(PRP_KEEP);
-		}
-		
+
+	PRP_PRP_LOGOUT(2,"SRC MAC: \n");
+	for (i=0;i<6;i++){
+		PRP_PRP_LOGOUT(2,"%x",src_mac[i]);
 	}
-	else
-	{
-		if(lan_id == PRP_ID_LAN_A)
-		{
-			node->cnt_keept_A_++; 
-		}
-		else
-		{
-			node->cnt_keept_B_++; 
-		}
-		
-		return(PRP_KEEP);
-	}
+	PRP_PRP_LOGOUT(2,"\nSequ. NR: %d\n",me->trailer_rx_.redundancy_control_trailer_.seq_);
+
+	/*The frame origin is a DAN, search drop table to check if frame has been received previously*/
+	ret = PRP_DiscardAlgorithm_PRP1_T_search_entry(&(me->frame_analyser_->environment_->discard_algorithm_prp1_), src_mac, me->trailer_rx_.redundancy_control_trailer_.seq_octet_);
+	PRP_DiscardAlgorithm_PRP1_T_print(&(me->frame_analyser_->environment_->discard_algorithm_prp1_),3);
+	return ret;
 	
 }
 
@@ -468,7 +383,7 @@ integer32 PRP_Frames_T_normal_tx(PRP_Frames_T* const me, octet* data, uinteger32
 	octet temp_mac[6];
 	octet src_mac[6];
 	octet dest_mac[6];
-	
+
 	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 	
 	if(me == NULL_PTR)

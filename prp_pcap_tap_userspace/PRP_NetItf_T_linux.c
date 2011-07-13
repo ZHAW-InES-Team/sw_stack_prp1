@@ -74,7 +74,7 @@
 Getting started:
 
 1)		./prp_linux_users_pace ethLanA ethLanB
-2)		ifconfig prp0 <your ip>
+2)		ifconfig prp1 <your ip>
 
 Known problems:
 * timer accuracy 
@@ -107,6 +107,9 @@ Known problems:
 #include "../prp/PRP_T.h"
 #include "../prp/PRP_LogItf_T.h"
 #include "../prp/PRP_NetItf_T.h"
+
+//#define PRP_DEBUG_LOG
+#define PRP_DEBUG_LEVEL 2
 
 
 
@@ -545,7 +548,7 @@ int main(int argc, char* argv[]){
 
     
     /* open tap device */
-    strcpy(devname,"prp0");
+    strcpy(devname,"prp1");
     if((tap = tap_open(devname)) > 0){
         fprintf(stderr,"tap open %s: done\n",devname);
     }else {
@@ -553,7 +556,7 @@ int main(int argc, char* argv[]){
         return -1;        
     }        
 
-    /* copy mac address from port a to prp0 */
+    /* copy mac address from port a to prp1 */
     if(get_mac(port_a_name,addr_A) >= 0){
         fprintf(stderr,"get mac address of %s: done %02x:%02x:%02x:%02x:%02x:%02x\n",port_a_name,
         addr_A[0],addr_A[1],addr_A[2],addr_A[3],addr_A[4],addr_A[5]);
@@ -569,7 +572,7 @@ int main(int argc, char* argv[]){
     memcpy(new_lamo,addr_A,IFHWADDRLEN);
     addr_A[0] = addr_A[0] & (~2);
     new_lamo[0] = new_lamo[0] | 2;
-    
+
      if(set_mac(port_a_name,new_lamo) >= 0){
         fprintf(stderr,"set mac address of %s: done\n",port_a_name);
     } else {

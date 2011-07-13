@@ -69,7 +69,6 @@
 #define PRP_Node_T_H 
 
 #include "PRP_Package_T.h"
-#include "PRP_DropWindowTable_T.h"
 
 struct PRP_Node_T 
 {
@@ -98,7 +97,6 @@ struct PRP_Node_T
 	boolean failed_;
 	boolean failed_A_;
 	boolean failed_B_;
-	PRP_DropWindowTable_T drop_window_table_;
 };
 
 void PRP_Node_T_print(PRP_Node_T* const me, uinteger32 level);

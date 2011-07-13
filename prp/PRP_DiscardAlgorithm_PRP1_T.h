@@ -1,6 +1,6 @@
 /********************************************************************
 *  
-*  Copyright (c) 2007, Institute of Embedded Systems at 
+*  Copyright (c) 2011, Institute of Embedded Systems at
 *                      Zurich University of Applied Sciences 
 *                      (http://ines.zhaw.ch)
 *  
@@ -54,50 +54,38 @@
 * 
 *  Project     : Parallel Redundancy Protocol
 * 
-*  Version     : 1.0
-*  Author      : Sven Meier
+*  Version     : 1.1
+*  Author      : itin
 * 
 *********************************************************************
 *  Change History
 *
 *  Date     | Name     | Modification
 ************|**********|*********************************************
-*  17.12.07 | mesv     | file created
+*  17.06.11 | itin     | file created
 *********************************************************************/
 
-#ifndef PRP_Environment_T_H 
-#define PRP_Environment_T_H 
+#ifndef PRP_DiscardAlgorithm_PRP1_T_H
+#define PRP_DiscardAlgorithm_PRP1_T_H
+#define TABLE_SIZE 100
 
 #include "PRP_Package_T.h"
-#include "PRP_Timer_T.h"
-#include "PRP_EnvironmentConfiguration_T.h"
-#include "PRP_NodeTable_T.h"
-#include "PRP_Supervision_T.h"
-#include "PRP_Bridging_T.h"
-#include "PRP_DiscardAlgorithm_PRP1_T.h"
-#include "PRP_FrameAnalyser_T.h"
+#include "PRP_RedundancyControlTrailer_T.h"
+#include "PRP_DataTypes_T.h"
 
-struct PRP_Environment_T 
+struct PRP_DiscardAlgorithm_PRP1_T
 {
-	PRP_Timer_T bridging_timer_;
-	PRP_Timer_T supervise_timer_;
-	PRP_Timer_T supervision_tx_timer_;
-	PRP_Timer_T aging_timer_;
-	PRP_EnvironmentConfiguration_T environment_configuration_;
-	PRP_Supervision_T supervision_;
-	PRP_Bridging_T bridging_;
-	PRP_NodeTable_T node_table_;
-	PRP_DiscardAlgorithm_PRP1_T discard_algorithm_prp1_;
-	PRP_FrameAnalyser_T frame_analyser_;
-
+	uinteger16 entry_pointer;
+	uinteger16 entry_pointer_old;
+	uinteger16 overflow;
+	octet table[TABLE_SIZE][9];
 };
 
-void PRP_Environment_T_process_timer(PRP_Environment_T* const me);
-integer32 PRP_Environment_T_process_rx(PRP_Environment_T* const me, octet* data, uinteger32* length, octet lan_id);
-integer32 PRP_Environment_T_process_tx(PRP_Environment_T* const me, octet* data, uinteger32* length, octet lan_id);
-
-void PRP_Environment_T_init(PRP_Environment_T* const me);
-void PRP_Environment_T_cleanup(PRP_Environment_T* const me);
+void PRP_DiscardAlgorithm_PRP1_T_print(PRP_DiscardAlgorithm_PRP1_T* const me, uinteger32 level);
+integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* const me, octet* mac, octet* seq_nr);
+void PRP_DiscardAlgorithm_PRP1_T_do_aging(PRP_DiscardAlgorithm_PRP1_T* const me);
+void PRP_DiscardAlgorithm_PRP1_T_init(PRP_DiscardAlgorithm_PRP1_T* const me);
+void PRP_DiscardAlgorithm_PRP1_T_cleanup(PRP_DiscardAlgorithm_PRP1_T* const me);
 
 #endif  
 

@@ -231,7 +231,6 @@ integer32 PRP_T_get_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
 	merge_layer->life_check_interval_ = environment_.supervision_.life_check_interval_;
 	merge_layer->node_forget_time_ = environment_.supervision_.node_forget_time_;
 	merge_layer->link_time_out_ = environment_.supervision_.link_time_out_;
-	merge_layer->drop_window_size_ = environment_.discard_algorithm_.drop_window_size_;	
 	merge_layer->cnt_total_sent_A_ = environment_.environment_configuration_.cnt_total_sent_A_;
 	merge_layer->cnt_total_sent_B_ = environment_.environment_configuration_.cnt_total_sent_B_;
 	merge_layer->cnt_total_errors_A_ = environment_.environment_configuration_.cnt_total_errors_A_;
@@ -249,8 +248,6 @@ integer32 PRP_T_get_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
 integer32 PRP_T_set_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
 {
 	PRP_Node_T* node;
-	PRP_DropWindow_T* drop_window;
-	PRP_DropWindow_T* temp_drop_window;
 	
 	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 	
@@ -280,23 +277,6 @@ integer32 PRP_T_set_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
 		{
 			PRP_Lock_T_up(&lock_);
 			return(-PRP_ERROR_ADAPTER);
-		}
-		/* delete all drop windows with the old mac address */		
-		node = PRP_NodeTable_T_get_first_node(&(environment_.node_table_)); 
-		while(node != NULL_PTR)
-		{
-			drop_window = PRP_DropWindowTable_T_get_first_drop_window(&(node->drop_window_table_));
-			while(drop_window != NULL_PTR)
-			{
-				temp_drop_window = PRP_DropWindowTable_T_get_next_drop_window(&(node->drop_window_table_), drop_window);
-				if(0 == prp_memcmp(drop_window->mac_address_, environment_.environment_configuration_.mac_address_A_, PRP_ETH_ADDR_LENGTH))
-				{
-					PRP_DropWindowTable_T_remove_drop_window(&(node->drop_window_table_), drop_window);
-				}
-				
-				drop_window = temp_drop_window;			
-			}	
-			node = PRP_NodeTable_T_get_next_node(&(environment_.node_table_), node);
 		}
 		
 		prp_memcpy(environment_.environment_configuration_.mac_address_A_, merge_layer->mac_address_A_, PRP_ETH_ADDR_LENGTH);
@@ -395,37 +375,14 @@ integer32 PRP_T_set_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
 			PRP_Lock_T_up(&lock_);
 			return(-PRP_ERROR_ADAPTER);
 		}
-		/* delete all drop windows with the old mac address */		
+
 		node = PRP_NodeTable_T_get_first_node(&(environment_.node_table_));
-		while(node != NULL_PTR)
-		{
-			drop_window = PRP_DropWindowTable_T_get_first_drop_window(&(node->drop_window_table_));
-			while(drop_window != NULL_PTR)
-			{
-				temp_drop_window = PRP_DropWindowTable_T_get_next_drop_window(&(node->drop_window_table_), drop_window);
-				if(0 == prp_memcmp(drop_window->mac_address_, environment_.supervision_.supervision_address_, PRP_ETH_ADDR_LENGTH))
-				{
-					PRP_DropWindowTable_T_remove_drop_window(&(node->drop_window_table_), drop_window);
-				}
-				
-				drop_window = temp_drop_window;			
-			}	
-			node = PRP_NodeTable_T_get_next_node(&(environment_.node_table_), node);
-		}
+
 		prp_memcpy(environment_.supervision_.supervision_address_, merge_layer->supervision_address_, PRP_ETH_ADDR_LENGTH);
 	}
 	environment_.supervision_.life_check_interval_ = merge_layer->life_check_interval_;
 	environment_.supervision_.node_forget_time_ = merge_layer->node_forget_time_;
 	environment_.supervision_.link_time_out_ = merge_layer->link_time_out_;
-	if(merge_layer->drop_window_size_ <= PRP_DROP_WINDOW_MAX_SIZE)
-	{
-		environment_.discard_algorithm_.drop_window_size_ = merge_layer->drop_window_size_;	
-	}
-	else
-	{
-		PRP_Lock_T_up(&lock_);
-		return(-PRP_ERROR_WRONG_VAL);
-	}
 	
 /*	environment_.environment_configuration_.cnt_total_sent_A_ = merge_layer->cnt_total_sent_A_; read only */
 /*	environment_.environment_configuration_.cnt_total_sent_B_ = merge_layer->cnt_total_sent_B_; read only */

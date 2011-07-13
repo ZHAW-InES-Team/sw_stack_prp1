@@ -162,7 +162,6 @@ void PRP_Node_T_init(PRP_Node_T* const me)
 	me->failed_ = FALSE;
 	me->failed_A_ = FALSE;
 	me->failed_B_ = FALSE;
-	PRP_DropWindowTable_T_init(&(me->drop_window_table_));
 }
 
 /************************************************************/
@@ -202,7 +201,6 @@ void PRP_Node_T_cleanup(PRP_Node_T* const me)
 	me->failed_ = FALSE;
 	me->failed_A_ = FALSE;
 	me->failed_B_ = FALSE;
-	PRP_DropWindowTable_T_cleanup(&(me->drop_window_table_));	
 }
 
 

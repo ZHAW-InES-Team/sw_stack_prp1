@@ -84,7 +84,7 @@ void PRP_DropWindowTable_T_print(PRP_DropWindowTable_T* const me, uinteger32 lev
 	{
 		return;
 	}
-	
+
 	PRP_PRP_LOGOUT(level, "%s\n", "====DropWindowTable=================");	
 	PRP_PRP_LOGOUT(level, "cnt_drop_windows_:\t%u\n", me->cnt_drop_windows_);
 	PRP_PRP_LOGOUT(level, "drop_window_table_empty_:\t%u\n", me->drop_window_table_empty_);

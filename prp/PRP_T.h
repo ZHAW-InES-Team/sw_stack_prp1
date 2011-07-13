@@ -90,7 +90,6 @@ struct PRP_MergeLayerInfo_T
 	uinteger16 life_check_interval_;
 	uinteger16 node_forget_time_;
 	uinteger16 link_time_out_;
-	uinteger16 drop_window_size_;	
 	uinteger32 cnt_total_sent_A_;
 	uinteger32 cnt_total_sent_B_;
 	uinteger32 cnt_total_errors_A_;

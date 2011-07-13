@@ -101,11 +101,10 @@
 #define PRP_VERSION_LENGTH 				32
 
 #define PRP_LIFE_CHECK_INTERVAL			2000 /* in ms */
+#define PRP_CHECK_INTERVAL_AGING		100 /* in ms */
 #define PRP_NODE_FORGET_TIME			60 /* in seconds */
 #define PRP_LINK_TIME_OUT				6 /* in seconds */
-#define PRP_DROP_WINDOW_MAX_SIZE		32768
 #define PRP_DROP_WINDOW_SIZE			65535
-#define PRP_HALF_DROP_WINDOW_SIZE       32768
 #define PRP_MAX_SKEW_TIME				10 /* in ms */
 
 
@@ -171,13 +170,10 @@ typedef struct PRP_EnvironmentConfiguration_T PRP_EnvironmentConfiguration_T;
 struct PRP_Environment_T; 
 typedef struct PRP_Environment_T PRP_Environment_T;
 
-struct PRP_DropWindowTable_T; 
-typedef struct PRP_DropWindowTable_T PRP_DropWindowTable_T;
-
-struct PRP_DropWindow_T; 
-typedef struct PRP_DropWindow_T PRP_DropWindow_T;
-
 struct PRP_DiscardAlgorithm_T; 
 typedef struct PRP_DiscardAlgorithm_T PRP_DiscardAlgorithm_T;
+
+struct PRP_DiscardAlgorithm_PRP1_T;
+typedef struct PRP_DiscardAlgorithm_PRP1_T PRP_DiscardAlgorithm_PRP1_T;
 
 #endif
