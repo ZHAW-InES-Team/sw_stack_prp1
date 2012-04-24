@@ -98,7 +98,7 @@ void PRP_Trailer_T_add_trailer(PRP_Trailer_T* const me, octet* data, uinteger32*
 	}
 	
 	// pad such that length would be >=60 bytes (without CRC, without VLAN tag, without PRP trailer)
-	while (size < 60-12) {
+	while (size < 60-8) {
 		data[(*length)++] = 0;
 		size++;
 	}
