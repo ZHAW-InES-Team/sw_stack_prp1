@@ -73,123 +73,155 @@
 #include "PRP_LogItf_T.h"
 
 
-/************************************************************/
-/*       PRP_Environment_T_process_timer                    */
-/************************************************************/
+/**
+ * @fn void PRP_Environment_T_process_timer(PRP_Environment_T* const me)
+ * @brief Runs the timers and if the timer expired calls the respective supervision function
+ *
+ * @param   me PRP_Environment_T this pointer
+ */
 void PRP_Environment_T_process_timer(PRP_Environment_T* const me)
 {
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(me == NULL_PTR)
-	{
-		return;
-	}
-	
-	if(TRUE == PRP_Timer_T_tick(&(me->bridging_timer_)))
-	{
-		PRP_Bridging_T_supervise(&(me->bridging_)); /* check for link down */
-		PRP_Timer_T_start(&(me->bridging_timer_), PRP_TIMER_TICK_INTERVAL); /* to detect link down fast */
-	}
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-	if(TRUE == PRP_Timer_T_tick(&(me->supervise_timer_)))
-	{
-		PRP_Supervision_T_supervise(&(me->supervision_)); /* check for aged out nodes and failed nodes etc */
-		PRP_Timer_T_start(&(me->supervise_timer_), me->supervision_.life_check_interval_);
-	}
+    if(me == NULL_PTR)
+    {
+        return;
+    }
 
-	if(TRUE == PRP_Timer_T_tick(&(me->supervision_tx_timer_)))
-	{
-		PRP_Supervision_T_supervision_tx(&(me->supervision_)); /* send a new supervision frame */
-		PRP_Timer_T_start(&(me->supervision_tx_timer_), me->supervision_.life_check_interval_);
-	}
+    if(TRUE == PRP_Timer_T_tick(&(me->bridging_timer_)))
+    {
+        /* check for link down */
+        PRP_Bridging_T_supervise(&(me->bridging_));
+        /* to detect link down fast */
+        PRP_Timer_T_start(&(me->bridging_timer_), PRP_TIMER_TICK_INTERVAL); 
+    }
 
-	if(TRUE == PRP_Timer_T_tick(&(me->aging_timer_)))
-	{
-		PRP_DiscardAlgorithm_PRP1_T_do_aging(&(me->discard_algorithm_prp1_)); /* execute aging*/
-		PRP_Timer_T_start(&(me->aging_timer_), me->supervision_.check_interval_aging_);
-	}
+    if(TRUE == PRP_Timer_T_tick(&(me->supervise_timer_)))
+    {
+        /* check for aged out nodes and failed nodes etc */
+        PRP_Supervision_T_supervise(&(me->supervision_));
+        PRP_Timer_T_start(&(me->supervise_timer_), me->supervision_.life_check_interval_);
+    }
+
+    if(TRUE == PRP_Timer_T_tick(&(me->supervision_tx_timer_)))
+    {
+        /* send a new supervision frame */
+        PRP_Supervision_T_supervision_tx(&(me->supervision_)); 
+        PRP_Timer_T_start(&(me->supervision_tx_timer_), me->supervision_.life_check_interval_);
+    }
+
+    if(TRUE == PRP_Timer_T_tick(&(me->aging_timer_)))
+    {
+        /* execute aging*/
+        PRP_DiscardAlgorithm_PRP1_T_do_aging(&(me->discard_algorithm_prp1_));
+        PRP_Timer_T_start(&(me->aging_timer_), me->supervision_.check_interval_aging_);
+    }
 }
 
-/************************************************************/
-/*       PRP_Environment_T_process_rx                       */
-/************************************************************/
+/**
+ * @fn integer32 PRP_Environment_T_process_rx(PRP_Environment_T* const me, octet* data, uinteger32* length, octet lan_id)
+ * @brief Forwards the API call receive to the frame analyser
+ *
+ * @param   me PRP_Environment_T this pointer
+ * @param   data octet pointer to the beginning of the frame (dest mac)
+ * @param   length uinteger32 length in bytes of the frame
+ * @param   lan_id octet on which LAN it was received
+ * @return  integer32 1 : DROP
+ *          integer32 0 : KEEP
+ *          integer32 <0 : ERROR (code)
+ */
 integer32 PRP_Environment_T_process_rx(PRP_Environment_T* const me, octet* data, uinteger32* length, octet lan_id)
 {
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(me == NULL_PTR)
-	{
-		return(-PRP_ERROR_NULL_PTR);
-	}
-		
-	return(PRP_FrameAnalyser_T_analyse_rx(&(me->frame_analyser_), data, length, lan_id)); 	/* forward to the frame analyser */
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+
+    if(me == NULL_PTR)
+    {
+        return(-PRP_ERROR_NULL_PTR);
+    }
+    /* forward to the frame analyser */
+    return(PRP_FrameAnalyser_T_analyse_rx(&(me->frame_analyser_), data, length, lan_id));
 }
 
-/************************************************************/
-/*       PRP_Environment_T_process_tx                       */
-/************************************************************/
+/**
+ * @fn integer32 PRP_Environment_T_process_tx(PRP_Environment_T* const me, octet* data, uinteger32* length, octet lan_id)
+ * @brief Forwards the API call transmit to the frame analyser
+ *
+ * @param   me PRP_Environment_T this pointer
+ * @param   data octet pointer to the beginning of the frame (dest mac)
+ * @param   length uinteger32 length in bytes of the frame
+ * @param   lan_id octet on which LAN it is going send
+ * @return  integer32 0 : OK
+ *          integer32 <0 : ERROR (code)
+ */
 integer32 PRP_Environment_T_process_tx(PRP_Environment_T* const me, octet* data, uinteger32* length, octet lan_id)
 {
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(me == NULL_PTR)
-	{
-		return(-PRP_ERROR_NULL_PTR);
-	}
-	
-	return(PRP_FrameAnalyser_T_analyse_tx(&(me->frame_analyser_), data, length, lan_id)); 	/* forward to the frame analyser */
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+
+    if(me == NULL_PTR)
+    {
+        return(-PRP_ERROR_NULL_PTR);
+    }
+    /* forward to the frame analyser */
+    return(PRP_FrameAnalyser_T_analyse_tx(&(me->frame_analyser_), data, length, lan_id));
 }
 
 
-/************************************************************/
-/*       PRP_Environment_T_init                             */
-/************************************************************/
+/**
+ * @fn void PRP_Environment_T_init(PRP_Environment_T* const me)
+ * @brief Initialize the PRP_Environment interface
+ *
+ * @param   me PRP_Environment_T this pointer
+ */
 void PRP_Environment_T_init(PRP_Environment_T* const me)
 {
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(me == NULL_PTR)
-	{
-		return;
-	}
-	
-	/* start all the modules */
-	PRP_EnvironmentConfiguration_T_init(&(me->environment_configuration_)); 
-	PRP_Supervision_T_init(&(me->supervision_), me); 
-	PRP_Bridging_T_init(&(me->bridging_), me); 
-	PRP_NodeTable_T_init(&(me->node_table_));
-	PRP_DiscardAlgorithm_PRP1_T_init(&(me->discard_algorithm_prp1_));
-	PRP_FrameAnalyser_T_init(&(me->frame_analyser_), me);
-	PRP_Timer_T_init(&(me->bridging_timer_));
-	PRP_Timer_T_start(&(me->bridging_timer_), 0);
-	PRP_Timer_T_init(&(me->supervise_timer_));
-	PRP_Timer_T_start(&(me->supervise_timer_), me->supervision_.life_check_interval_);
-	PRP_Timer_T_init(&(me->supervision_tx_timer_));
-	PRP_Timer_T_start(&(me->supervision_tx_timer_), me->supervision_.life_check_interval_);
-	PRP_Timer_T_init(&(me->aging_timer_));
-	PRP_Timer_T_start(&(me->aging_timer_), me->supervision_.check_interval_aging_);
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+
+    if(me == NULL_PTR)
+    {
+        return;
+    }
+
+    /* start all the modules */
+    PRP_EnvironmentConfiguration_T_init(&(me->environment_configuration_));
+    PRP_Supervision_T_init(&(me->supervision_), me);
+    PRP_Bridging_T_init(&(me->bridging_), me);
+    PRP_NodeTable_T_init(&(me->node_table_));
+    PRP_DiscardAlgorithm_PRP1_T_init(&(me->discard_algorithm_prp1_));
+    PRP_FrameAnalyser_T_init(&(me->frame_analyser_), me);
+    PRP_Timer_T_init(&(me->bridging_timer_));
+    PRP_Timer_T_start(&(me->bridging_timer_), 0);
+    PRP_Timer_T_init(&(me->supervise_timer_));
+    PRP_Timer_T_start(&(me->supervise_timer_), me->supervision_.life_check_interval_);
+    PRP_Timer_T_init(&(me->supervision_tx_timer_));
+    PRP_Timer_T_start(&(me->supervision_tx_timer_), me->supervision_.life_check_interval_);
+    PRP_Timer_T_init(&(me->aging_timer_));
+    PRP_Timer_T_start(&(me->aging_timer_), me->supervision_.check_interval_aging_);
 }
 
-/************************************************************/
-/*       PRP_Environment_T_cleanup                          */
-/************************************************************/
+/**
+ * @fn void PRP_Environment_T_cleanup(PRP_Environment_T* const me)
+ * @brief Clean up the PRP_Environment interface
+ *
+ * @param   me PRP_Environment_T this pointer
+ */
 void PRP_Environment_T_cleanup(PRP_Environment_T* const me)
 {
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(me == NULL_PTR)
-	{
-		return;
-	}
-	
-	/* stop all the modules */
-	PRP_Timer_T_cleanup(&(me->bridging_timer_));
-	PRP_Timer_T_cleanup(&(me->supervise_timer_));
-	PRP_Timer_T_cleanup(&(me->supervision_tx_timer_));
-	PRP_Timer_T_cleanup(&(me->aging_timer_));
-	PRP_EnvironmentConfiguration_T_cleanup(&(me->environment_configuration_));
-	PRP_Supervision_T_cleanup(&(me->supervision_));
-	PRP_Bridging_T_cleanup(&(me->bridging_));
-	PRP_NodeTable_T_cleanup(&(me->node_table_));
-	PRP_FrameAnalyser_T_cleanup(&(me->frame_analyser_));
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+
+    if(me == NULL_PTR)
+    {
+        return;
+    }
+
+    /* stop all the modules */
+    PRP_Timer_T_cleanup(&(me->bridging_timer_));
+    PRP_Timer_T_cleanup(&(me->supervise_timer_));
+    PRP_Timer_T_cleanup(&(me->supervision_tx_timer_));
+    PRP_Timer_T_cleanup(&(me->aging_timer_));
+    PRP_EnvironmentConfiguration_T_cleanup(&(me->environment_configuration_));
+    PRP_Supervision_T_cleanup(&(me->supervision_));
+    PRP_Bridging_T_cleanup(&(me->bridging_));
+    PRP_NodeTable_T_cleanup(&(me->node_table_));
+    PRP_FrameAnalyser_T_cleanup(&(me->frame_analyser_));
 }
+

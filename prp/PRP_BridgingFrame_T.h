@@ -72,23 +72,23 @@
 
 struct PRP_BridgingFrame_T 
 {
-	uinteger8 flags_;
-	uinteger16 root_prio_and_id_;
-	octet root_mac_[PRP_ETH_ADDR_LENGTH];
-	uinteger32 root_path_costs_;
-	uinteger16 bridge_prio_and_id_;
-	octet bridge_mac_[PRP_ETH_ADDR_LENGTH];
-	uinteger16 port_prio_and_id_;
-	uinteger16 message_age_;
-	uinteger16 max_age_;
-	uinteger16 hello_time_;
-	uinteger16 forward_delay_;
-	uinteger8 v1_length_;
+    uinteger8 flags_;                       /* flags */
+    uinteger16 root_prio_and_id_;           /* Root priority and ID */
+    octet root_mac_[PRP_ETH_ADDR_LENGTH];   /* Root's mac address */
+    uinteger32 root_path_costs_;            /* Path costs to root */
+    uinteger16 bridge_prio_and_id_;         /* Priority and ID of the Brdige who sent frame */
+    octet bridge_mac_[PRP_ETH_ADDR_LENGTH]; /* The bridge's mac address */
+    uinteger16 port_prio_and_id_;           /* Port where the message was sent */
+    uinteger16 message_age_;                /* Age of the message */
+    uinteger16 max_age_;                    /* Maximum age */
+    uinteger16 hello_time_;                 /* How often a BPDU is sent */
+    uinteger16 forward_delay_;              /* Forward delay time */
+    uinteger8 v1_length_;                   /* For STP */
 };
 
 void PRP_BridgingFrame_T_print(PRP_BridgingFrame_T* const me, uinteger32 level);
-
 void PRP_BridgingFrame_T_init(PRP_BridgingFrame_T* const me);
 void PRP_BridgingFrame_T_cleanup(PRP_BridgingFrame_T* const me);
 
-#endif  
+#endif /* PRP_BridgingFrame_T_H */
+

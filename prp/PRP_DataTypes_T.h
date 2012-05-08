@@ -82,13 +82,13 @@
 
 /************************************************************************/
 #if SIZEOF_INT == 4
-   typedef unsigned int	   	uinteger32;
-   typedef int		       	integer32;
-   typedef unsigned short	uinteger16;
-   typedef short           	integer16;
-   typedef unsigned char   	uinteger8;
-   typedef char            	integer8;
-   typedef unsigned char    octet;
+    typedef unsigned int    uinteger32;
+    typedef int             integer32;
+    typedef unsigned short  uinteger16;
+    typedef short           integer16;
+    typedef unsigned char   uinteger8;
+    typedef char            integer8;
+    typedef unsigned char   octet;
 #else
    #error No suitable types
 #endif
@@ -97,10 +97,10 @@
 
 #if	HAVE_LONG_LONG
    #if SIZEOF_LONG == 8
-      typedef long				integer64;
-      typedef unsigned long		uinteger64;
+      typedef long              integer64;
+      typedef unsigned long     uinteger64;
    #else
-     typedef long long			integer64;
+     typedef long long          integer64;
      typedef unsigned long long uinteger64;
    #endif 
 #endif 
@@ -114,7 +114,6 @@ typedef unsigned char boolean;
 #ifndef FALSE
 #define FALSE 0
 #endif
-
 
 /* Generic pointer (containers) */
 typedef void* void_ptr;

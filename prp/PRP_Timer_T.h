@@ -72,17 +72,15 @@
 
 struct PRP_Timer_T 
 {
-	boolean enabled_;
-	uinteger64 timer_;
+    boolean enabled_;   /* If a tick decrements the timer */
+    uinteger64 timer_;  /* Current tick of the timer */
 };
 
 void PRP_Timer_T_start(PRP_Timer_T* const me, uinteger16 timeout);
 void PRP_Timer_T_stop(PRP_Timer_T* const me);
 boolean PRP_Timer_T_tick(PRP_Timer_T* const me);
-
-
 void PRP_Timer_T_init(PRP_Timer_T* const me);
 void PRP_Timer_T_cleanup(PRP_Timer_T* const me);
 
-#endif  
+#endif /* PRP_Timer_T_H */
 

@@ -72,14 +72,17 @@
 
 struct PRP_NodeTable_T 
 {
-	PRP_Node_T* first_node_;
-	PRP_Node_T* last_node_;
-	uinteger32 cnt_nodes_;
-	boolean node_table_empty_;
+    /* Pointer to the first node. If NULL, table is empty */
+    PRP_Node_T* first_node_;
+    /* Pointer to the last node. If NULL, table is empty */
+    PRP_Node_T* last_node_;
+    /* Number of nodes in the table */
+    uinteger32 cnt_nodes_;
+    /* Shows whether table is empty or not */
+    boolean node_table_empty_;
 };
 
 void PRP_NodeTable_T_print(PRP_NodeTable_T* const me, uinteger32 level);
-
 void PRP_NodeTable_T_set_mac_address_A(PRP_NodeTable_T* const me, PRP_Node_T* node, octet* mac);
 void PRP_NodeTable_T_set_mac_address_B(PRP_NodeTable_T* const me, PRP_Node_T* node, octet* mac);
 PRP_Node_T* PRP_NodeTable_T_add_node(PRP_NodeTable_T* const me, PRP_Node_T* node);
@@ -89,8 +92,8 @@ PRP_Node_T* PRP_NodeTable_T_get_previous_node(PRP_NodeTable_T* const me, PRP_Nod
 PRP_Node_T* PRP_NodeTable_T_get_next_node(PRP_NodeTable_T* const me, PRP_Node_T* node);
 PRP_Node_T* PRP_NodeTable_T_get_node(PRP_NodeTable_T* const me, octet* node_mac);
 void PRP_NodeTable_T_remove_node(PRP_NodeTable_T* const me, PRP_Node_T* node);
-
 void PRP_NodeTable_T_init(PRP_NodeTable_T* const me);
 void PRP_NodeTable_T_cleanup(PRP_NodeTable_T* const me);
 
-#endif
+#endif /* PRP_NodeTable_T_H */
+

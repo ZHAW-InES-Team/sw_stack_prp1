@@ -73,14 +73,14 @@
 
 struct PRP_Trailer_T 
 {
-	PRP_RedundancyControlTrailer_T redundancy_control_trailer_;
+    /* Instance of a redundancy control trailer */
+    PRP_RedundancyControlTrailer_T redundancy_control_trailer_;
 };
 
 
 PRP_RedundancyControlTrailer_T* PRP_Trailer_T_get_trailer(PRP_Trailer_T* const me, octet* data, uinteger32* length);
 void PRP_Trailer_T_add_trailer(PRP_Trailer_T* const me, octet* data, uinteger32* length, PRP_RedundancyControlTrailer_T* trailer);
 void PRP_Trailer_T_remove_trailer(PRP_Trailer_T* const me, octet* data, uinteger32* length);
-
 void PRP_Trailer_T_init(PRP_Trailer_T* const me);
 void PRP_Trailer_T_cleanup(PRP_Trailer_T* const me);
 

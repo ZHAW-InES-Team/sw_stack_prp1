@@ -72,14 +72,15 @@
 
 struct PRP_Lock_T 
 {
-	void* lock_;
+    /* Pointer to the first drop window in the table. If NULL table is empty */
+    void* lock_;
 };
 
 
 void PRP_Lock_T_down(PRP_Lock_T* const me);
 void PRP_Lock_T_up(PRP_Lock_T* const me);
-
 void PRP_Lock_T_init(PRP_Lock_T* const me);
 void PRP_Lock_T_cleanup(PRP_Lock_T* const me);
 
-#endif
+#endif /* PRP_Lock_T_H */
+

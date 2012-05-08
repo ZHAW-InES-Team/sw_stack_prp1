@@ -68,61 +68,73 @@
 #include "PRP_Lock_T.h"
 #include "PRP_LogItf_T.h"
 
-/************************************************************/
-/*       PRP_Lock_T_down                                    */
-/************************************************************/
+/**
+ * @fn void PRP_Lock_T_down(PRP_Lock_T* const me)
+ * @brief Takes the lock, this is blocking if already locked
+ *
+ * @param   me PRP_Lock_T this pointer
+ */
 void PRP_Lock_T_down(PRP_Lock_T* const me)
 {
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(me == NULL_PTR)
-	{
-		return;
-	}
-	
-	lock_down(me->lock_);
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+
+    if(me == NULL_PTR)
+    {
+        return;
+    }
+
+    lock_down(me->lock_);
 }
 
-/************************************************************/
-/*       PRP_Lock_T_up                                      */
-/************************************************************/
+/**
+ * @fn void PRP_Lock_T_up(PRP_Lock_T* const me)
+ * @brief Releases the lock, this is non-blocking
+ *
+ * @param   me PRP_Lock_T this pointer
+ */
 void PRP_Lock_T_up(PRP_Lock_T* const me)
 {
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(me == NULL_PTR)
-	{
-		return;
-	}
-	
-	lock_up(me->lock_);
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+
+    if(me == NULL_PTR)
+    {
+        return;
+    }
+
+    lock_up(me->lock_);
 }
 
-/************************************************************/
-/*       PRP_Lock_T_init                                    */
-/************************************************************/
+/**
+ * @fn void PRP_Lock_T_init(PRP_Lock_T* const me)
+ * @brief Initialize the PRP_Lock interface
+ *
+ * @param   me PRP_Lock_T this pointer
+ */
 void PRP_Lock_T_init(PRP_Lock_T* const me)
 {
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(me == NULL_PTR)
-	{
-		return;
-	}
-	
-	me->lock_ = create_lock();
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+
+    if(me == NULL_PTR)
+    {
+        return;
+    }
+
+    me->lock_ = create_lock();
 }
 
-/************************************************************/
-/*       PRP_Lock_T_cleanup                                 */
-/************************************************************/
+/**
+ * @fn void PRP_Lock_T_cleanup(PRP_Lock_T* const me)
+ * @brief Clean up the PRP_Lock interface
+ *
+ * @param   me PRP_Lock_T this pointer
+ */
 void PRP_Lock_T_cleanup(PRP_Lock_T* const me)
 {
-	if(me == NULL_PTR)
-	{
-		return;
-	}
-	
-	destroy_lock(me->lock_);
+    if(me == NULL_PTR)
+    {
+        return;
+    }
+
+    destroy_lock(me->lock_);
 }
 

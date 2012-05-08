@@ -79,17 +79,26 @@
 
 struct PRP_Environment_T 
 {
-	PRP_Timer_T bridging_timer_;
-	PRP_Timer_T supervise_timer_;
-	PRP_Timer_T supervision_tx_timer_;
-	PRP_Timer_T aging_timer_;
-	PRP_EnvironmentConfiguration_T environment_configuration_;
-	PRP_Supervision_T supervision_;
-	PRP_Bridging_T bridging_;
-	PRP_NodeTable_T node_table_;
-	PRP_DiscardAlgorithm_PRP1_T discard_algorithm_prp1_;
-	PRP_FrameAnalyser_T frame_analyser_;
-
+    /* Instance to check of the link, for bridging */
+    PRP_Timer_T bridging_timer_;
+    /* Instance to check of the Node table fortimed out nodes */
+    PRP_Timer_T supervise_timer_;
+    /* Instance to invoke the sending of the supervision frame */
+    PRP_Timer_T supervision_tx_timer_;
+    /* Instance of the aging timer */
+    PRP_Timer_T aging_timer_;
+    /* Instance of the environment configuration */
+    PRP_EnvironmentConfiguration_T environment_configuration_;
+    /* Instance of the supervision part of the protocol engine */
+    PRP_Supervision_T supervision_;
+    /* Instance of the bridging part of the protocol engine */
+    PRP_Bridging_T bridging_;
+    /* Instance of the node table */
+    PRP_NodeTable_T node_table_;
+    /* Instance of the discard algorithm part of the protocol engine */
+    PRP_DiscardAlgorithm_PRP1_T discard_algorithm_prp1_;
+    /* Instance of the frame analyzer */
+    PRP_FrameAnalyser_T frame_analyser_;
 };
 
 void PRP_Environment_T_process_timer(PRP_Environment_T* const me);

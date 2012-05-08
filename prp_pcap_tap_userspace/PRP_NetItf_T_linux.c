@@ -63,9 +63,9 @@
 ************|**********|*********************************************
 *  01.01.08 | mesv     | file created
 ************|**********|*********************************************
-*  05.02.08 | stpa	   | error handling / fixes
+*  05.02.08 | stpa     | error handling / fixes
 *********************************************************************
-*  18.03.10 | gunz	   | rewrite for single thread, pcap and tun/tap
+*  18.03.10 | gunz     | rewrite for single thread, pcap and tun/tap
 *********************************************************************/
 
 
@@ -73,8 +73,8 @@
 
 Getting started:
 
-1)		./prp_linux_users_pace ethLanA ethLanB
-2)		ifconfig prp1 <your ip>
+1)      ./prp_linux_users_pace ethLanA ethLanB
+2)      ifconfig prp1 <your ip>
 
 Known problems:
 * timer accuracy 
@@ -114,7 +114,7 @@ Known problems:
 
 
 /********************************************************************/
-/*			local vars and functions					    		*/
+/*          local vars and functions                                */
 /********************************************************************/
 static volatile boolean exit_prp = FALSE;
 pcap_t *port_a;
@@ -123,130 +123,160 @@ int tap;
 char devname[IFNAMSIZ];
 char port_a_name[IFNAMSIZ];
 char port_b_name[IFNAMSIZ];
-    
-    
+
+/**
+ * @fn static void sig_term(int sig)
+ * @brief Termination handling function.
+ *
+ * @param   sig int termination signal
+ */
 static void sig_term(int sig)
 {
     exit_prp = TRUE;
 }
 
 
-
 #ifdef PRP_DEBUG_LOG
-	extern int debug_level;
-	extern int net_itf_debug_level;
-	extern int prp_debug_level;
+    extern int debug_level;
+    extern int net_itf_debug_level;
+    extern int prp_debug_level;
 #endif
 
 /********************************************************************/
-/*			function prototypes			    						*/
+/*          function prototypes	                                     */
 /********************************************************************/
 int set_mac(char *dev, unsigned char *buffer);
 
-
-/************************************************************/
-/*       PRP_NetItf_T_set_active_A                          */
-/************************************************************/
+/**
+ * @fn integer32 PRP_NetItf_T_set_active_A(boolean value)
+ * @brief Enable or disable adapter A
+ *
+ * @param   value boolean TRUE activates the adapter
+ * @return  integer32 0 : OK
+ *          integer32 <0 : ERROR (code)
+ */
 integer32 PRP_NetItf_T_set_active_A(boolean value)
 {
     /* Don't care*/
-	return(0);
+    return(0);
 }
 
-/************************************************************/
-/*       PRP_NetItf_T_set_active_B                          */
-/************************************************************/
+/**
+ * @fn integer32 PRP_NetItf_T_set_active_B(boolean value)
+ * @brief Enable or disable adapter B
+ * 
+ * @param   value boolean TRUE activates the adapter
+ * @return  integer32 0 : OK
+ *          integer32 <0 : ERROR (code)
+ */
 integer32 PRP_NetItf_T_set_active_B(boolean value)
 {
     /* Don't care*/
-	return(0);
+    return(0);
 }
 
-/************************************************************/
-/*       PRP_NetItf_T_set_mac_address_A                     */
-/************************************************************/
+/**
+ * @fn integer32 PRP_NetItf_T_set_mac_address_A(octet* mac)
+ * @brief Sets the MAC address of the adapter A
+ * 
+ * @param   mac octet array[6] Mac address to set
+ * @return  integer32 0 : OK
+ *          integer32 <0 : ERROR (code)
+ */
 integer32 PRP_NetItf_T_set_mac_address_A(octet* mac)
 {
- 
     /* Don't care*/
     return(0);
 }
 
-/************************************************************/
-/*       PRP_NetItf_T_set_mac_address_B                     */
-/************************************************************/
+/**
+ * @fn integer32 PRP_NetItf_T_set_mac_address_B(octet* mac)
+ * @brief Sets the MAC address of the adapter B
+ * @param   mac octet array[6] Mac address to set
+ * @return  integer32 0 : OK
+ *          integer32 <0 : ERROR (code)
+ */
 integer32 PRP_NetItf_T_set_mac_address_B(octet* mac)
 {
-
     /* Don't care*/
     return(0);
 }
 
-/************************************************************/
-/*       PRP_NetItf_T_set_supervision_address               */
-/************************************************************/
+/**
+ * @fn integer32 PRP_NetItf_T_set_supervision_address(octet* mac)
+ * @brief Sets the MAC address for the supervision frames
+ *
+ * @param   mac octet array[6] Mac address to set
+ * 
+ * MACs have to know the multicast mac, or they go into promiscuous mode
+ */
 integer32 PRP_NetItf_T_set_supervision_address(octet* mac)
 {
     /* Don't care*/
-      return(0);
+    return(0);
 }
 
 
-/************************************************************/
-/*       PRP_NetItf_T_transmit                              */
-/************************************************************/
+/**
+ * @fn integer32 PRP_NetItf_T_transmit(octet* data, uinteger32* length, octet lan_id)
+ * @brief Transmits the Frame to the actual adapter specified in the lan_id.
+ *
+ * @param   data octet pointer to the beginning of the frame (dest mac)
+ * @param   length uinteger32 length in bytes of the frame
+ * @param   lan_id octet LAN to send the frame
+ * @return  integer32 0 : OK
+ *          integer32 <0 : ERROR (code)
+ */
 integer32 PRP_NetItf_T_transmit(octet* data, uinteger32* length, octet lan_id)
 {
-	if(lan_id == PRP_ID_LAN_A)
-	{
+    if(lan_id == PRP_ID_LAN_A)
+    {
         pcap_sendpacket(port_a,data,*length);
-	}
-	else if(lan_id == PRP_ID_LAN_B)
-	{
+    }
+    else if(lan_id == PRP_ID_LAN_B)
+    {
         pcap_sendpacket(port_b,data,*length); /* LAN B */
-	}
-	else
-	{
-    	fprintf(stderr, "Invalid lan ID in %s\n", __FUNCTION__);
-	}
-	return(0);
+    }
+    else
+    {
+        fprintf(stderr, "Invalid lan ID in %s\n", __FUNCTION__);
+    }
+    return(0);
 }
 
-
-
-
-/*******************************************************************/
-/*** PcapReceive_callback                                        ***/
-/*** Args = PRP_ID_LAN_[A|B]                                     ***/
-/*******************************************************************/
-
-
-void PcapReceive_callback(unsigned char *Args,
-                      const struct pcap_pkthdr* Pkthdr,
-                      unsigned char *Packet)
+/**
+ * @fn void PcapReceive_callback(unsigned char *Args, const struct pcap_pkthdr* Pkthdr, unsigned char *Packet)
+ * @brief Packet receive function
+ *
+ * @param   Args unsigned char pointer to the PRP_ID_LAN [A|B]
+ * @param   Pkthdr pcap_pkthdr struct to the packet header
+ * @param   Packet unsigned char pointer to the packet
+ */
+void PcapReceive_callback(unsigned char *Args, const struct pcap_pkthdr* Pkthdr,
+                          unsigned char *Packet)
 {
-        octet lanID = *Args;
-        uinteger32  len;
-    	int res = -1;
+    octet lanID = *Args;
+    uinteger32  len;
+    int res = -1;
 
-        len = Pkthdr->caplen;
+    len = Pkthdr->caplen;
 
-        res = PRP_T_receive(Packet, &len, lanID);  
+    res = PRP_T_receive(Packet, &len, lanID);
 
-        if(res == PRP_KEEP)
-        {
-            write(tap,Packet,len);
-        }
+    if(res == PRP_KEEP)
+    {
+        write(tap,Packet,len);
+    }
 }
 
-
-
-
-/*******************************************************************/
-/*** Open new virtual TAP PRP device                             ***/
-/*******************************************************************/
-
-
+/**
+ * @fn int tap_open(char *dev)
+ * @brief Open new virtual TAP PRP device
+ *
+ * @param   dev char pointer to the device
+ * @return  int 0 : OK
+ *          int <0 : ERROR (code)
+ */ 
 int tap_open(char *dev)
 {
     struct ifreq ifr;
@@ -278,20 +308,26 @@ int tap_open(char *dev)
         fprintf(stderr,"set nonblock failed\n");
     }
 
-
     return fd;
 failed:
     perror("tap open failed");
     close(fd);
     return -1;
 }
-/*******************************************************************/
-/*** open pcap live for sniffing                                 ***/
-/*******************************************************************/
-pcap_t*  raw_open(char *dev){
+
+/**
+ * @fn pcap_t*  raw_open(char *dev)
+ * @brief Open pcap live for sniffing
+ *
+ * @param   dev char pointer to the device
+ * @return  pointer to a pcap_t struct
+ *          NULL : ERROR
+ */
+pcap_t*  raw_open(char *dev)
+{
     pcap_t  *pcap_handle;
     char    errbuf[PCAP_ERRBUF_SIZE];
-    
+
     pcap_handle = pcap_open_live(dev,ETHER_MAX_LEN,1,1,errbuf);
    
    if(pcap_handle == NULL)
@@ -305,15 +341,21 @@ pcap_t*  raw_open(char *dev){
    fprintf(stderr, "Could not set device \"%s\" to non-blocking: %s\n", dev, errbuf);
     return NULL;
    }
-   
+
    return pcap_handle;
-    
 }
 
-/*********************************************************************/
-/*** set_mac_filter(pcap_t* dev,unsigned char *mac)                ***/
-/*********************************************************************/
-int set_mac_filter(pcap_t* dev,unsigned char *mac){
+/**
+ * @fn int set_mac_filter(pcap_t* dev,unsigned char *mac)
+ * @brief Set mac filter for the pcap app
+ *
+ * @param   dev pcap_t pointer to the pcap device
+ * @param   mac unsigned char pointer to the mac
+ * @return  int 0 : OK
+ *          int <0 : ERROR
+ */
+int set_mac_filter(pcap_t* dev,unsigned char *mac)
+{
     struct bpf_program fp;
     char filter_string[100];
     sprintf(filter_string,"not ether src %02x:%02x:%02x:%02x:%02x:%02x",
@@ -329,11 +371,17 @@ int set_mac_filter(pcap_t* dev,unsigned char *mac){
     return 0;
 }
 
-
-/*********************************************************************/
-/*** get_mac(char *dev, char *buffer)                               ***/
-/*********************************************************************/
-int get_mac(char *dev, unsigned char *buffer){
+/**
+ * @fn int get_mac(char *dev, unsigned char *buffer)
+ * @brief Get the device' mac address
+ *
+ * @param   dev char pointer to the device
+ * @param   buffer unsigned char pointer to the buffer
+ * @return  int 0 : OK
+ *          int <0 : ERROR
+ */
+int get_mac(char *dev, unsigned char *buffer)
+{
     int sd;
     struct ifreq ifr;
     sd = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
@@ -353,10 +401,18 @@ int get_mac(char *dev, unsigned char *buffer){
     return 0;
 
 }
-/*********************************************************************/
-/*** set_mac(char *dev, char *buffer)                               ***/
-/*********************************************************************/
-int set_mac(char *dev, unsigned char *buffer){
+
+/**
+ * @fn int set_mac(char *dev, unsigned char *buffer)
+ * @brief Set the device' mac address
+ *
+ * @param   dev char pointer to the device
+ * @param   buffer unsigned char pointer to the buffer
+ * @return  int 0 : OK
+ *          int <0 : ERROR
+ */
+int set_mac(char *dev, unsigned char *buffer)
+{
     int sd;
     struct ifreq ifr;
     int flags;
@@ -368,15 +424,15 @@ int set_mac(char *dev, unsigned char *buffer){
         return -1;
     }
 
-     strncpy((char*)&ifr.ifr_name, dev, IFNAMSIZ);
-        
+    strncpy((char*)&ifr.ifr_name, dev, IFNAMSIZ);
+
     /*get interface flags */
     if (ioctl(sd, SIOCGIFFLAGS, &ifr) < 0) {
         perror("ioctl SIOCGIFFLAGS");
         close(sd);
         return -1;
     }        
-     /* save flags */
+    /* save flags */
     flags = ifr.ifr_flags;
     /*set interface down*/
     ifr.ifr_flags = 0;
@@ -405,10 +461,17 @@ int set_mac(char *dev, unsigned char *buffer){
     close(sd);           
     return 0; 
 }
-/*********************************************************************/
-/*** set_flags_red(char *dev)   -   device flags for red. net. cards   ***/
-/*********************************************************************/
-int set_flags_red(char *dev){
+
+/**
+ * @fn int set_flags_red(char *dev)
+ * @brief Device flags for redundancy network cards
+ *
+ * @param   dev char pointer to the device
+ * @return  int 0 : OK
+ *          int <0: ERROR
+ */
+int set_flags_red(char *dev)
+{
     int sd;
     struct ifreq ifr;
     bzero(&ifr,sizeof(ifr));
@@ -417,9 +480,8 @@ int set_flags_red(char *dev){
         perror("socket");
         return -1;
     }
-     strncpy((char*)&ifr.ifr_name, dev, IFNAMSIZ);
-        
-                
+    strncpy((char*)&ifr.ifr_name, dev, IFNAMSIZ);
+
     /*set flags, set MULTICAST */
     ifr.ifr_flags = IFF_ALLMULTI |  IFF_MULTICAST | IFF_UP | IFF_NOARP | IFF_PROMISC;
     if (ioctl(sd, SIOCSIFFLAGS, &ifr) < 0) {
@@ -427,9 +489,9 @@ int set_flags_red(char *dev){
         close(sd);
         return -1;
     }
-         
+
     /* set mtu to 1500 */
-     ifr.ifr_mtu = 1500;
+    ifr.ifr_mtu = 1500;
     if (ioctl(sd, SIOCSIFMTU, &ifr) < 0) {
         perror("ioctl SIOCSIFMTU");
         close(sd);
@@ -442,7 +504,16 @@ int set_flags_red(char *dev){
 /*********************************************************************/
 /*** set_flags_prp(char *dev)   -   device flags for virtual prp   ***/
 /*********************************************************************/
-int set_flags_prp(char *dev){
+/**
+ * @fn int set_flags_prp(char *dev)
+ * @brief Device flags for the virtual PRP interface
+ *
+ * @param   dev char pointer to the device
+ * @return  int 0 : OK
+ *          int <0: ERROR
+ */
+int set_flags_prp(char *dev)
+{
     int sd;
     struct ifreq ifr;
     bzero(&ifr,sizeof(ifr));
@@ -461,8 +532,7 @@ int set_flags_prp(char *dev){
         close(sd);
         return -1;
     }
-    
-    
+
     /* set mtu to 1496 */
      ifr.ifr_mtu = 1496;
     if (ioctl(sd, SIOCSIFMTU, &ifr) < 0) {
@@ -474,46 +544,42 @@ int set_flags_prp(char *dev){
     return 0; 
 }
 
-/*********************************************************************/
-/*** main                                                          ***/
-/*********************************************************************/
-
-
-
-int main(int argc, char* argv[]){
+/**
+ * @fn int main(int argc, char* argv[])
+ * @brief PRP-1 SW stack main function
+ *
+ * @param   argc int value of passed arguments
+ * @param   argv char pointer to the argument array
+ */
+int main(int argc, char* argv[])
+{
     int port_a_fd,port_b_fd;
     unsigned char addr_A[IFHWADDRLEN];
     unsigned char new_lamo[IFHWADDRLEN] ;
     PRP_MergeLayerInfo_T merge_layer_info;
-	char node_name[] = "ZHAW PRP Node";
-	char manufacturer_name[] = "ZHAW InES";
-	char version[] = "pcap + tap";
-	struct timeval next;	
+    char node_name[] = "ZHAW PRP Node";
+    char manufacturer_name[] = "ZHAW InES";
+    char version[] = "pcap + tap";
+    struct timeval next;
 
     exit_prp = FALSE;
-    
-	
+
 #ifdef PRP_DEBUG_LOG
-	debug_level = PRP_DEBUG_LEVEL;
-	net_itf_debug_level = PRP_DEBUG_LEVEL;
-	prp_debug_level = PRP_DEBUG_LEVEL;
+    debug_level = PRP_DEBUG_LEVEL;
+    net_itf_debug_level = PRP_DEBUG_LEVEL;
+    prp_debug_level = PRP_DEBUG_LEVEL;
 #endif
 
-    
-
-	/* parse IP interface parameter */
-	if(argc == (3))
-	{
-    	
+    /* parse IP interface parameter */
+    if(argc == (3)) {
         strncpy(port_a_name, argv[1],IFNAMSIZ);
         strncpy(port_b_name, argv[2],IFNAMSIZ);
-	}
-	else
-	{
-		fprintf(stderr, "Usage: %s eth1 eth2 \n",argv[0]);
-		exit(-1);
-	}
-    
+    }
+    else {
+        fprintf(stderr, "Usage: %s eth1 eth2 \n",argv[0]);
+        exit(-1);
+    }
+
     /* renice */
     errno = 0;
     nice(-20);
@@ -529,23 +595,17 @@ int main(int argc, char* argv[]){
     system("echo 2 > /proc/sys/net/ipv4/conf/all/arp_announce");
     system("echo 1 > /proc/sys/net/ipv4/conf/all/arp_ignore");
 
-
-
-
-
-    
     PRP_T_init();
     PRP_T_get_merge_layer_info(&merge_layer_info); 
- 	memset(merge_layer_info.node_, '\0' , PRP_NODE_NAME_LENGTH);	
- 	memcpy(merge_layer_info.node_, node_name, sizeof(node_name));
- 	memset(merge_layer_info.manufacturer_, '\0' , PRP_MANUFACTURER_NAME_LENGTH);	
- 	memcpy(merge_layer_info.manufacturer_, manufacturer_name, sizeof(manufacturer_name));
- 	memset(merge_layer_info.version_, '\0' , PRP_VERSION_LENGTH);	
- 	memcpy(merge_layer_info.version_, version, sizeof(version));
-	merge_layer_info.adapter_active_A_ = FALSE;
-	merge_layer_info.adapter_active_B_ = FALSE;
-    PRP_T_set_merge_layer_info(&merge_layer_info);    
-
+    memset(merge_layer_info.node_, '\0' , PRP_NODE_NAME_LENGTH);
+    memcpy(merge_layer_info.node_, node_name, sizeof(node_name));
+    memset(merge_layer_info.manufacturer_, '\0' , PRP_MANUFACTURER_NAME_LENGTH);
+    memcpy(merge_layer_info.manufacturer_, manufacturer_name, sizeof(manufacturer_name));
+    memset(merge_layer_info.version_, '\0' , PRP_VERSION_LENGTH);
+    memcpy(merge_layer_info.version_, version, sizeof(version));
+    merge_layer_info.adapter_active_A_ = FALSE;
+    merge_layer_info.adapter_active_B_ = FALSE;
+    PRP_T_set_merge_layer_info(&merge_layer_info);
     
     /* open tap device */
     strcpy(devname,"prp1");
@@ -579,22 +639,22 @@ int main(int argc, char* argv[]){
         fprintf(stderr,"set mac address of %s: failed\n",port_a_name);
         return -1;
     }   
-        
+
     if(set_mac(port_b_name,new_lamo) >= 0){
         fprintf(stderr,"set mac address of %s: done\n",port_b_name);
     } else {
         fprintf(stderr,"set mac address of %s: failed\n",port_b_name);
         return -1;
     }
-    
+
     if(set_mac(devname,addr_A) >= 0){
         fprintf(stderr,"set mac address of %s: done\n",devname);
     } else {
         fprintf(stderr,"set mac address of %s: failed\n",devname);
         return -1;
     }
-       
-   if(set_flags_red(port_a_name) >= 0){
+
+    if(set_flags_red(port_a_name) >= 0){
         fprintf(stderr,"set flags of %s: done\n",port_a_name);
     } else {
         fprintf(stderr,"set flags of %s: failed\n",port_a_name);
@@ -612,8 +672,6 @@ int main(int argc, char* argv[]){
         fprintf(stderr,"set flags of %s: failed\n",devname);
         return -1;
     }       
-
-
 
     /* open port a */
     if((port_a = raw_open(port_a_name)) != NULL){
@@ -643,18 +701,17 @@ int main(int argc, char* argv[]){
         return -1;
     }
 
-	/* start */
-    PRP_T_get_merge_layer_info(&merge_layer_info); 
- 	memcpy(merge_layer_info.mac_address_A_, addr_A, PRP_ETH_ADDR_LENGTH);
- 	memcpy(merge_layer_info.mac_address_B_, addr_A, PRP_ETH_ADDR_LENGTH);  	
-	merge_layer_info.adapter_active_A_ = TRUE;
-	merge_layer_info.adapter_active_B_ = TRUE;
-    PRP_T_set_merge_layer_info(&merge_layer_info);	   
-    
+    /* start */
+    PRP_T_get_merge_layer_info(&merge_layer_info);
+    memcpy(merge_layer_info.mac_address_A_, addr_A, PRP_ETH_ADDR_LENGTH);
+    memcpy(merge_layer_info.mac_address_B_, addr_A, PRP_ETH_ADDR_LENGTH);
+    merge_layer_info.adapter_active_A_ = TRUE;
+    merge_layer_info.adapter_active_B_ = TRUE;
+    PRP_T_set_merge_layer_info(&merge_layer_info);
 
     fprintf(stderr,"entering main loop, press q to exit\n");
-	gettimeofday(&next,NULL);
-	
+    gettimeofday(&next,NULL);
+
     signal(SIGINT, sig_term);
     signal(SIGQUIT, sig_term);
     signal(SIGTERM, sig_term);
@@ -676,27 +733,26 @@ int main(int argc, char* argv[]){
         FD_SET(STDIN_FILENO,&descriptors);
         /* select ! */
         int retval = select(FD_SETSIZE,&descriptors,NULL,NULL,&timeout);
-	
-		/* check for timer, replacement for timer_fd */
-		struct timeval now;
-		gettimeofday(&now,NULL);
-		if((now.tv_sec > next.tv_sec) || ((now.tv_sec == next.tv_sec) && (now.tv_usec > next.tv_usec))) {
-			PRP_T_timer();
-			next.tv_usec = now.tv_usec + PRP_TIMER_TICK_INTERVAL*1000;	/* in 100 ms */
-			next.tv_sec = now.tv_sec;
-			if(next.tv_usec > 1000000){
-				next.tv_usec -= 1000000;
-				next.tv_sec += 1;
-			}
-		}
-		
-		
-		if(retval < 0){
+
+        /* check for timer, replacement for timer_fd */
+        struct timeval now;
+        gettimeofday(&now,NULL);
+        if((now.tv_sec > next.tv_sec) || ((now.tv_sec == next.tv_sec) && (now.tv_usec > next.tv_usec))) {
+            PRP_T_timer();
+            next.tv_usec = now.tv_usec + PRP_TIMER_TICK_INTERVAL*1000;	/* in 100 ms */
+            next.tv_sec = now.tv_sec;
+            if(next.tv_usec > 1000000){
+                next.tv_usec -= 1000000;
+                next.tv_sec += 1;
+            }
+        }
+
+        if(retval < 0){
             perror("select failed");
             exit_prp = TRUE;
         } else if (retval == 0){
         /* timeout - do nothing*/
-			
+
         } else {
             if(FD_ISSET(STDIN_FILENO,&descriptors)){
                 unsigned int len;
@@ -705,7 +761,7 @@ int main(int argc, char* argv[]){
                     exit_prp = TRUE;
                 }
             }
-            
+
             if(FD_ISSET(tap,&descriptors)){
                 unsigned int len;
                 len = read(tap,buffer,ETHER_MAX_LEN);
@@ -726,8 +782,9 @@ int main(int argc, char* argv[]){
             
         }
     }
-    
- 	PRP_T_cleanup();
-		
-	return 0;
+
+    PRP_T_cleanup();
+
+    return 0;
 }
+

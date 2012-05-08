@@ -76,496 +76,545 @@
 #include "PRP_Lock_T.h"
 #include "PRP_Bridging_T.h"
 
+/* All API functions are using this lock to have atomic access */
 static PRP_Environment_T environment_;
+/* Instance of the protocol engine */
 static PRP_Lock_T lock_;
+/* Node to read over management */
 static PRP_Node_T node_;
+/* Indicates if the stack is initialized or not */
 static boolean initialized_ = FALSE;
 
 
-/************************************************************/
-/*       PRP_T_receive                                      */
-/************************************************************/
+/**
+ * @fn integer32 PRP_T_receive(octet* data, uinteger32* length, octet lan_id)
+ * @brief Receive function for all incoming frames of the PRP network adapters
+ *
+ * @param   data octet pointer to the beginning of the frame (dest mac)
+ * @param   length uinteger32 length in bytes of the frame
+ * @param   lan_id octet on which LAN it was received
+ * @return  integer32 1: DROP
+ *          integer32 0: KEEP
+ *          integer32 <0: ERROR (code)
+ */
 integer32 PRP_T_receive(octet* data, uinteger32* length, octet lan_id)
-{         
-	integer32 ret = PRP_KEEP;	
-			
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(initialized_ != TRUE)
-	{
-		return(-PRP_ERROR_NOT_INITIALIZED);
-	}
-		
-	PRP_Lock_T_down(&lock_); /* API calls are mutex */
-		
-  	ret = PRP_Environment_T_process_rx(&environment_, data, length, lan_id);
- 	
-	PRP_Lock_T_up(&lock_);
-	
-	return(ret);
-}      
-   
-/************************************************************/
-/*       PRP_T_transmit                                     */
-/************************************************************/
+{
+    integer32 ret = PRP_KEEP;
+
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+
+    if(initialized_ != TRUE)
+    {
+        return(-PRP_ERROR_NOT_INITIALIZED);
+    }
+
+    PRP_Lock_T_down(&lock_); /* API calls are mutex */
+
+    ret = PRP_Environment_T_process_rx(&environment_, data, length, lan_id);
+ 
+    PRP_Lock_T_up(&lock_);
+
+    return(ret);
+}
+
+/**
+ * @fn integer32 PRP_T_transmit(octet* data, uinteger32* length)
+ * @brief Transmit function for all frames of the PRP network adapters
+ *
+ * @param   data octet pointer to the beginning of the frame (dest mac)
+ * @param   length uinteger32 length in bytes of the frame
+ * @return  integer32 0 : OK
+ *          integer32 <0 : ERROR (code)
+ */
 integer32 PRP_T_transmit(octet* data, uinteger32* length)
 {
-	integer32 ret = 0;	
-	
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(initialized_ != TRUE)
-	{
-		return(-PRP_ERROR_NOT_INITIALIZED);
-	}
-	
-	PRP_Lock_T_down(&lock_); /* API calls are mutex */
-	 	
- 	ret = PRP_Environment_T_process_tx(&environment_, data, length, 0x00);
+    integer32 ret = 0;
 
-	PRP_Lock_T_up(&lock_);
-	
- 	return(ret);
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+
+    if(initialized_ != TRUE)
+    {
+        return(-PRP_ERROR_NOT_INITIALIZED);
+    }
+
+    PRP_Lock_T_down(&lock_); /* API calls are mutex */
+
+    ret = PRP_Environment_T_process_tx(&environment_, data, length, 0x00);
+
+    PRP_Lock_T_up(&lock_);
+
+    return(ret);
 }
 
-/************************************************************/
-/*       PRP_T_timer                                        */
-/************************************************************/
+/**
+ * @fn void PRP_T_timer(void)
+ * @brief Timer (1s) for all periodical jobs
+ */
 void PRP_T_timer(void)
 {
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(initialized_ != TRUE)
-	{
-		return;
-	}
-	
-	PRP_Lock_T_down(&lock_); /* API calls are mutex */
-	
-	PRP_Environment_T_process_timer(&environment_);
-	
-	PRP_Lock_T_up(&lock_);
-	
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+
+    if(initialized_ != TRUE)
+    {
+    return;
+    }
+
+    PRP_Lock_T_down(&lock_); /* API calls are mutex */
+
+    PRP_Environment_T_process_timer(&environment_);
+
+    PRP_Lock_T_up(&lock_);
+
 }
 
-/************************************************************/
-/*       PRP_T_link_down_A                                  */
-/************************************************************/
+/**
+ * @fn void PRP_T_link_down_A(void)
+ * @brief Function to set link PRP A down
+ */
 void PRP_T_link_down_A(void)
 {
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(initialized_ != TRUE)
-	{
-		return;
-	}
-	
-	PRP_Lock_T_down(&lock_); /* API calls are mutex */
-	
-	if(environment_.environment_configuration_.bridging_ == TRUE)
-	{	
-		PRP_Bridging_T_statemachine(&(environment_.bridging_), PRP_RAPID_SPANNING_TREE_LINK_DOWN, NULL_PTR, PRP_ID_LAN_A);
-	}
-	
-	PRP_Lock_T_up(&lock_);
-	
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+
+    if(initialized_ != TRUE)
+    {
+        return;
+    }
+
+    PRP_Lock_T_down(&lock_); /* API calls are mutex */
+
+    if(environment_.environment_configuration_.bridging_ == TRUE)
+    {
+        PRP_Bridging_T_statemachine(&(environment_.bridging_), PRP_RAPID_SPANNING_TREE_LINK_DOWN, NULL_PTR, PRP_ID_LAN_A);
+    }
+
+    PRP_Lock_T_up(&lock_);
 }
 
-
-/************************************************************/
-/*       PRP_T_link_down_B                                   */
-/************************************************************/
+/**
+ * @fn void PRP_T_link_down_B(void)
+ * @brief Function to set link PRP B down
+ */
 void PRP_T_link_down_B(void)
 {
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(initialized_ != TRUE)
-	{
-		return;
-	}
-	
-	PRP_Lock_T_down(&lock_); /* API calls are mutex */
-	
-	if(environment_.environment_configuration_.bridging_ == TRUE)
-	{	
-		PRP_Bridging_T_statemachine(&(environment_.bridging_), PRP_RAPID_SPANNING_TREE_LINK_DOWN, NULL_PTR, PRP_ID_LAN_B);
-	}
-	
-	PRP_Lock_T_up(&lock_);
-	
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+
+    if(initialized_ != TRUE)
+    {
+        return;
+    }
+
+    PRP_Lock_T_down(&lock_); /* API calls are mutex */
+
+    if(environment_.environment_configuration_.bridging_ == TRUE)
+    {
+        PRP_Bridging_T_statemachine(&(environment_.bridging_), PRP_RAPID_SPANNING_TREE_LINK_DOWN, NULL_PTR, PRP_ID_LAN_B);
+    }
+
+    PRP_Lock_T_up(&lock_);
 }
 
-
-/************************************************************/
-/*       PRP_T_get_merge_layer_info                         */
-/************************************************************/
+/**
+ * @fn integer32 PRP_T_get_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
+ * @brief Copies the Merge Layer information to the object passed as argument.
+ *
+ * @param   merge_layer PRP_MergeLayerInfo_T pointer to a Merge Layer Info
+ *          object where the info shall be copied to
+ * @return  integer32 0 : OK
+ *          integer32 <0 : ERROR (code)
+ */
 integer32 PRP_T_get_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
 {
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(initialized_ != TRUE)
-	{
-		return(-PRP_ERROR_NOT_INITIALIZED);
-	}
-	
-	if(merge_layer == NULL_PTR)
-	{
-		return(-PRP_ERROR_NULL_PTR);
-	}
-	
-	PRP_Lock_T_down(&lock_); /* API calls are mutex */
-	
-	prp_memcpy(merge_layer->node_, environment_.environment_configuration_.node_, PRP_NODE_NAME_LENGTH);
-	prp_memcpy(merge_layer->manufacturer_, environment_.environment_configuration_.manufacturer_, PRP_MANUFACTURER_NAME_LENGTH);
-	prp_memcpy(merge_layer->version_, environment_.environment_configuration_.version_, PRP_VERSION_LENGTH);
-	prp_memcpy(merge_layer->mac_address_A_, environment_.environment_configuration_.mac_address_A_, PRP_ETH_ADDR_LENGTH);
-	prp_memcpy(merge_layer->mac_address_B_, environment_.environment_configuration_.mac_address_B_, PRP_ETH_ADDR_LENGTH);
-	merge_layer->adapter_active_A_ = environment_.environment_configuration_.adapter_active_A_;
-	merge_layer->adapter_active_B_ = environment_.environment_configuration_.adapter_active_B_;
-	merge_layer->duplicate_discard_ = environment_.environment_configuration_.duplicate_discard_;
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+
+    if(initialized_ != TRUE)
+    {
+        return(-PRP_ERROR_NOT_INITIALIZED);
+    }
+
+    if(merge_layer == NULL_PTR)
+    {
+        return(-PRP_ERROR_NULL_PTR);
+    }
+
+    PRP_Lock_T_down(&lock_); /* API calls are mutex */
+
+    prp_memcpy(merge_layer->node_, environment_.environment_configuration_.node_, PRP_NODE_NAME_LENGTH);
+    prp_memcpy(merge_layer->manufacturer_, environment_.environment_configuration_.manufacturer_, PRP_MANUFACTURER_NAME_LENGTH);
+    prp_memcpy(merge_layer->version_, environment_.environment_configuration_.version_, PRP_VERSION_LENGTH);
+    prp_memcpy(merge_layer->mac_address_A_, environment_.environment_configuration_.mac_address_A_, PRP_ETH_ADDR_LENGTH);
+    prp_memcpy(merge_layer->mac_address_B_, environment_.environment_configuration_.mac_address_B_, PRP_ETH_ADDR_LENGTH);
+    merge_layer->adapter_active_A_ = environment_.environment_configuration_.adapter_active_A_;
+    merge_layer->adapter_active_B_ = environment_.environment_configuration_.adapter_active_B_;
+    merge_layer->duplicate_discard_ = environment_.environment_configuration_.duplicate_discard_;
     merge_layer->transparent_reception_ = environment_.environment_configuration_.transparent_reception_;
-	merge_layer->bridging_ = environment_.environment_configuration_.bridging_;
-	merge_layer->clear_node_table_ = FALSE; /* write only */ 
-	merge_layer->node_table_empty_ = environment_.node_table_.node_table_empty_;
-	prp_memcpy(merge_layer->supervision_address_, environment_.supervision_.supervision_address_, PRP_ETH_ADDR_LENGTH);
-	merge_layer->life_check_interval_ = environment_.supervision_.life_check_interval_;
-	merge_layer->node_forget_time_ = environment_.supervision_.node_forget_time_;
-	merge_layer->link_time_out_ = environment_.supervision_.link_time_out_;
-	merge_layer->cnt_total_sent_A_ = environment_.environment_configuration_.cnt_total_sent_A_;
-	merge_layer->cnt_total_sent_B_ = environment_.environment_configuration_.cnt_total_sent_B_;
-	merge_layer->cnt_total_errors_A_ = environment_.environment_configuration_.cnt_total_errors_A_;
-	merge_layer->cnt_total_errors_B_ = environment_.environment_configuration_.cnt_total_errors_B_;
-	merge_layer->cnt_nodes_ = environment_.node_table_.cnt_nodes_;
-	
-	PRP_Lock_T_up(&lock_);
-	
-	return(0);
+    merge_layer->bridging_ = environment_.environment_configuration_.bridging_;
+    merge_layer->clear_node_table_ = FALSE; /* write only */
+    merge_layer->node_table_empty_ = environment_.node_table_.node_table_empty_;
+    prp_memcpy(merge_layer->supervision_address_, environment_.supervision_.supervision_address_, PRP_ETH_ADDR_LENGTH);
+    merge_layer->life_check_interval_ = environment_.supervision_.life_check_interval_;
+    merge_layer->node_forget_time_ = environment_.supervision_.node_forget_time_;
+    merge_layer->link_time_out_ = environment_.supervision_.link_time_out_;
+    merge_layer->cnt_total_sent_A_ = environment_.environment_configuration_.cnt_total_sent_A_;
+    merge_layer->cnt_total_sent_B_ = environment_.environment_configuration_.cnt_total_sent_B_;
+    merge_layer->cnt_total_errors_A_ = environment_.environment_configuration_.cnt_total_errors_A_;
+    merge_layer->cnt_total_errors_B_ = environment_.environment_configuration_.cnt_total_errors_B_;
+    merge_layer->cnt_nodes_ = environment_.node_table_.cnt_nodes_;
+
+    PRP_Lock_T_up(&lock_);
+
+    return(0);
 }
 
-/************************************************************/
-/*       PRP_T_set_merge_layer_info                         */
-/************************************************************/
+/**
+ * @fn integer32 PRP_T_set_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
+ * @brief Sets the Merge Layer info parameters to the values passed as argument.
+ *
+ * @param   merge_layer PRP_MergeLayerInfo_T pointer to a Merge Layer Info
+ *          object where the info shall be copied from
+ * @return  integer32 0 : OK
+ *          integer32 <0 : ERROR (code)
+ */
 integer32 PRP_T_set_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
 {
-	PRP_Node_T* node;
-	
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(initialized_ != TRUE)
-	{
-		return(-PRP_ERROR_NOT_INITIALIZED);
-	}
-	
-	if(merge_layer == NULL_PTR)
-	{
-		return(-PRP_ERROR_NULL_PTR);
-	}
-	
-	PRP_Lock_T_down(&lock_); /* API calls are mutex */
-	
-	prp_memcpy(environment_.environment_configuration_.node_, merge_layer->node_, PRP_NODE_NAME_LENGTH);
-	prp_memcpy(environment_.environment_configuration_.manufacturer_, merge_layer->manufacturer_, PRP_MANUFACTURER_NAME_LENGTH);	
-	prp_memcpy(environment_.environment_configuration_.version_, merge_layer->version_, PRP_VERSION_LENGTH);
-	if(merge_layer->clear_node_table_ == TRUE) /* clear the table */
-	{		
-		PRP_NodeTable_T_cleanup(&(environment_.node_table_));
-		PRP_NodeTable_T_init(&(environment_.node_table_));
-	}
-	if(0 != prp_memcmp(environment_.environment_configuration_.mac_address_A_, merge_layer->mac_address_A_, PRP_ETH_ADDR_LENGTH)) /* did^mac address of adapter A change ? */
-	{
-		if(0 != PRP_NetItf_T_set_mac_address_A(merge_layer->mac_address_A_)) /* change the mac on the card */
-		{
-			PRP_Lock_T_up(&lock_);
-			return(-PRP_ERROR_ADAPTER);
-		}
-		
-		prp_memcpy(environment_.environment_configuration_.mac_address_A_, merge_layer->mac_address_A_, PRP_ETH_ADDR_LENGTH);
-	}
-	if(0 !=	prp_memcmp(environment_.environment_configuration_.mac_address_B_, merge_layer->mac_address_B_, PRP_ETH_ADDR_LENGTH))
-	{
-		if(0 != PRP_NetItf_T_set_mac_address_B(merge_layer->mac_address_B_))
-		{
-			PRP_Lock_T_up(&lock_);
-			return(-PRP_ERROR_ADAPTER);
-		}
-		
-		prp_memcpy(environment_.environment_configuration_.mac_address_B_, merge_layer->mac_address_B_, PRP_ETH_ADDR_LENGTH);
-	}
-	
-	if((merge_layer->adapter_active_A_ == TRUE) || (merge_layer->adapter_active_A_ == FALSE))
-	{
-		if(0 != PRP_NetItf_T_set_active_A(merge_layer->adapter_active_A_))
-		{
-			PRP_Lock_T_up(&lock_);
-			return(-PRP_ERROR_ADAPTER);
-		}
-		environment_.environment_configuration_.adapter_active_A_ = merge_layer->adapter_active_A_;
-	}
-	else
-	{
-		PRP_Lock_T_up(&lock_);
-		return(-PRP_ERROR_WRONG_VAL);
-	}
-	
-	if((merge_layer->adapter_active_B_ == TRUE) || (merge_layer->adapter_active_B_ == FALSE))
-	{
-		if(0 != PRP_NetItf_T_set_active_B(merge_layer->adapter_active_B_))
-		{
-			PRP_Lock_T_up(&lock_);
-			return(-PRP_ERROR_ADAPTER);
-		}
-		environment_.environment_configuration_.adapter_active_B_ = merge_layer->adapter_active_B_;
-	}
-	else
-	{
-		PRP_Lock_T_up(&lock_);
-		return(-PRP_ERROR_WRONG_VAL);
-	}
+    PRP_Node_T* node;
 
-	if((merge_layer->duplicate_discard_ == TRUE) || (merge_layer->duplicate_discard_ == FALSE))
-	{
-		environment_.environment_configuration_.duplicate_discard_ = merge_layer->duplicate_discard_;
-	}
-	else
-	{
-		PRP_Lock_T_up(&lock_);
-		return(-PRP_ERROR_WRONG_VAL);
-	}
-	
-	if((merge_layer->duplicate_discard_ == TRUE) || (merge_layer->duplicate_discard_ == FALSE))
-	{
-	    environment_.environment_configuration_.transparent_reception_ = merge_layer->transparent_reception_;
-	}
-	else
-	{
-		PRP_Lock_T_up(&lock_);
-		return(-PRP_ERROR_WRONG_VAL);
-	}
-    
-	if((merge_layer->bridging_ == TRUE) || (merge_layer->bridging_ == FALSE))
-	{
-		if((merge_layer->bridging_ == TRUE) && (environment_.environment_configuration_.bridging_ == FALSE))
-		{
-			PRP_NodeTable_T_cleanup(&(environment_.node_table_));
-		}	
-		environment_.environment_configuration_.bridging_ = merge_layer->bridging_;
-	}
-	else
-	{
-		PRP_Lock_T_up(&lock_);
-		return(-PRP_ERROR_WRONG_VAL);
-	}
-	
-	
-/*	environment_.node_table_.node_table_empty_ = merge_layer->node_table_empty_; read only */
-	if(0 !=	prp_memcmp(environment_.supervision_.supervision_address_, merge_layer->supervision_address_, PRP_ETH_ADDR_LENGTH))
-	{
-		if((merge_layer->supervision_address_[0] != 0x01) ||
-		   (merge_layer->supervision_address_[1] != 0x15) ||
-		   (merge_layer->supervision_address_[2] != 0x4e) ||
-		   (merge_layer->supervision_address_[3] != 0x00) ||
-		   (merge_layer->supervision_address_[4] != 0x01)) /* is it a valid supervision frame address? */
-		{
-			PRP_Lock_T_up(&lock_);
-			return(-PRP_ERROR_WRONG_VAL);
-		}
-		
-		if(0 != PRP_NetItf_T_set_supervision_address(merge_layer->supervision_address_)) /* add the address to the multicast addresses of the adapters */
-		{
-			PRP_Lock_T_up(&lock_);
-			return(-PRP_ERROR_ADAPTER);
-		}
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-		node = PRP_NodeTable_T_get_first_node(&(environment_.node_table_));
+    if(initialized_ != TRUE)
+    {
+        return(-PRP_ERROR_NOT_INITIALIZED);
+    }
 
-		prp_memcpy(environment_.supervision_.supervision_address_, merge_layer->supervision_address_, PRP_ETH_ADDR_LENGTH);
-	}
-	environment_.supervision_.life_check_interval_ = merge_layer->life_check_interval_;
-	environment_.supervision_.node_forget_time_ = merge_layer->node_forget_time_;
-	environment_.supervision_.link_time_out_ = merge_layer->link_time_out_;
-	
-/*	environment_.environment_configuration_.cnt_total_sent_A_ = merge_layer->cnt_total_sent_A_; read only */
-/*	environment_.environment_configuration_.cnt_total_sent_B_ = merge_layer->cnt_total_sent_B_; read only */
-/*	environment_.environment_configuration_.cnt_total_errors_A_ = merge_layer->cnt_total_errors_A_; read only */
-/*	environment_.environment_configuration_.cnt_total_errors_B_ = merge_layer->cnt_total_errors_B_; read only */
-/*	environment_.node_table_.cnt_nodes_ = merge_layer->cnt_nodes_; read only */
-	
-	PRP_Lock_T_up(&lock_);
-	
-	return(0);
+    if(merge_layer == NULL_PTR)
+    {
+        return(-PRP_ERROR_NULL_PTR);
+    }
+
+    PRP_Lock_T_down(&lock_); /* API calls are mutex */
+
+    prp_memcpy(environment_.environment_configuration_.node_, merge_layer->node_, PRP_NODE_NAME_LENGTH);
+    prp_memcpy(environment_.environment_configuration_.manufacturer_, merge_layer->manufacturer_, PRP_MANUFACTURER_NAME_LENGTH);
+    prp_memcpy(environment_.environment_configuration_.version_, merge_layer->version_, PRP_VERSION_LENGTH);
+    if(merge_layer->clear_node_table_ == TRUE) /* clear the table */
+    {
+        PRP_NodeTable_T_cleanup(&(environment_.node_table_));
+        PRP_NodeTable_T_init(&(environment_.node_table_));
+    }
+    /* did mac address of adapter A change ? */
+    if(0 != prp_memcmp(environment_.environment_configuration_.mac_address_A_, merge_layer->mac_address_A_, PRP_ETH_ADDR_LENGTH))
+    {
+        /* change the mac on the card */
+        if(0 != PRP_NetItf_T_set_mac_address_A(merge_layer->mac_address_A_))
+        {
+            PRP_Lock_T_up(&lock_);
+            return(-PRP_ERROR_ADAPTER);
+        }
+        prp_memcpy(environment_.environment_configuration_.mac_address_A_, merge_layer->mac_address_A_, PRP_ETH_ADDR_LENGTH);
+    }
+    if(0 !=	prp_memcmp(environment_.environment_configuration_.mac_address_B_, merge_layer->mac_address_B_, PRP_ETH_ADDR_LENGTH))
+    {
+        if(0 != PRP_NetItf_T_set_mac_address_B(merge_layer->mac_address_B_))
+        {
+            PRP_Lock_T_up(&lock_);
+            return(-PRP_ERROR_ADAPTER);
+        }
+
+        prp_memcpy(environment_.environment_configuration_.mac_address_B_, merge_layer->mac_address_B_, PRP_ETH_ADDR_LENGTH);
+    }
+
+    if((merge_layer->adapter_active_A_ == TRUE) || (merge_layer->adapter_active_A_ == FALSE))
+    {
+        if(0 != PRP_NetItf_T_set_active_A(merge_layer->adapter_active_A_))
+        {
+            PRP_Lock_T_up(&lock_);
+            return(-PRP_ERROR_ADAPTER);
+        }
+        environment_.environment_configuration_.adapter_active_A_ = merge_layer->adapter_active_A_;
+    }
+    else
+    {
+        PRP_Lock_T_up(&lock_);
+        return(-PRP_ERROR_WRONG_VAL);
+    }
+
+    if((merge_layer->adapter_active_B_ == TRUE) || (merge_layer->adapter_active_B_ == FALSE))
+    {
+        if(0 != PRP_NetItf_T_set_active_B(merge_layer->adapter_active_B_))
+        {
+            PRP_Lock_T_up(&lock_);
+            return(-PRP_ERROR_ADAPTER);
+        }
+        environment_.environment_configuration_.adapter_active_B_ = merge_layer->adapter_active_B_;
+    }
+    else
+    {
+        PRP_Lock_T_up(&lock_);
+        return(-PRP_ERROR_WRONG_VAL);
+    }
+
+    if((merge_layer->duplicate_discard_ == TRUE) || (merge_layer->duplicate_discard_ == FALSE))
+    {
+        environment_.environment_configuration_.duplicate_discard_ = merge_layer->duplicate_discard_;
+    }
+    else
+    {
+        PRP_Lock_T_up(&lock_);
+        return(-PRP_ERROR_WRONG_VAL);
+    }
+
+    if((merge_layer->duplicate_discard_ == TRUE) || (merge_layer->duplicate_discard_ == FALSE))
+    {
+        environment_.environment_configuration_.transparent_reception_ = merge_layer->transparent_reception_;
+    }
+    else
+    {
+        PRP_Lock_T_up(&lock_);
+        return(-PRP_ERROR_WRONG_VAL);
+    }
+
+    if((merge_layer->bridging_ == TRUE) || (merge_layer->bridging_ == FALSE))
+    {
+        if((merge_layer->bridging_ == TRUE) && (environment_.environment_configuration_.bridging_ == FALSE))
+        {
+            PRP_NodeTable_T_cleanup(&(environment_.node_table_));
+        }
+        environment_.environment_configuration_.bridging_ = merge_layer->bridging_;
+    }
+    else
+    {
+        PRP_Lock_T_up(&lock_);
+        return(-PRP_ERROR_WRONG_VAL);
+    }
+
+
+    /* environment_.node_table_.node_table_empty_ = merge_layer->node_table_empty_; read only */
+    if(0 !=	prp_memcmp(environment_.supervision_.supervision_address_, merge_layer->supervision_address_, PRP_ETH_ADDR_LENGTH))
+    {
+        if((merge_layer->supervision_address_[0] != 0x01) ||
+            (merge_layer->supervision_address_[1] != 0x15) ||
+            (merge_layer->supervision_address_[2] != 0x4e) ||
+            (merge_layer->supervision_address_[3] != 0x00) ||
+            (merge_layer->supervision_address_[4] != 0x01)) /* is it a valid supervision frame address? */
+        {
+            PRP_Lock_T_up(&lock_);
+            return(-PRP_ERROR_WRONG_VAL);
+        }
+        /* add the address to the multicast addresses of the adapters */
+        if(0 != PRP_NetItf_T_set_supervision_address(merge_layer->supervision_address_))
+        {
+            PRP_Lock_T_up(&lock_);
+            return(-PRP_ERROR_ADAPTER);
+        }
+        node = PRP_NodeTable_T_get_first_node(&(environment_.node_table_));
+        prp_memcpy(environment_.supervision_.supervision_address_, merge_layer->supervision_address_, PRP_ETH_ADDR_LENGTH);
+    }
+    environment_.supervision_.life_check_interval_ = merge_layer->life_check_interval_;
+    environment_.supervision_.node_forget_time_ = merge_layer->node_forget_time_;
+    environment_.supervision_.link_time_out_ = merge_layer->link_time_out_;
+
+    /* environment_.environment_configuration_.cnt_total_sent_A_ = merge_layer->cnt_total_sent_A_; read only */
+    /* environment_.environment_configuration_.cnt_total_sent_B_ = merge_layer->cnt_total_sent_B_; read only */
+    /* environment_.environment_configuration_.cnt_total_errors_A_ = merge_layer->cnt_total_errors_A_; read only */
+    /* environment_.environment_configuration_.cnt_total_errors_B_ = merge_layer->cnt_total_errors_B_; read only */
+    /* environment_.node_table_.cnt_nodes_ = merge_layer->cnt_nodes_; read only */
+
+    PRP_Lock_T_up(&lock_);
+
+    return(0);
 }
 
-
-
-
-
-/************************************************************/
-/*       PRP_T_get_node_table_entry                         */
-/************************************************************/
+/**
+ * @fn integer32 PRP_T_get_node_table_entry(PRP_NodeTableEntry_T* node_table_entry)
+ * @brief Copies the node info into to the structure passed as argument
+ *
+ * @param   node_table_entry PRP_NodeTableEntry_T pointer to a Node Table Entry
+ *          Info object where the info shall be copied to.
+ * @return  integer32 0 : OK
+ *          integer32 <0 : ERROR (code)
+ */
 integer32 PRP_T_get_node_table_entry(PRP_NodeTableEntry_T* node_table_entry)
 {
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(initialized_ != TRUE)
-	{
-		return(-PRP_ERROR_NOT_INITIALIZED);
-	}
-	
-	PRP_Lock_T_down(&lock_);
-	
-	if(node_.previous_node_ == NULL_PTR)
-	{
-		PRP_Lock_T_up(&lock_);
-		return(-PRP_NODE_DELETED);
-	}
-	
-	prp_memcpy(&node_, node_.previous_node_, sizeof(PRP_Node_T));	
-	
-	prp_memcpy(node_table_entry->mac_address_A_, node_.mac_address_A_, PRP_ETH_ADDR_LENGTH);
-	prp_memcpy(node_table_entry->mac_address_B_, node_.mac_address_B_, PRP_ETH_ADDR_LENGTH);
-	node_table_entry->cnt_received_A_ = node_.cnt_received_A_;
-	node_table_entry->cnt_received_B_ = node_.cnt_received_B_;
-	node_table_entry->cnt_keept_A_ = node_.cnt_keept_A_;
-	node_table_entry->cnt_keept_B_ = node_.cnt_keept_B_;
-	node_table_entry->cnt_err_out_of_sequence_A_ = node_.cnt_err_out_of_sequence_A_;
-	node_table_entry->cnt_err_out_of_sequence_B_ = node_.cnt_err_out_of_sequence_B_;
-	node_table_entry->cnt_err_wrong_lan_A_ = node_.cnt_err_wrong_lan_A_;
-	node_table_entry->cnt_err_wrong_lan_B_ = node_.cnt_err_wrong_lan_B_;
-	node_table_entry->time_last_seen_A_ = node_.time_last_seen_A_;
-	node_table_entry->time_last_seen_B_ = node_.time_last_seen_B_;
-	node_table_entry->san_A_ = node_.san_A_;
-	node_table_entry->san_B_ = node_.san_B_;
-	node_table_entry->send_seq_ = node_.send_seq_;
-	node_table_entry->failed_A_ = node_.failed_A_;
-	node_table_entry->failed_B_ = node_.failed_B_;
-	
-	PRP_Lock_T_up(&lock_);
-	return(0);
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+
+    if(initialized_ != TRUE)
+    {
+        return(-PRP_ERROR_NOT_INITIALIZED);
+    }
+
+    PRP_Lock_T_down(&lock_);
+
+    if(node_.previous_node_ == NULL_PTR)
+    {
+        PRP_Lock_T_up(&lock_);
+        return(-PRP_NODE_DELETED);
+    }
+
+    prp_memcpy(&node_, node_.previous_node_, sizeof(PRP_Node_T));
+
+    prp_memcpy(node_table_entry->mac_address_A_, node_.mac_address_A_, PRP_ETH_ADDR_LENGTH);
+    prp_memcpy(node_table_entry->mac_address_B_, node_.mac_address_B_, PRP_ETH_ADDR_LENGTH);
+    node_table_entry->cnt_received_A_ = node_.cnt_received_A_;
+    node_table_entry->cnt_received_B_ = node_.cnt_received_B_;
+    node_table_entry->cnt_keept_A_ = node_.cnt_keept_A_;
+    node_table_entry->cnt_keept_B_ = node_.cnt_keept_B_;
+    node_table_entry->cnt_err_out_of_sequence_A_ = node_.cnt_err_out_of_sequence_A_;
+    node_table_entry->cnt_err_out_of_sequence_B_ = node_.cnt_err_out_of_sequence_B_;
+    node_table_entry->cnt_err_wrong_lan_A_ = node_.cnt_err_wrong_lan_A_;
+    node_table_entry->cnt_err_wrong_lan_B_ = node_.cnt_err_wrong_lan_B_;
+    node_table_entry->time_last_seen_A_ = node_.time_last_seen_A_;
+    node_table_entry->time_last_seen_B_ = node_.time_last_seen_B_;
+    node_table_entry->san_A_ = node_.san_A_;
+    node_table_entry->san_B_ = node_.san_B_;
+    node_table_entry->send_seq_ = node_.send_seq_;
+    node_table_entry->failed_A_ = node_.failed_A_;
+    node_table_entry->failed_B_ = node_.failed_B_;
+
+    PRP_Lock_T_up(&lock_);
+    return(0);
 }
 
-/************************************************************/
-/*       PRP_T_go_to_first_node_table_entry                 */
-/************************************************************/
+/**
+ * @fn integer32 PRP_T_go_to_first_node_table_entry(void)
+ * @brief Goes to the first node in the node table
+ *
+ * @return  integer32 0 : OK
+ *          integer32 1 : PRP_NODETABLE_END
+ *          integer32 <0 : ERROR (code)
+ *
+ * This function has to be called before go_to_next_node_table_entry
+ */
 integer32 PRP_T_go_to_first_node_table_entry(void)
 {         
-	PRP_Node_T* temp_node;
-	
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(initialized_ != TRUE)
-	{
-		return(-PRP_ERROR_NOT_INITIALIZED);
-	}
-	
-	PRP_Lock_T_down(&lock_);
-	
-	temp_node = PRP_NodeTable_T_get_first_node(&(environment_.node_table_));
-	
-	if(temp_node == NULL_PTR)
-	{
-		PRP_Lock_T_up(&lock_);
-		return(PRP_NODETABLE_END);
-	}
-	
-	prp_memcpy(&node_, temp_node, sizeof(PRP_Node_T));	
-	
-	node_.previous_node_ = temp_node; /* to detect if a node gets deleted if it was the current one */
-		
-	PRP_Lock_T_up(&lock_);
-	return(0);
+    PRP_Node_T* temp_node;
+
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+
+    if(initialized_ != TRUE)
+    {
+        return(-PRP_ERROR_NOT_INITIALIZED);
+    }
+
+    PRP_Lock_T_down(&lock_);
+
+    temp_node = PRP_NodeTable_T_get_first_node(&(environment_.node_table_));
+
+    if(temp_node == NULL_PTR)
+    {
+        PRP_Lock_T_up(&lock_);
+        return(PRP_NODETABLE_END);
+    }
+
+    prp_memcpy(&node_, temp_node, sizeof(PRP_Node_T));
+
+    /* to detect if a node gets deleted if it was the current one */
+    node_.previous_node_ = temp_node;
+
+    PRP_Lock_T_up(&lock_);
+    return(0);
 }         
 
-          
-/************************************************************/
-/*       PRP_T_go_to_next_node_table_entry                  */
-/************************************************************/
+/**
+ * @fn integer32 PRP_T_go_to_next_node_table_entry(void)
+ * @brief Goes to the next node in the node table.
+ *
+ * @return  integer32 0 : OK
+ *          integer32 1 : PRP_NODETABLE_END
+ *          integer32 <0 : ERROR (code)
+ */
 integer32 PRP_T_go_to_next_node_table_entry(void)
 {    
-	PRP_Node_T* temp_node;
-	
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(initialized_ != TRUE)
-	{
-		return(-PRP_ERROR_NOT_INITIALIZED);
-	}
-	
-	PRP_Lock_T_down(&lock_);
-	
-	temp_node = node_.next_node_;
-	
-	if(temp_node == NULL_PTR)
-	{
-		PRP_Lock_T_up(&lock_);
-		return(PRP_NODETABLE_END);
-	}
-	
-	prp_memcpy(&node_, temp_node, sizeof(PRP_Node_T));	
-	
-	node_.previous_node_ = temp_node; /* to detect if a node gets deleted if it was the current one */
-	
-	PRP_Lock_T_up(&lock_);	
-	return(0);
+    PRP_Node_T* temp_node;
+
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+
+    if(initialized_ != TRUE)
+    {
+        return(-PRP_ERROR_NOT_INITIALIZED);
+    }
+
+    PRP_Lock_T_down(&lock_);
+
+    temp_node = node_.next_node_;
+
+    if(temp_node == NULL_PTR)
+    {
+        PRP_Lock_T_up(&lock_);
+        return(PRP_NODETABLE_END);
+    }
+
+    prp_memcpy(&node_, temp_node, sizeof(PRP_Node_T));
+
+    /* to detect if a node gets deleted if it was the current one */
+    node_.previous_node_ = temp_node;
+
+    PRP_Lock_T_up(&lock_);
+    return(0);
 }         
 
-/************************************************************/
-/*       PRP_T_delete_node_table_entry                      */
-/************************************************************/
+/**
+ * @fn void PRP_T_delete_node_table_entry(PRP_Node_T* node)
+ * @brief Deletes the node passed as argument
+ *
+ * @param   node PRP_Node_T Pointer to a node structure
+ * @return  integer32 0 : OK
+ *          integer32 <0 : ERROR (code)
+ */
 void PRP_T_delete_node_table_entry(PRP_Node_T* node)
 {         
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(initialized_ != TRUE)
-	{
-		return;
-	}
-	
-	if(node == NULL_PTR)
-	{
-		return;
-	}
-	
-	if(node_.next_node_ == node)
-	{
-		node_.next_node_ = 	node->next_node_;
-	}
-	if(node_.previous_node_ == node)
-	{
-		node_.previous_node_ = 	NULL_PTR;		
-	}
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+
+    if(initialized_ != TRUE)
+    {
+        return;
+    }
+
+    if(node == NULL_PTR)
+    {
+        return;
+    }
+
+    if(node_.next_node_ == node)
+    {
+        node_.next_node_ = 	node->next_node_;
+    }
+    if(node_.previous_node_ == node)
+    {
+        node_.previous_node_ = 	NULL_PTR;
+    }
 }
 
-
-/************************************************************/
-/*       PRP_T_init                                         */
-/************************************************************/
+/**
+ * @fn void PRP_T_init(void)
+ * @brief Initialize the PRP interface
+ */
 void PRP_T_init(void)
 {
-	if(initialized_ != FALSE)
-	{
-		return;
-	}
-	PRP_Lock_T_init(&lock_); /* API calls are mutex */
-	PRP_Environment_T_init(&environment_);
-	PRP_Node_T_init(&node_);
-	initialized_ = TRUE;
+    if(initialized_ != FALSE)
+    {
+        return;
+    }
+    PRP_Lock_T_init(&lock_); /* API calls are mutex */
+    PRP_Environment_T_init(&environment_);
+    PRP_Node_T_init(&node_);
+    initialized_ = TRUE;
 }
 
-/************************************************************/
-/*       PRP_T_cleanup                                      */
-/************************************************************/
+/**
+ * @fn void PRP_T_cleanup(void)
+ * @brief Clean up the PRP interface
+ */
 void PRP_T_cleanup(void)
 {
-	if(initialized_ != TRUE)
-	{
-		return;
-	}
-	PRP_Lock_T_down(&lock_); /* API calls are mutex */
-	
-	initialized_ = FALSE;
-	
-	PRP_Lock_T_cleanup(&lock_);
-	PRP_Environment_T_cleanup(&environment_);
-	PRP_Node_T_cleanup(&node_);
+    if(initialized_ != TRUE)
+    {
+        return;
+    }
+    PRP_Lock_T_down(&lock_); /* API calls are mutex */
+
+    initialized_ = FALSE;
+
+    PRP_Lock_T_cleanup(&lock_);
+    PRP_Environment_T_cleanup(&environment_);
+    PRP_Node_T_cleanup(&node_);
 }
 

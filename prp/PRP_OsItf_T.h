@@ -89,5 +89,5 @@ void* create_lock(void);
 void destroy_lock(void* sem);
 void lock_down(void* sem);
 void lock_up(void* sem);
-#endif  
+#endif /* PRP_OsItf_T_H */
 

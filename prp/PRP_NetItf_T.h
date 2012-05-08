@@ -78,4 +78,4 @@ integer32 PRP_NetItf_T_set_supervision_address(octet* mac);
 integer32 PRP_NetItf_T_transmit(octet* data, uinteger32* length, octet lan_id);
 
 
-#endif  
+#endif /* PRP_NetItf_T_H */

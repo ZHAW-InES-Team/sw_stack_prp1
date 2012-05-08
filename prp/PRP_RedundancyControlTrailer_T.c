@@ -70,53 +70,63 @@
 #include "PRP_RedundancyControlTrailer_T.h"
 #include "PRP_LogItf_T.h"
 
-/************************************************************/
-/*       PRP_RedundancyControlTrailer_T_print               */
-/************************************************************/
+/**
+ * @fn void PRP_RedundancyControlTrailer_T_print(PRP_RedundancyControlTrailer_T* const me, uinteger32 level)
+ * @brief Print PRP_RedundancyControlTrailer status information
+ *
+ * @param   me PRP_RedundancyControlTrailer_T this pointer
+ * @param   level uinteger32 importance
+ */
 void PRP_RedundancyControlTrailer_T_print(PRP_RedundancyControlTrailer_T* const me, uinteger32 level)
 {
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(me == NULL_PTR)
-	{
-		return;
-	}
-	
-	PRP_PRP_LOGOUT(level, "%s\n", "====RedundancyControlTrailer========");	
-	PRP_PRP_LOGOUT(level, "lan_id_:\t\t%x\n", me->lan_id_);
-	PRP_PRP_LOGOUT(level, "seq_:\t\t\t%u\n", me->seq_);
-	PRP_PRP_LOGOUT(level, "%s\n", "====================================");	
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+
+    if(me == NULL_PTR)
+    {
+        return;
+    }
+
+    PRP_PRP_LOGOUT(level, "%s\n", "====RedundancyControlTrailer========");
+    PRP_PRP_LOGOUT(level, "lan_id_:\t\t%x\n", me->lan_id_);
+    PRP_PRP_LOGOUT(level, "seq_:\t\t\t%u\n", me->seq_);
+    PRP_PRP_LOGOUT(level, "%s\n", "====================================");
 }
 
-/************************************************************/
-/*       PRP_RedundancyControlTrailer_T_init                */
-/************************************************************/
+/**
+ * @fn void PRP_RedundancyControlTrailer_T_init(PRP_RedundancyControlTrailer_T* const me)
+ * @brief Initialize the PRP_RedundancyControlTrailer interface
+ *
+ * @param   me PRP_RedundancyControlTrailer_T this pointer
+ */
 void PRP_RedundancyControlTrailer_T_init(PRP_RedundancyControlTrailer_T* const me)
 {
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(me == NULL_PTR)
-	{
-		return;
-	}
-	
-	me->lan_id_ = 0;
-	me->seq_ = 0;
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+
+    if(me == NULL_PTR)
+    {
+        return;
+    }
+
+    me->lan_id_ = 0;
+    me->seq_ = 0;
 }
 
-/************************************************************/
-/*       PRP_RedundancyControlTrailer_T_cleanup             */
-/************************************************************/
+/**
+ * @fn void PRP_RedundancyControlTrailer_T_cleanup(PRP_RedundancyControlTrailer_T* const me)
+ * @brief Clean up the PRP_RedundancyControlTrailer interface
+ *
+ * @param   me PRP_RedundancyControlTrailer_T this pointer
+ */
 void PRP_RedundancyControlTrailer_T_cleanup(PRP_RedundancyControlTrailer_T* const me)
 {
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(me == NULL_PTR)
-	{
-		return;
-	}
-	
-	me->lan_id_ = 0;
-	me->seq_ = 0;
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+
+    if(me == NULL_PTR)
+    {
+        return;
+    }
+
+    me->lan_id_ = 0;
+    me->seq_ = 0;
 }
 

@@ -73,8 +73,8 @@
 
 struct PRP_FrameAnalyser_T 
 {
-	PRP_Environment_T* environment_;
-	PRP_Frames_T frames_;
+    PRP_Environment_T* environment_;    /* Pointer to the environment */
+    PRP_Frames_T frames_;               /* Instance of a frame object */
 };
 
 

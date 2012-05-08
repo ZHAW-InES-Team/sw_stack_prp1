@@ -74,49 +74,49 @@
 typedef struct PRP_MergeLayerInfo_T PRP_MergeLayerInfo_T;
 struct PRP_MergeLayerInfo_T 
 {
-	octet node_[PRP_NODE_NAME_LENGTH];
-	octet manufacturer_[PRP_MANUFACTURER_NAME_LENGTH];
+    octet node_[PRP_NODE_NAME_LENGTH];
+    octet manufacturer_[PRP_MANUFACTURER_NAME_LENGTH];
     octet version_[PRP_VERSION_LENGTH];
-	octet mac_address_A_[PRP_ETH_ADDR_LENGTH];
-	octet mac_address_B_[PRP_ETH_ADDR_LENGTH];
-	boolean adapter_active_A_;
-	boolean adapter_active_B_;
-	boolean duplicate_discard_;
+    octet mac_address_A_[PRP_ETH_ADDR_LENGTH];
+    octet mac_address_B_[PRP_ETH_ADDR_LENGTH];
+    boolean adapter_active_A_;
+    boolean adapter_active_B_;
+    boolean duplicate_discard_;
     boolean transparent_reception_;
-	boolean bridging_;
-	boolean node_table_empty_;
-	boolean clear_node_table_;
-	octet supervision_address_[PRP_ETH_ADDR_LENGTH];
-	uinteger16 life_check_interval_;
-	uinteger16 node_forget_time_;
-	uinteger16 link_time_out_;
-	uinteger32 cnt_total_sent_A_;
-	uinteger32 cnt_total_sent_B_;
-	uinteger32 cnt_total_errors_A_;
-	uinteger32 cnt_total_errors_B_;
-	uinteger32 cnt_nodes_;
+    boolean bridging_;
+    boolean node_table_empty_;
+    boolean clear_node_table_;
+    octet supervision_address_[PRP_ETH_ADDR_LENGTH];
+    uinteger16 life_check_interval_;
+    uinteger16 node_forget_time_;
+    uinteger16 link_time_out_;
+    uinteger32 cnt_total_sent_A_;
+    uinteger32 cnt_total_sent_B_;
+    uinteger32 cnt_total_errors_A_;
+    uinteger32 cnt_total_errors_B_;
+    uinteger32 cnt_nodes_;
 };
 
 typedef struct PRP_NodeTableEntry_T PRP_NodeTableEntry_T;
 struct PRP_NodeTableEntry_T 
 {
-	octet mac_address_A_[PRP_ETH_ADDR_LENGTH];
-	octet mac_address_B_[PRP_ETH_ADDR_LENGTH];
-	uinteger32 cnt_received_A_;
-	uinteger32 cnt_received_B_;
-	uinteger32 cnt_keept_A_;
-	uinteger32 cnt_keept_B_;
-	uinteger32 cnt_err_out_of_sequence_A_;
-	uinteger32 cnt_err_out_of_sequence_B_;
-	uinteger32 cnt_err_wrong_lan_A_;
-	uinteger32 cnt_err_wrong_lan_B_;
-	uinteger64 time_last_seen_A_;
-	uinteger64 time_last_seen_B_;
-	boolean san_A_;
-	boolean san_B_;
-	uinteger16 send_seq_;
-	boolean failed_A_;
-	boolean failed_B_;
+    octet mac_address_A_[PRP_ETH_ADDR_LENGTH];
+    octet mac_address_B_[PRP_ETH_ADDR_LENGTH];
+    uinteger32 cnt_received_A_;
+    uinteger32 cnt_received_B_;
+    uinteger32 cnt_keept_A_;
+    uinteger32 cnt_keept_B_;
+    uinteger32 cnt_err_out_of_sequence_A_;
+    uinteger32 cnt_err_out_of_sequence_B_;
+    uinteger32 cnt_err_wrong_lan_A_;
+    uinteger32 cnt_err_wrong_lan_B_;
+    uinteger64 time_last_seen_A_;
+    uinteger64 time_last_seen_B_;
+    boolean san_A_;
+    boolean san_B_;
+    uinteger16 send_seq_;
+    boolean failed_A_;
+    boolean failed_B_;
 };
 
 integer32 PRP_T_receive(octet* data, uinteger32* length, octet lan_id);
@@ -140,4 +140,4 @@ void PRP_T_delete_node_table_entry(PRP_Node_T* node); /* private for the stack *
 void PRP_T_init(void);
 void PRP_T_cleanup(void);
 
-#endif  
+#endif  /* PRP_P_H */

@@ -72,9 +72,9 @@
 
 struct PRP_RedundancyControlTrailer_T 
 {
-	octet lan_id_;
-	uinteger16 seq_;
-	octet seq_octet_[2];
+    octet lan_id_;          /* LAN identifier */
+    uinteger16 seq_;        /* Sequence number */
+    octet seq_octet_[2];    /* Sequence number */
 };
 
 
@@ -82,5 +82,5 @@ void PRP_RedundancyControlTrailer_T_print(PRP_RedundancyControlTrailer_T* const 
 void PRP_RedundancyControlTrailer_T_init(PRP_RedundancyControlTrailer_T* const me);
 void PRP_RedundancyControlTrailer_T_cleanup(PRP_RedundancyControlTrailer_T* const me);
 
-#endif  
+#endif /* PRP_RedundancyControlTrailer_T_H */
 

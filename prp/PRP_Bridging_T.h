@@ -71,27 +71,24 @@
 #include "PRP_Package_T.h"
 
 struct PRP_Bridging_T 
-{  
-	PRP_Environment_T* environment_;
-	uinteger8 state_A_;
-	uinteger8 state_B_;
-	uinteger64 time_last_seen_A_;
-	uinteger64 time_last_seen_B_;
-	octet full_path_costs_[22];
-	boolean topologie_change_A_;	
-	boolean topologie_change_B_;	
-	
+{
+    PRP_Environment_T* environment_;    /* Pointer to the environment object */
+    uinteger8 state_A_;                 /* state for the statemachine */
+    uinteger8 state_B_;                 /* state for the statemachine */
+    uinteger64 time_last_seen_A_;       /* Last time a BPDU was received on LAN A */
+    uinteger64 time_last_seen_B_;       /* Last time a BPDU was received on LAN B */
+    octet full_path_costs_[22];         /* Path costs to the root, updates with every frame */
+    boolean topologie_change_A_;        /* Flag for the statemachine */
+    boolean topologie_change_B_;        /* Flag for the statemachine */
 };
 
 void PRP_Bridging_T_print(PRP_Bridging_T* const me, uinteger32 level);
-
 integer32 PRP_Bridging_T_supervise(PRP_Bridging_T* const me);
 integer32 PRP_Bridging_T_bridging_rx(PRP_Bridging_T* const me, octet* data, uinteger32* length, octet lan_id);
 integer32 PRP_Bridging_T_bridging_tx(PRP_Bridging_T* const me, PRP_BridgingFrame_T* bridging_frame_payload, octet lan_id);
 integer32 PRP_Bridging_T_statemachine(PRP_Bridging_T* const me, octet event, void* event_data, octet lan_id);
-
 void PRP_Bridging_T_init(PRP_Bridging_T* const me, PRP_Environment_T* const environment);
 void PRP_Bridging_T_cleanup(PRP_Bridging_T* const me);
 
-#endif
+#endif /* PRP_Bridging_T_H */
 

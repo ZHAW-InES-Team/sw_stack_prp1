@@ -71,110 +71,119 @@
 
 
 
-/************************************************************/
-/*       PRP_EnvironmentConfiguration_T_init                */
-/************************************************************/
+/**
+ * @fn void PRP_EnvironmentConfiguration_T_print(PRP_EnvironmentConfiguration_T* const me, uinteger32 level)
+ * @brief Print the PRP_EnvironmentConfiguration_T status information
+ *
+ * @param   me PRP_Environment_T this pointer
+ * @param   level uinteger32 importance
+ */
 void PRP_EnvironmentConfiguration_T_print(PRP_EnvironmentConfiguration_T* const me, uinteger32 level)
 {
-	integer32 i;
-	
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(me == NULL_PTR)
-	{
-		return;
-	}
+    integer32 i;
 
-	PRP_PRP_LOGOUT(level, "%s\n", "====EnvironmentConfiguration========");	
-	PRP_PRP_LOGOUT(level, "node_:\t%s\n", me->node_);
-	PRP_PRP_LOGOUT(level, "manufacturer_:\t%s\n", me->manufacturer_);
-	PRP_PRP_LOGOUT(level, "\version_:\t%s\n", me->version_);
-	PRP_PRP_LOGOUT(level, "%s\n", "mac_address_A_:");
-	for(i=0; i<PRP_ETH_ADDR_LENGTH; i++)
-	{
-		PRP_PRP_LOGOUT(level, "%x\n", me->mac_address_A_[i]);
-		
-	}
-	PRP_PRP_LOGOUT(level, "%s\n", "mac_address_B_:");
-	for(i=0; i<PRP_ETH_ADDR_LENGTH; i++)
-	{
-		PRP_PRP_LOGOUT(level, "%x\n", me->mac_address_B_[i]);
-		
-	}
-	
-	PRP_PRP_LOGOUT(level, "adapter_active_A_:\t%u\n", me->adapter_active_A_);
-	PRP_PRP_LOGOUT(level, "adapter_active_B_:\t%u\n", me->adapter_active_B_);
-	PRP_PRP_LOGOUT(level, "duplicate_discard_:\t%u\n", me->duplicate_discard_);
-	PRP_PRP_LOGOUT(level, "transparent_reception_:\t%u\n", me->transparent_reception_);
-	PRP_PRP_LOGOUT(level, "bridging_:\t%u\n", me->bridging_);
-	PRP_PRP_LOGOUT(level, "cnt_total_sent_A_:\t%u\n", me->cnt_total_sent_A_);
-	PRP_PRP_LOGOUT(level, "cnt_total_sent_B_:\t%u\n", me->cnt_total_sent_B_);
-	PRP_PRP_LOGOUT(level, "cnt_total_received_A_:\t%u\n", me->cnt_total_received_A_);
-	PRP_PRP_LOGOUT(level, "cnt_total_received_B_:\t%u\n", me->cnt_total_received_B_);
-	PRP_PRP_LOGOUT(level, "cnt_total_errors_A_:\t%u\n", me->cnt_total_errors_A_);
-	PRP_PRP_LOGOUT(level, "cnt_total_errors_B_:\t%u\n", me->cnt_total_errors_B_);
-	PRP_PRP_LOGOUT(level, "%s\n", "====================================");	
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+
+    if(me == NULL_PTR)
+    {
+        return;
+    }
+
+    PRP_PRP_LOGOUT(level, "%s\n", "====EnvironmentConfiguration========");
+    PRP_PRP_LOGOUT(level, "node_:\t%s\n", me->node_);
+    PRP_PRP_LOGOUT(level, "manufacturer_:\t%s\n", me->manufacturer_);
+    PRP_PRP_LOGOUT(level, "\version_:\t%s\n", me->version_);
+    PRP_PRP_LOGOUT(level, "%s\n", "mac_address_A_:");
+    for(i=0; i<PRP_ETH_ADDR_LENGTH; i++)
+    {
+        PRP_PRP_LOGOUT(level, "%x\n", me->mac_address_A_[i]);
+
+    }
+    PRP_PRP_LOGOUT(level, "%s\n", "mac_address_B_:");
+    for(i=0; i<PRP_ETH_ADDR_LENGTH; i++)
+    {
+        PRP_PRP_LOGOUT(level, "%x\n", me->mac_address_B_[i]);
+
+    }
+
+    PRP_PRP_LOGOUT(level, "adapter_active_A_:\t%u\n", me->adapter_active_A_);
+    PRP_PRP_LOGOUT(level, "adapter_active_B_:\t%u\n", me->adapter_active_B_);
+    PRP_PRP_LOGOUT(level, "duplicate_discard_:\t%u\n", me->duplicate_discard_);
+    PRP_PRP_LOGOUT(level, "transparent_reception_:\t%u\n", me->transparent_reception_);
+    PRP_PRP_LOGOUT(level, "bridging_:\t%u\n", me->bridging_);
+    PRP_PRP_LOGOUT(level, "cnt_total_sent_A_:\t%u\n", me->cnt_total_sent_A_);
+    PRP_PRP_LOGOUT(level, "cnt_total_sent_B_:\t%u\n", me->cnt_total_sent_B_);
+    PRP_PRP_LOGOUT(level, "cnt_total_received_A_:\t%u\n", me->cnt_total_received_A_);
+    PRP_PRP_LOGOUT(level, "cnt_total_received_B_:\t%u\n", me->cnt_total_received_B_);
+    PRP_PRP_LOGOUT(level, "cnt_total_errors_A_:\t%u\n", me->cnt_total_errors_A_);
+    PRP_PRP_LOGOUT(level, "cnt_total_errors_B_:\t%u\n", me->cnt_total_errors_B_);
+    PRP_PRP_LOGOUT(level, "%s\n", "====================================");
 
 }
 
-
-/************************************************************/
-/*       PRP_EnvironmentConfiguration_T_init                */
-/************************************************************/
+/**
+ * @fn void PRP_EnvironmentConfiguration_T_init(PRP_EnvironmentConfiguration_T* const me)
+ * @brief Initialize the PRP_EnvironmentConfiguration interface
+ *
+ * @param   me PRP_Environment_T this pointer
+ */
 void PRP_EnvironmentConfiguration_T_init(PRP_EnvironmentConfiguration_T* const me)
 {
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(me == NULL_PTR)
-	{
-		return;
-	}
-	
-	prp_memset(me->node_, 0, PRP_NODE_NAME_LENGTH);
-	prp_memset(me->manufacturer_, 0, PRP_MANUFACTURER_NAME_LENGTH);
-	prp_memset(me->version_, 0, PRP_VERSION_LENGTH);
-	prp_memset(me->mac_address_A_, 0, PRP_ETH_ADDR_LENGTH);
-	prp_memset(me->mac_address_B_, 0, PRP_ETH_ADDR_LENGTH);
-	me->adapter_active_A_ = FALSE;
-	me->adapter_active_B_ = FALSE;
-	me->duplicate_discard_ = TRUE;
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+
+    if(me == NULL_PTR)
+    {
+        return;
+    }
+
+    prp_memset(me->node_, 0, PRP_NODE_NAME_LENGTH);
+    prp_memset(me->manufacturer_, 0, PRP_MANUFACTURER_NAME_LENGTH);
+    prp_memset(me->version_, 0, PRP_VERSION_LENGTH);
+    prp_memset(me->mac_address_A_, 0, PRP_ETH_ADDR_LENGTH);
+    prp_memset(me->mac_address_B_, 0, PRP_ETH_ADDR_LENGTH);
+    me->adapter_active_A_ = FALSE;
+    me->adapter_active_B_ = FALSE;
+    me->duplicate_discard_ = TRUE;
     me->transparent_reception_ = FALSE;
-	me->bridging_ = FALSE;
-	me->cnt_total_sent_A_ = 0;
-	me->cnt_total_sent_B_ = 0;
-	me->cnt_total_received_A_ = 0;
-	me->cnt_total_received_B_ = 0;
-	me->cnt_total_errors_A_ = 0;
-	me->cnt_total_errors_B_ = 0;	
+    me->bridging_ = FALSE;
+    me->cnt_total_sent_A_ = 0;
+    me->cnt_total_sent_B_ = 0;
+    me->cnt_total_received_A_ = 0;
+    me->cnt_total_received_B_ = 0;
+    me->cnt_total_errors_A_ = 0;
+    me->cnt_total_errors_B_ = 0;
 }
 
-/************************************************************/
-/*       PRP_EnvironmentConfiguration_T_cleanup             */
-/************************************************************/
+/**
+ * @fn void PRP_EnvironmentConfiguration_T_cleanup(PRP_EnvironmentConfiguration_T* const me)
+ * @brief Clean up the PRP_EnvironmentConfiguration interface
+ *
+ * @param   me PRP_Environment_T this pointer
+ */
 void PRP_EnvironmentConfiguration_T_cleanup(PRP_EnvironmentConfiguration_T* const me)
 {
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
-	if(me == NULL_PTR)
-	{
-		return;
-	}
-	
-	prp_memset(me->node_, 0, PRP_NODE_NAME_LENGTH);
-	prp_memset(me->manufacturer_, 0, PRP_MANUFACTURER_NAME_LENGTH);
-	prp_memset(me->version_, 0, PRP_VERSION_LENGTH);
-	prp_memset(me->mac_address_A_, 0, PRP_ETH_ADDR_LENGTH);
-	prp_memset(me->mac_address_B_, 0, PRP_ETH_ADDR_LENGTH);
-	me->adapter_active_A_ = FALSE;
-	me->adapter_active_B_ = FALSE;
-	me->duplicate_discard_ = TRUE;
+    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+
+    if(me == NULL_PTR)
+    {
+        return;
+    }
+
+    prp_memset(me->node_, 0, PRP_NODE_NAME_LENGTH);
+    prp_memset(me->manufacturer_, 0, PRP_MANUFACTURER_NAME_LENGTH);
+    prp_memset(me->version_, 0, PRP_VERSION_LENGTH);
+    prp_memset(me->mac_address_A_, 0, PRP_ETH_ADDR_LENGTH);
+    prp_memset(me->mac_address_B_, 0, PRP_ETH_ADDR_LENGTH);
+    me->adapter_active_A_ = FALSE;
+    me->adapter_active_B_ = FALSE;
+    me->duplicate_discard_ = TRUE;
     me->transparent_reception_ = FALSE;
-	me->bridging_ = FALSE;
-	me->cnt_total_sent_A_ = 0;
-	me->cnt_total_sent_B_ = 0;
-	me->cnt_total_received_A_ = 0;
-	me->cnt_total_received_B_ = 0;
-	me->cnt_total_errors_A_ = 0;
-	me->cnt_total_errors_B_ = 0;
+    me->bridging_ = FALSE;
+    me->cnt_total_sent_A_ = 0;
+    me->cnt_total_sent_B_ = 0;
+    me->cnt_total_received_A_ = 0;
+    me->cnt_total_received_B_ = 0;
+    me->cnt_total_errors_A_ = 0;
+    me->cnt_total_errors_B_ = 0;
 }
 

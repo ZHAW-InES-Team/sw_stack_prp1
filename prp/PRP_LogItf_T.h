@@ -78,42 +78,63 @@
 #ifdef PRP_DEBUG_LOG_SRC
     /* add source file name and line number */
     #define PRP_LOG(format, args...) \
-            prp_printf("["DRV_NAME"]: " __FILE__ ":%d: " format, __LINE__, args)
+        prp_printf("["DRV_NAME"]: " __FILE__ ":%d: " format, __LINE__, args)
 #else
     #define PRP_LOG(format, args...) prp_printf("["DRV_NAME"]: " format, args)
 #endif
 
-
-/* info and error log macros */
+/**
+ * @fn PRP_INFOOUT(format, args...)
+ * @brief Informational output
+ *
+ * @param   format const octet pointer to the display string
+ * @param   args Variables etc.
+ * @return  integer32 >=0 : OK (nr of bytes written)
+ *          integer32 <0 : ERROR (code)
+ */
 #define PRP_INFOOUT(format, args...) PRP_LOG("<INFO> "format, args)
+
+/**
+ * @fn PRP_ERROUT(format, args...)
+ * @brief Error output
+ *
+ * @param   format const octet pointer to the display string
+ * @param   args Variables etc.
+ * @return  integer32 >=0 : OK (nr of bytes written)
+ *          integer32 <0 : ERROR (code)
+ */
 #define PRP_ERROUT(format, args...) PRP_LOG("<ERROR> " format, args)
 
-/* general module debug macros */
+/**
+ * @fn PRP_LOGOUT(level, format, args...)
+ * @brief General output
+ *
+ * @param   level uinteger32 importance
+ * @param   format const octet pointer to the display string
+ * @return  integer32 >=0 : OK (nr of bytes written)
+ *          integer32 <0 : ERROR (code)
+ */
 #ifdef PRP_DEBUG_LOG
     extern int debug_level;
     #define PRP_LOGOUT(level, format, args...) if (debug_level >= level) \
-            PRP_LOG("<LOG>" format, args)
+        PRP_LOG("<LOG>" format, args)
 #else
     #define PRP_LOGOUT(level, format, args...)
 #endif
-
-/* prp debug macros */
 #ifdef PRP_DEBUG_LOG
     extern int prp_debug_level;
     #define PRP_PRP_LOGOUT(level, format, args...) if (prp_debug_level >= level) \
-            PRP_LOG("<PRP_LOG> " format, args)
+        PRP_LOG("<PRP_LOG> " format, args)
 #else
     #define PRP_PRP_LOGOUT(level, format, args...)
 #endif
-
-/* netdevice debug macros */
 #ifdef PRP_DEBUG_LOG
     extern int net_itf_debug_level;
     #define PRP_NET_ITF_LOGOUT(level, format, args...) if (net_itf_debug_level >= level) \
-            PRP_LOG("<NET_ITF_LOG> " format, args)
+        PRP_LOG("<NET_ITF_LOG> " format, args)
 #else
     #define PRP_NET_ITF_LOGOUT(level, format, args...)
 #endif
 
 
-#endif
+#endif /* PRP_LogItf_T_H */

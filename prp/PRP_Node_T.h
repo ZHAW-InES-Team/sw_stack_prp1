@@ -72,39 +72,61 @@
 
 struct PRP_Node_T 
 {
-	PRP_Node_T* next_node_;
-	PRP_Node_T* previous_node_;
-	octet mac_address_A_[PRP_ETH_ADDR_LENGTH];
-	octet mac_address_B_[PRP_ETH_ADDR_LENGTH];
-	uinteger32 cnt_received_A_;
-	uinteger32 cnt_received_B_;
-	uinteger32 cnt_sent_A_;
-	uinteger32 cnt_sent_B_;
-	uinteger32 cnt_keept_A_;
-	uinteger32 cnt_keept_B_;
-	uinteger32 cnt_err_out_of_sequence_A_;
-	uinteger32 cnt_err_out_of_sequence_B_;
-	uinteger32 cnt_err_wrong_lan_A_;
-	uinteger32 cnt_err_wrong_lan_B_;
-	uinteger64 time_last_seen_A_;
-	uinteger64 time_last_seen_B_;
-	boolean san_A_;
-	boolean san_B_;
-	uinteger64 time_last_seen_sf_;
-	boolean received_sf_;
-	uinteger16 send_seq_;
-	boolean multi_broadcast_;
-	boolean failed_;
-	boolean failed_A_;
-	boolean failed_B_;
+    /* Pointer to the next node. If NULL, end of the table */
+    PRP_Node_T* next_node_;
+    /* Pointer to the previous node. If NULL, start of the table */
+    PRP_Node_T* previous_node_;
+    /* Mac address of adapter A of the remote node */
+    octet mac_address_A_[PRP_ETH_ADDR_LENGTH];
+    /* Mac address of adapter B of the remote node */
+    octet mac_address_B_[PRP_ETH_ADDR_LENGTH];
+    /* Total number of frames received from this node over adapter A */
+    uinteger32 cnt_received_A_;
+    /* Total number of frames received from this node over adapter B */
+    uinteger32 cnt_received_B_;
+    /* Total number of frames sent to this node over adapter A */
+    uinteger32 cnt_sent_A_;
+    /* Total number of frames sent to this node over adapter B */
+    uinteger32 cnt_sent_B_;
+    /* Total number of frames kept from this node received over adapter A */
+    uinteger32 cnt_keept_A_;
+    /* Total number of frames kept from this node received over adapter B */
+    uinteger32 cnt_keept_B_;
+    /* Total number of out of sequence errors from this node received on adapter A */
+    uinteger32 cnt_err_out_of_sequence_A_;
+    /* Total number of out of sequence errors from this node received on adapter B */
+    uinteger32 cnt_err_out_of_sequence_B_;
+    /* Total number of wrong LAN errors from this node received on adapter A */
+    uinteger32 cnt_err_wrong_lan_A_;
+    /* Total number of wrong LAN errors from this node received on adapter B */
+    uinteger32 cnt_err_wrong_lan_B_;
+    /*Time when the last frame was received from this node over LAN A */
+    uinteger64 time_last_seen_A_;
+    /*Time when the last frame was received from this node over LAN B */
+    uinteger64 time_last_seen_B_;
+    /* TRUE if this node is a SAN on LAN A */
+    boolean san_A_;
+    /* TRUE if this node is a SAN on LAN B */
+    boolean san_B_;
+    uinteger64 time_last_seen_sf_;
+    boolean received_sf_;
+    /* Sending sequence number for this node */
+    uinteger16 send_seq_;
+    /* Shows whether the node is a real node or a multicast destination */
+    boolean multi_broadcast_;
+    /* Indicates whether no frame was received for link_timeout_time */
+    boolean failed_;
+    /* Indicates whether no frame was received for link_timeout_time on LAN A */
+    boolean failed_A_;
+    /* Indicates whether no frame was received for link_timeout_time on LAN B */
+    boolean failed_B_;
 };
 
 void PRP_Node_T_print(PRP_Node_T* const me, uinteger32 level);
-
 void PRP_Node_T_init(PRP_Node_T* const me);
 void PRP_Node_T_cleanup(PRP_Node_T* const me);
-
 PRP_Node_T* PRP_Node_T_create(void);
 void PRP_Node_T_destroy(PRP_Node_T* const me);
 
-#endif  
+#endif /* PRP_Node_T_H */
+

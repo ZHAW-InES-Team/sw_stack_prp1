@@ -72,27 +72,43 @@
 
 struct PRP_EnvironmentConfiguration_T 
 {
-	octet node_[PRP_NODE_NAME_LENGTH];
-	octet manufacturer_[PRP_MANUFACTURER_NAME_LENGTH];
+    /* Name of the node */
+    octet node_[PRP_NODE_NAME_LENGTH];
+    /* Name of the manufacturer */
+    octet manufacturer_[PRP_MANUFACTURER_NAME_LENGTH];
+    /* Version of the implementation */
     octet version_[PRP_VERSION_LENGTH];
-	octet mac_address_A_[PRP_ETH_ADDR_LENGTH];
-	octet mac_address_B_[PRP_ETH_ADDR_LENGTH];
-	boolean adapter_active_A_;
-	boolean adapter_active_B_;
-	boolean duplicate_discard_;
+    /* MAC address of adapter A */
+    octet mac_address_A_[PRP_ETH_ADDR_LENGTH];
+    /* MAC address of adapter B */
+    octet mac_address_B_[PRP_ETH_ADDR_LENGTH];
+    /* Status of adapter A */
+    boolean adapter_active_A_;
+    /* Status of adapter B */
+    boolean adapter_active_B_;
+    /* Duplicate discard modus enabled flag */
+    boolean duplicate_discard_;
+    /* Transparent reception modus enabled flag */
     boolean transparent_reception_;
-	boolean bridging_;
-	uinteger32 cnt_total_sent_A_;
-	uinteger32 cnt_total_sent_B_;
-	uinteger32 cnt_total_received_A_;
-	uinteger32 cnt_total_received_B_;
-	uinteger32 cnt_total_errors_A_;
-	uinteger32 cnt_total_errors_B_;
+    /* Bridging modus enabled flag */
+    boolean bridging_;
+    /* Total number of frames sent over adapter A */
+    uinteger32 cnt_total_sent_A_;
+    /* Total number of frames sent over adapter B */
+    uinteger32 cnt_total_sent_B_;
+    /* Total number of frames received over adapter A */
+    uinteger32 cnt_total_received_A_;
+    /* Total number of frames received over adapter B */
+    uinteger32 cnt_total_received_B_;
+    /* Total number of errors on adapter A */
+    uinteger32 cnt_total_errors_A_;
+    /* Total number of errors on adapter B */
+    uinteger32 cnt_total_errors_B_;
 };
 
 void PRP_EnvironmentConfiguration_T_print(PRP_EnvironmentConfiguration_T* const me, uinteger32 level);
-
 void PRP_EnvironmentConfiguration_T_init(PRP_EnvironmentConfiguration_T* const me);
 void PRP_EnvironmentConfiguration_T_cleanup(PRP_EnvironmentConfiguration_T* const me);
 
-#endif  
+#endif /* PRP_EnvironmentConfiguration_T_H */
+
