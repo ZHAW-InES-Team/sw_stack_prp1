@@ -416,7 +416,6 @@ integer32 PRP_Frames_T_normal_tx(PRP_Frames_T* const me, octet* data, uinteger32
 
     integer32 i;
     octet temp_mac[6];
-    octet src_mac[6];
     octet dest_mac[6];
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
@@ -434,7 +433,7 @@ integer32 PRP_Frames_T_normal_tx(PRP_Frames_T* const me, octet* data, uinteger32
     for(i=0; i<PRP_ETH_ADDR_LENGTH; i++)
     {
         dest_mac[i] = data[i];
-        src_mac[i] = data[(6 + i)];
+        /* src_mac[i] = data[(6 + i)]; */
     }
 
     if(me->frame_analyser_->environment_->environment_configuration_.bridging_ == TRUE) /* if in bridging mode */

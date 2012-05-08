@@ -276,8 +276,6 @@ integer32 PRP_T_get_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
  */
 integer32 PRP_T_set_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
 {
-    PRP_Node_T* node;
-
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
     if(initialized_ != TRUE)
@@ -405,7 +403,7 @@ integer32 PRP_T_set_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
             PRP_Lock_T_up(&lock_);
             return(-PRP_ERROR_ADAPTER);
         }
-        node = PRP_NodeTable_T_get_first_node(&(environment_.node_table_));
+        PRP_NodeTable_T_get_first_node(&(environment_.node_table_));
         prp_memcpy(environment_.supervision_.supervision_address_, merge_layer->supervision_address_, PRP_ETH_ADDR_LENGTH);
     }
     environment_.supervision_.life_check_interval_ = merge_layer->life_check_interval_;

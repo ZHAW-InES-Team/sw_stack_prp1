@@ -755,8 +755,7 @@ int main(int argc, char* argv[])
 
         } else {
             if(FD_ISSET(STDIN_FILENO,&descriptors)){
-                unsigned int len;
-                len = read(STDIN_FILENO,buffer,ETHER_MAX_LEN);
+                read(STDIN_FILENO,buffer,ETHER_MAX_LEN);
                 if(buffer[0] == 'q'){
                     exit_prp = TRUE;
                 }

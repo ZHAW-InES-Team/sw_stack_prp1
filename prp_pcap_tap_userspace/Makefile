@@ -82,3 +82,4 @@ $(TARGET): $(OBJ)
 
 clean:	
 	rm -f *.o ../prp/*.o
+	rm -f $(TARGET)

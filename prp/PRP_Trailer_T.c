@@ -140,7 +140,6 @@ void PRP_Trailer_T_add_trailer(PRP_Trailer_T* const me, octet* data, uinteger32*
 PRP_RedundancyControlTrailer_T* PRP_Trailer_T_get_trailer(PRP_Trailer_T* const me, octet* data, uinteger32* length) 
 {
     uinteger16 size_offset;
-    uinteger32 trailer_offset;
     octet lan_id;
     uinteger16 lsdu_size;
 
@@ -174,7 +173,7 @@ PRP_RedundancyControlTrailer_T* PRP_Trailer_T_get_trailer(PRP_Trailer_T* const m
         size_offset = 14;
     }
 
-    trailer_offset = 0;
+    /* trailer_offset = 0; */
 
     lan_id = data[*length-4] >> 4;
     lsdu_size = ((data[*length-4] & 0xF) << 8) | data[*length-3];
