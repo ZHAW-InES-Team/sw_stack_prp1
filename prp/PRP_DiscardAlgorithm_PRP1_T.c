@@ -74,6 +74,9 @@
 #include "PRP_LogItf_T.h"
 #include <stdio.h>
 
+static struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T discardalgorithm_items_[DISCARD_ITEM_COUNT];
+static struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *discardalgorithm_list_[DISCARD_LIST_ENTRY_COUNT];
+
 
 /************************************************************/
 /*       PRP_DiscardAlgorithm_PRP1_T_print                  */
@@ -82,13 +85,14 @@
  * */
 void PRP_DiscardAlgorithm_PRP1_T_print(PRP_DiscardAlgorithm_PRP1_T* const me, uinteger32 level)
 {
-	int i, j;
+	//int i, j;
 
 	PRP_PRP_LOGOUT(level, "[%s] entering \n", __FUNCTION__);
 	
 	if(me == NULL_PTR) return;
 
 	PRP_PRP_LOGOUT(level, "%s\n", "======= Discard Table ================");
+	/*
 	for (i=0;i<TABLE_SIZE;i++){
 		PRP_PRP_LOGOUT(level,"%d ",i);
 		for (j=0;j<9;j++){
@@ -96,6 +100,7 @@ void PRP_DiscardAlgorithm_PRP1_T_print(PRP_DiscardAlgorithm_PRP1_T* const me, ui
 		}
 		PRP_PRP_LOGOUT(level,"\n");
 	}
+	*/
 
 }
 
@@ -108,47 +113,131 @@ void PRP_DiscardAlgorithm_PRP1_T_print(PRP_DiscardAlgorithm_PRP1_T* const me, ui
  * */
 integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* const me, octet* mac, octet* seq_nr)
 {
-	//new_entry: array[10]  --> [0-5]:mac; [6-9]:SeqNr
-	int i;
+
+	unsigned short seqnr_corr;
+	unsigned short hash;
+	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *item;
 
 	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 	
 	if(me == NULL_PTR) return(-PRP_ERROR_NULL_PTR);
 
-	//search entry
-	for (i=0;i<TABLE_SIZE;i++){
-		if (me->table[i][0] == 0x01){  				//entry valid?
-			if (seq_nr[1] == me->table[i][8]) { 	//last byte of SeqNr equal?
-				 if (seq_nr[0]==me->table[i][7]){	//Sequence Number is equal, check mac
-					 if ((mac[5]==me->table[i][6])&&(mac[4]==me->table[i][5])&&(mac[3]==me->table[i][4])&&
-					 (mac[2]==me->table[i][3])&&(mac[1]==me->table[i][2])&&(mac[0]==me->table[i][1])){
-						 PRP_PRP_LOGOUT(3,"\n---------- DROP ----------\n");
-						 return PRP_DROP;
-					 }
-				 }
+	seqnr_corr = seq_nr[1];
+	seqnr_corr |= (seq_nr[0]<<8);
+	hash = seqnr_corr & DISCARD_HASH_MASK;
+
+	// search entry
+
+	item = me->hash_list[hash];
+	while ( item != 0 ) {
+
+		if ( seqnr_corr == item->seq_nr ) {
+			if (    (item->src_mac[0]==mac[0]) && 
+				(item->src_mac[1]==mac[1]) &&
+				(item->src_mac[2]==mac[2]) &&
+				(item->src_mac[3]==mac[3]) &&
+				(item->src_mac[4]==mac[4]) &&
+				(item->src_mac[5]==mac[5])    )
+			{
+
+				// duplicate found
+
+				// unlink from hash table
+
+				if ( item->next != 0 )  {
+					item->next->previous = item->previous;
+				}
+
+				if ( item->previous != 0 )  {
+					item->previous->next = item->next;
+				} else {
+					me->hash_list[hash] = item->next;
+				}
+
+				// unlink from chronology
+
+				if ( item->next_alt != 0 )  {
+					item->next_alt->previous_alt = item->previous_alt;
+				} else {
+					me->newest = item->previous_alt;
+				}
+
+				if ( item->previous_alt != 0 )  {
+					item->previous_alt->next = item->next_alt;
+				} else {
+					me->chronology = item->next_alt;
+				}
+
+				// add to free list
+
+				item->next_alt = me->free_list;
+				me->free_list = item;
+
+				PRP_PRP_LOGOUT(3,"\n---------- DROP ----------\n");
+				return PRP_DROP;
+
 			}
 		}
+
+		item = item->next;
 	}
 
-	//entry not found, make new entry
-	if (me->entry_pointer >= TABLE_SIZE){
-		me->overflow++;
-		me->entry_pointer = 0;
+	// get item
+
+	item = me->free_list;
+	if ( item != 0 ) {
+
+		me->free_list = item->next_alt;
+
+	} else {
+
+		item = me->chronology;
+		me->chronology = item->next_alt;
+		me->chronology->previous_alt = 0;
+		// me->newest != me->chronology I dont't have to check this
+
+		item->previous->next = 0;
+		// item->next must be 0 in this case because this is the oldest item of all
+
 	}
 
-    for (i=0;i<6;i++){					//set mac
-    	me->table[me->entry_pointer][i+1]=mac[i];
-    }
+	// add item to hash table
 
-    me->table[me->entry_pointer][7]=seq_nr[0];
-    me->table[me->entry_pointer][8]=seq_nr[1];
+	if ( me->hash_list[hash] != 0 ) {
+		me->hash_list[hash]->previous = item;
+	}
+	item->next = me->hash_list[hash];
+	me->hash_list[hash] = item;
+	item->previous = 0;
 
+	// add item to chronology
 
-    me->table[me->entry_pointer][0]=0x01; //set valid flag
+	if ( me->chronology != 0 ) {
+		// me->newest is not 0 too
+		me->newest->next_alt = item;
+	} else {
+		me->chronology = item;
+	}
+	item->next_alt = 0;
+	item->previous_alt = me->newest;
+	me->newest = item;
 
-    me->entry_pointer++;
-    PRP_PRP_LOGOUT(stderr,"\n---------- KEEP ----------\n");
-    return PRP_KEEP;
+	// populate item
+
+	item->seq_nr = seqnr_corr;
+	item->src_mac[0] = mac[0];
+	item->src_mac[1] = mac[1];
+	item->src_mac[2] = mac[2];
+	item->src_mac[3] = mac[3];
+	item->src_mac[4] = mac[4];
+	item->src_mac[5] = mac[5];
+
+	gettimeofday( &item->tv, 0 );
+
+	item->hash = hash;
+
+	PRP_PRP_LOGOUT(stderr,"\n---------- KEEP ----------\n");
+	return PRP_KEEP;
 }
 
 /************************************************************/
@@ -161,48 +250,75 @@ integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* 
  * */
 void PRP_DiscardAlgorithm_PRP1_T_do_aging(PRP_DiscardAlgorithm_PRP1_T* const me)
 {
-	int delta, i;
-	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-	if(me == NULL_PTR) return;
+	struct timeval tv_now;
+	struct timeval tv_delta;
+	struct timeval tv;
 
-    switch(me->overflow){
-        case 0:
-        	delta = me->entry_pointer - me->entry_pointer_old;
-        break;
-        case 1:
-        	delta = TABLE_SIZE - me->entry_pointer_old + me->entry_pointer;
-        break;
-        	//if overflow > 1: no aging needed, whole table has been passed through at least once
-        	delta = TABLE_SIZE; //this makes sure that the aging loop will be skipped
-        break;
-    }
+	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *item;
+	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *new_oldest;
 
-    //do aging if necessary
-	if (delta < TABLE_SIZE/4) {
-		PRP_PRP_LOGOUT(3,"\nAGING is necessary\n");
-		//make the necessary number of invalid entries
-		for (i=0;i<(TABLE_SIZE/4-delta);i++){
-			//deal with table overflow
-			if ((me->entry_pointer + i)<TABLE_SIZE){
-				me->table[me->entry_pointer + i][0]=0x00;
+	tv_delta.tv_sec = 0;
+	tv_delta.tv_usec = 400000;
+	gettimeofday( &tv_now, 0 );
+	timersub( &tv_now, &tv_delta, &tv );
+
+	new_oldest = 0;
+	item = me->chronology;
+	while ( item != 0 ) {
+
+		if ( timercmp( &item->tv, &tv, > ) ) {
+			new_oldest = item;
+			break;
+		} else {
+
+			// unlink from hash table
+
+			if ( item->previous != 0 )  {
+				// It is allowed to set item->previous->next to 0 instead of item->next because 
+				// item->next is older and was already unlinked
+				item->previous->next = 0;
+			} else {
+				// Because we move from the oldest to the newest and me->hash_list[x] is sorted
+				// from the newest to the oldest we did not set item->previous to 0 by accident
+				// item->previous still means - this is the first entry of the hash entry
+				me->hash_list[item->hash] = 0;
 			}
-			else{
-				me->table[me->entry_pointer + i-TABLE_SIZE][0]=0x00;
-			}
 		}
-		//adapt the entry pointer to the new value
-		if (me->entry_pointer+i < TABLE_SIZE){
-			me->entry_pointer = me->entry_pointer + (TABLE_SIZE/4-delta);
-		}
-		else{
-			me->entry_pointer = me->entry_pointer + (TABLE_SIZE/4-delta)-TABLE_SIZE;
-		}
+
+		item = item->next_alt;
 	}
 
-	me->entry_pointer_old = me->entry_pointer;
-	me->overflow = 0;
-	PRP_PRP_LOGOUT(3,"\nNew entry pointer: %d\n",me->entry_pointer);
+	if ( new_oldest != 0 ) {
+
+		if ( me->chronology != new_oldest ) {
+
+			// add to free list
+			new_oldest->previous_alt->next_alt = me->free_list;
+			me->free_list = me->chronology;
+
+			// unlink from chronology
+			me->chronology = new_oldest;
+			new_oldest->previous_alt = 0;
+
+		}
+
+	} else {
+
+		if ( me->chronology != 0 ) {
+
+			// add to free list
+			me->newest->next_alt = me->free_list;
+			me->free_list = me->chronology;
+
+			// unlink from chronology
+			me->chronology = 0;
+			me->newest = 0;
+
+		}
+
+	}
+
 }
 
 /************************************************************/
@@ -220,13 +336,22 @@ void PRP_DiscardAlgorithm_PRP1_T_init(PRP_DiscardAlgorithm_PRP1_T* const me)
 	
 	if(me == NULL_PTR) return;
 
-	me->entry_pointer = 0;
-	me->entry_pointer_old = 0;
-	for (i=0;i<TABLE_SIZE;i++){
-	    me->table[i][0]=0x00;
-	    me->table[i][7]=(octet)(i);		// initialize the sequence numbers
-	    me->table[i][8]=(octet)(i);		// to different values, this speeds up
-	}									// search algorithm
+	// init hash list
+	for (i=0; i<DISCARD_LIST_ENTRY_COUNT; i++) {
+		discardalgorithm_list_[i] = 0;
+	}
+	me->hash_list = discardalgorithm_list_;
+
+	// init discard items
+	for (i=0; i<(DISCARD_ITEM_COUNT-1); i++) {
+		discardalgorithm_items_[i].next_alt = &discardalgorithm_items_[i+1];
+	}
+	discardalgorithm_items_[DISCARD_ITEM_COUNT-1].next_alt = 0;
+	me->free_list = &discardalgorithm_items_[0];
+
+	// init chronology
+	me->chronology = 0;
+	me->newest = 0;
 
 }
 

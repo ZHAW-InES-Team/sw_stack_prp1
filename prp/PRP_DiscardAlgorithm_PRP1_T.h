@@ -67,18 +67,39 @@
 
 #ifndef PRP_DiscardAlgorithm_PRP1_T_H
 #define PRP_DiscardAlgorithm_PRP1_T_H
-#define TABLE_SIZE 100
 
 #include "PRP_Package_T.h"
 #include "PRP_RedundancyControlTrailer_T.h"
 #include "PRP_DataTypes_T.h"
+#include <sys/time.h>
+
+#define DISCARD_ITEM_COUNT          1024
+
+#define DISCARD_LIST_ENTRY_COUNT    256      // 2^n, n is 8 in this case
+#define DISCARD_HASH_MASK           0x00FF   // Must select n bit in a range from 1 to 16
 
 struct PRP_DiscardAlgorithm_PRP1_T
 {
-	uinteger16 entry_pointer;
-	uinteger16 entry_pointer_old;
-	uinteger16 overflow;
-	octet table[TABLE_SIZE][9];
+	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T **hash_list;           // first list orded by hash, second list orded from newest to oldest because we dont want to process dead items all the time
+	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *free_list;            // list of free items to use
+	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *chronology;           // from oldest to newest
+	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *newest;               // shortcut to newest item
+};
+
+struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T
+{
+	unsigned short seq_nr;
+	unsigned char src_mac[6];
+	
+	struct timeval tv;           // timestamp
+
+	unsigned short hash;         // hash code
+
+	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *previous;             // Used only for hash_list
+	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *next;                 // Used only for hash_list
+
+	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *previous_alt;         // Used only for chronology
+	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *next_alt;             // Used only for free_list and chronology
 };
 
 void PRP_DiscardAlgorithm_PRP1_T_print(PRP_DiscardAlgorithm_PRP1_T* const me, uinteger32 level);
