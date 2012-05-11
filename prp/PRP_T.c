@@ -182,10 +182,10 @@ void PRP_T_link_down_A(void)
 
     PRP_Lock_T_down(&lock_); /* API calls are mutex */
 
-    if(environment_.environment_configuration_.bridging_ == TRUE)
-    {
-        PRP_Bridging_T_statemachine(&(environment_.bridging_), PRP_RAPID_SPANNING_TREE_LINK_DOWN, NULL_PTR, PRP_ID_LAN_A);
-    }
+//     if(environment_.environment_configuration_.bridging_ == TRUE)
+//     {
+//         PRP_Bridging_T_statemachine(&(environment_.bridging_), PRP_RAPID_SPANNING_TREE_LINK_DOWN, NULL_PTR, PRP_ID_LAN_A);
+//     }
 
     PRP_Lock_T_up(&lock_);
 }
@@ -205,10 +205,10 @@ void PRP_T_link_down_B(void)
 
     PRP_Lock_T_down(&lock_); /* API calls are mutex */
 
-    if(environment_.environment_configuration_.bridging_ == TRUE)
-    {
-        PRP_Bridging_T_statemachine(&(environment_.bridging_), PRP_RAPID_SPANNING_TREE_LINK_DOWN, NULL_PTR, PRP_ID_LAN_B);
-    }
+//     if(environment_.environment_configuration_.bridging_ == TRUE)
+//     {
+//         PRP_Bridging_T_statemachine(&(environment_.bridging_), PRP_RAPID_SPANNING_TREE_LINK_DOWN, NULL_PTR, PRP_ID_LAN_B);
+//     }
 
     PRP_Lock_T_up(&lock_);
 }
@@ -247,7 +247,7 @@ integer32 PRP_T_get_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
     merge_layer->adapter_active_B_ = environment_.environment_configuration_.adapter_active_B_;
     merge_layer->duplicate_discard_ = environment_.environment_configuration_.duplicate_discard_;
     merge_layer->transparent_reception_ = environment_.environment_configuration_.transparent_reception_;
-    merge_layer->bridging_ = environment_.environment_configuration_.bridging_;
+//     merge_layer->bridging_ = environment_.environment_configuration_.bridging_;
     merge_layer->clear_node_table_ = FALSE; /* write only */
     merge_layer->node_table_empty_ = environment_.node_table_.node_table_empty_;
     prp_memcpy(merge_layer->supervision_address_, environment_.supervision_.supervision_address_, PRP_ETH_ADDR_LENGTH);

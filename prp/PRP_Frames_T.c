@@ -246,33 +246,33 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
         return(PRP_DROP);
     }
 
-    if(me->frame_analyser_->environment_->environment_configuration_.bridging_ == TRUE) /* if in bridging mode */
-    {
-        if(lan_id == PRP_ID_LAN_A)
-        {
-            me->frame_analyser_->environment_->environment_configuration_.cnt_total_received_A_++;
-            if(me->frame_analyser_->environment_->bridging_.state_A_ == PRP_RAPID_SPANNING_TREE_ALTERNATE) /* decide whether to keep frame or not */
-            {
-                return(PRP_DROP); /* should be only BPDUs */
-            }
-            else
-            {
-                return(PRP_KEEP);
-            }
-        }
-        else
-        {
-            me->frame_analyser_->environment_->environment_configuration_.cnt_total_received_B_++;
-            if(me->frame_analyser_->environment_->bridging_.state_B_ == PRP_RAPID_SPANNING_TREE_ALTERNATE)
-            {
-                return(PRP_DROP);
-            }
-            else
-            {
-                return(PRP_KEEP);
-            }
-        }
-    }
+//     if(me->frame_analyser_->environment_->environment_configuration_.bridging_ == TRUE) /* if in bridging mode */
+//     {
+//         if(lan_id == PRP_ID_LAN_A)
+//         {
+//             me->frame_analyser_->environment_->environment_configuration_.cnt_total_received_A_++;
+//             if(me->frame_analyser_->environment_->bridging_.state_A_ == PRP_RAPID_SPANNING_TREE_ALTERNATE) /* decide whether to keep frame or not */
+//             {
+//                 return(PRP_DROP); /* should be only BPDUs */
+//             }
+//             else
+//             {
+//                 return(PRP_KEEP);
+//             }
+//         }
+//         else
+//         {
+//             me->frame_analyser_->environment_->environment_configuration_.cnt_total_received_B_++;
+//             if(me->frame_analyser_->environment_->bridging_.state_B_ == PRP_RAPID_SPANNING_TREE_ALTERNATE)
+//             {
+//                 return(PRP_DROP);
+//             }
+//             else
+//             {
+//                 return(PRP_KEEP);
+//             }
+//         }
+//     }
 
     trailer = PRP_Trailer_T_get_trailer(&(me->trailer_rx_), data, length);
     if(trailer != NULL_PTR) /* lan id out of the trailer */
@@ -384,7 +384,7 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
         PRP_Trailer_T_remove_trailer(&(me->trailer_rx_), data, length); /* remove trailer */
     }
 
-    PRP_PRP_LOGOUT(2,"SRC MAC: \n");
+    PRP_PRP_LOGOUT(2,"%s","SRC MAC: \n");
     for (i=0;i<6;i++){
         PRP_PRP_LOGOUT(2,"%x",src_mac[i]);
     }
@@ -436,31 +436,31 @@ integer32 PRP_Frames_T_normal_tx(PRP_Frames_T* const me, octet* data, uinteger32
         /* src_mac[i] = data[(6 + i)]; */
     }
 
-    if(me->frame_analyser_->environment_->environment_configuration_.bridging_ == TRUE) /* if in bridging mode */
-    {
-        if((me->frame_analyser_->environment_->bridging_.state_A_ != PRP_RAPID_SPANNING_TREE_ALTERNATE) && ((lan_id == PRP_ID_LAN_A) || (lan_id == 0x00))) /* check if this frame should be sent over LAN A */
-        {
-            if(me->frame_analyser_->environment_->environment_configuration_.adapter_active_A_ == FALSE)
-            {
-                return(0);
-            }
-            PRP_NetItf_T_transmit(data, length, PRP_ID_LAN_A);
-            me->frame_analyser_->environment_->environment_configuration_.cnt_total_sent_A_++;
-        }
-
-        if((me->frame_analyser_->environment_->bridging_.state_B_ != PRP_RAPID_SPANNING_TREE_ALTERNATE) && ((lan_id == PRP_ID_LAN_B) || (lan_id == 0x00))) /* check if this frame should be sent over LAN B */
-        {
-            if(me->frame_analyser_->environment_->environment_configuration_.adapter_active_B_ == FALSE)
-            {
-                return(0);
-            }
-
-            PRP_NetItf_T_transmit(data, length, PRP_ID_LAN_B);
-            me->frame_analyser_->environment_->environment_configuration_.cnt_total_sent_B_++;
-        }
-
-        return(0);
-    }
+//     if(me->frame_analyser_->environment_->environment_configuration_.bridging_ == TRUE) /* if in bridging mode */
+//     {
+//         if((me->frame_analyser_->environment_->bridging_.state_A_ != PRP_RAPID_SPANNING_TREE_ALTERNATE) && ((lan_id == PRP_ID_LAN_A) || (lan_id == 0x00))) /* check if this frame should be sent over LAN A */
+//         {
+//             if(me->frame_analyser_->environment_->environment_configuration_.adapter_active_A_ == FALSE)
+//             {
+//                 return(0);
+//             }
+//             PRP_NetItf_T_transmit(data, length, PRP_ID_LAN_A);
+//             me->frame_analyser_->environment_->environment_configuration_.cnt_total_sent_A_++;
+//         }
+// 
+//         if((me->frame_analyser_->environment_->bridging_.state_B_ != PRP_RAPID_SPANNING_TREE_ALTERNATE) && ((lan_id == PRP_ID_LAN_B) || (lan_id == 0x00))) /* check if this frame should be sent over LAN B */
+//         {
+//             if(me->frame_analyser_->environment_->environment_configuration_.adapter_active_B_ == FALSE)
+//             {
+//                 return(0);
+//             }
+// 
+//             PRP_NetItf_T_transmit(data, length, PRP_ID_LAN_B);
+//             me->frame_analyser_->environment_->environment_configuration_.cnt_total_sent_B_++;
+//         }
+// 
+//         return(0);
+//     }
 
 
     /* get node table entry with this dest mac */

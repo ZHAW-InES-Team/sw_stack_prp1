@@ -73,7 +73,7 @@
 #include "PRP_EnvironmentConfiguration_T.h"
 #include "PRP_NodeTable_T.h"
 #include "PRP_Supervision_T.h"
-#include "PRP_Bridging_T.h"
+// #include "PRP_Bridging_T.h"
 #include "PRP_DiscardAlgorithm_PRP1_T.h"
 #include "PRP_FrameAnalyser_T.h"
 
@@ -91,8 +91,8 @@ struct PRP_Environment_T
     PRP_EnvironmentConfiguration_T environment_configuration_;
     /* Instance of the supervision part of the protocol engine */
     PRP_Supervision_T supervision_;
-    /* Instance of the bridging part of the protocol engine */
-    PRP_Bridging_T bridging_;
+//     /* Instance of the bridging part of the protocol engine */
+//     PRP_Bridging_T bridging_;
     /* Instance of the node table */
     PRP_NodeTable_T node_table_;
     /* Instance of the discard algorithm part of the protocol engine */

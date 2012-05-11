@@ -119,12 +119,12 @@ integer32 PRP_FrameAnalyser_T_analyse_rx(PRP_FrameAnalyser_T* const me, octet* d
         {
             return(PRP_Supervision_T_supervision_rx(&(me->environment_->supervision_), data, length, lan_id));
         }
-        if((data[12] == 0x00) && (data[13] == 0x27) &&
-            (data[14] == 0x42) && (data[15] == 0x42) &&
-            (data[16] == 0x03)) /* if RSTP */
-        {
-            return(PRP_Bridging_T_bridging_rx(&(me->environment_->bridging_), data, length, lan_id));
-        }
+//         if((data[12] == 0x00) && (data[13] == 0x27) &&
+//             (data[14] == 0x42) && (data[15] == 0x42) &&
+//             (data[16] == 0x03)) /* if RSTP */
+//         {
+//             return(PRP_Bridging_T_bridging_rx(&(me->environment_->bridging_), data, length, lan_id));
+//         }
         else
         {
             return(PRP_Frames_T_normal_rx(&(me->frames_), data, length, lan_id));

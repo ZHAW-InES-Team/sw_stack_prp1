@@ -91,7 +91,7 @@ void PRP_Environment_T_process_timer(PRP_Environment_T* const me)
     if(TRUE == PRP_Timer_T_tick(&(me->bridging_timer_)))
     {
         /* check for link down */
-        PRP_Bridging_T_supervise(&(me->bridging_));
+//         PRP_Bridging_T_supervise(&(me->bridging_));
         /* to detect link down fast */
         PRP_Timer_T_start(&(me->bridging_timer_), PRP_TIMER_TICK_INTERVAL); 
     }
@@ -184,7 +184,7 @@ void PRP_Environment_T_init(PRP_Environment_T* const me)
     /* start all the modules */
     PRP_EnvironmentConfiguration_T_init(&(me->environment_configuration_));
     PRP_Supervision_T_init(&(me->supervision_), me);
-    PRP_Bridging_T_init(&(me->bridging_), me);
+//     PRP_Bridging_T_init(&(me->bridging_), me);
     PRP_NodeTable_T_init(&(me->node_table_));
     PRP_DiscardAlgorithm_PRP1_T_init(&(me->discard_algorithm_prp1_));
     PRP_FrameAnalyser_T_init(&(me->frame_analyser_), me);
@@ -220,7 +220,7 @@ void PRP_Environment_T_cleanup(PRP_Environment_T* const me)
     PRP_Timer_T_cleanup(&(me->aging_timer_));
     PRP_EnvironmentConfiguration_T_cleanup(&(me->environment_configuration_));
     PRP_Supervision_T_cleanup(&(me->supervision_));
-    PRP_Bridging_T_cleanup(&(me->bridging_));
+//     PRP_Bridging_T_cleanup(&(me->bridging_));
     PRP_NodeTable_T_cleanup(&(me->node_table_));
     PRP_FrameAnalyser_T_cleanup(&(me->frame_analyser_));
 }

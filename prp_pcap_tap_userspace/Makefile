@@ -42,8 +42,8 @@
 # *********************************************************************/
 
 #edit this for verbosity levels of debug output (5: very verbose)
-PRP_DEBUG_LEVEL=0
-#DEBUG   = -DPRP_DEBUG_LOG -DPRP_DEBUG_LEVEL=$(PRP_DEBUG_LEVEL)
+PRP_DEBUG_LEVEL=1
+DEBUG   = -DPRP_DEBUG_LOG -DPRP_DEBUG_LEVEL=$(PRP_DEBUG_LEVEL)
 CFLAGS	=  -Wall -g2 $(DEBUG)
 CFLAGS += $(DEBFLAGS) $(CFLAGS_EXTRA)
 LDFLAGS = -lm -lpcap $(LDFLAGS_EXTRA)
@@ -67,8 +67,8 @@ OBJ += ../prp/PRP_Node_T.o
 OBJ += ../prp/PRP_NodeTable_T.o
 OBJ += ../prp/PRP_RedundancyControlTrailer_T.o
 OBJ += ../prp/PRP_Supervision_T.o
-OBJ += ../prp/PRP_Bridging_T.o
-OBJ += ../prp/PRP_BridgingFrame_T.o
+# OBJ += ../prp/PRP_Bridging_T.o
+# OBJ += ../prp/PRP_BridgingFrame_T.o
 OBJ += ../prp/PRP_T.o
 OBJ += ../prp/PRP_Timer_T.o
 OBJ += ../prp/PRP_Trailer_T.o
