@@ -392,7 +392,7 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
 
     /*The frame origin is a DAN, search drop table to check if frame has been received previously*/
     ret = PRP_DiscardAlgorithm_PRP1_T_search_entry(&(me->frame_analyser_->environment_->discard_algorithm_prp1_), src_mac, me->trailer_rx_.redundancy_control_trailer_.seq_octet_);
-    PRP_DiscardAlgorithm_PRP1_T_print(&(me->frame_analyser_->environment_->discard_algorithm_prp1_),3);
+
     return ret;
 }
 

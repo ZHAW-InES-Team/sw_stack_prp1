@@ -105,7 +105,7 @@ struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T
 	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *next_alt;             // Used only for free_list and chronology
 };
 
-void PRP_DiscardAlgorithm_PRP1_T_print(PRP_DiscardAlgorithm_PRP1_T* const me, uinteger32 level);
+void PRP_DiscardAlgorithm_PRP1_T_print(PRP_DiscardAlgorithm_PRP1_T* const me);
 integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* const me, octet* mac, octet* seq_nr);
 void PRP_DiscardAlgorithm_PRP1_T_do_aging(PRP_DiscardAlgorithm_PRP1_T* const me);
 void PRP_DiscardAlgorithm_PRP1_T_init(PRP_DiscardAlgorithm_PRP1_T* const me);

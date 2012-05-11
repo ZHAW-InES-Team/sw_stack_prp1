@@ -83,38 +83,51 @@ static struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *discardalgorithm_list_[DI
 /************************************************************/
 /** Print the discard table
  * */
-void PRP_DiscardAlgorithm_PRP1_T_print(PRP_DiscardAlgorithm_PRP1_T* const me, uinteger32 level)
+void PRP_DiscardAlgorithm_PRP1_T_print(PRP_DiscardAlgorithm_PRP1_T* const me)
 {
 	int i;
 	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *item;
 
-	PRP_PRP_LOGOUT(level, "[%s] entering \n", __FUNCTION__);
+	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 	
 	if(me == NULL_PTR) return;
 
-	//PRP_PRP_LOGOUT(level, "%s\n", "======= Discard Table ================");
+	PRP_DISCARD_LOGOUT(2, "%s\n", "======= Discard Table ================");
 
 	for ( i=0; i<DISCARD_LIST_ENTRY_COUNT; i++ ) {
 		if ( me->hash_list[i] != 0 ) {
-			//prp_printf( "entry %i: ", i );
+			PRP_DISCARD_LOGOUT( 2, "entry %i: ", i );
 			item = me->hash_list[i];
 			while ( item != 0 ) {
-				//prp_printf( "[0x%x] ", item );
+				PRP_DISCARD_S_LOGOUT( 2, "[0x%x] ", item );
 				item = item->next;
 			}
-			//prp_printf( "\n", i );
+			PRP_DISCARD_S_LOGOUT( 2, "\n", i );
 		}
 	}
 
-	/*
-	for (i=0;i<TABLE_SIZE;i++){
-		PRP_PRP_LOGOUT(level,"%d ",i);
-		for (j=0;j<9;j++){
-			PRP_PRP_LOGOUT(level,"%02x ", me->table[i][j]);
+
+	if ( discard_debug_level >= 3 ) {
+
+		i=0;
+		item = me->free_list;
+		while ( item != 0 ) {
+			i++;
+			item = item->next_alt;
 		}
-		PRP_PRP_LOGOUT(level,"\n");
+		PRP_DISCARD_LOGOUT( 3, "free_list: %i items\n", i );
+
+		i=0;
+		item = me->chronology;
+		while ( item != 0 ) {
+			i++;
+			item = item->next_alt;
+		}
+		PRP_DISCARD_LOGOUT( 3, "chronology: %i items\n", i );
+
 	}
-	*/
+
+	PRP_DISCARD_LOGOUT(2, "%s\n", "======= END Discard Table ============");
 
 }
 
@@ -193,7 +206,7 @@ integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* 
 				me->used_item_count--;
 				#endif
 
-				//PRP_DiscardAlgorithm_PRP1_T_print
+				PRP_DiscardAlgorithm_PRP1_T_print( me );
 
 				PRP_DISCARD_LOGOUT( 1, "DROP, %i items used\n", me->used_item_count );
 
@@ -263,6 +276,8 @@ integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* 
 	item->hash = hash;
 
 	PRP_DISCARD_LOGOUT( 1, "KEEP, %i items used\n", me->used_item_count );
+
+	PRP_DiscardAlgorithm_PRP1_T_print( me );
 
 	return PRP_KEEP;
 }

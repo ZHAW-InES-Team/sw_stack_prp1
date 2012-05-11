@@ -139,8 +139,11 @@
     extern int discard_debug_level;
     #define PRP_DISCARD_LOGOUT(level, format, args...) if (discard_debug_level >= level) \
         PRP_LOG("<DISCARD_LOG> " format, args)
+    #define PRP_DISCARD_S_LOGOUT(level, format, args...) if (discard_debug_level >= level) \
+        prp_printf(format, args)
 #else
     #define PRP_DISCARD_LOGOUT(level, format, args...)
+    #define PRP_DISCARD_S_LOGOUT(level, format, args...)
 #endif
 
 
