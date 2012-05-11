@@ -112,8 +112,10 @@ struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T
 	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *next_alt;             // Used only for free_list and chronology
 };
 
+#ifdef PRP_DEBUG_LOG
 void PRP_DiscardAlgorithm_PRP1_T_print(PRP_DiscardAlgorithm_PRP1_T* const me);
 void PRP_DiscardAlgorithm_PRP1_T_check_consistency(PRP_DiscardAlgorithm_PRP1_T* const me);
+#endif
 
 integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* const me, octet* mac, octet* seq_nr);
 void PRP_DiscardAlgorithm_PRP1_T_do_aging(PRP_DiscardAlgorithm_PRP1_T* const me);

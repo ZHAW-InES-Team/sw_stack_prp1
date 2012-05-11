@@ -78,6 +78,8 @@ static struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T discardalgorithm_items_[DI
 static struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *discardalgorithm_list_[DISCARD_LIST_ENTRY_COUNT];
 
 
+#ifdef PRP_DEBUG_LOG
+
 /************************************************************/
 /*       PRP_DiscardAlgorithm_PRP1_T_print                  */
 /************************************************************/
@@ -265,8 +267,10 @@ void PRP_DiscardAlgorithm_PRP1_T_check_consistency(PRP_DiscardAlgorithm_PRP1_T* 
 
 }
 
+#endif
+
 /************************************************************/
-/* 		PRP_DiscardAlgorithm_PRP1_T_search_entry            */
+/* 		PRP_DiscardAlgorithm_PRP1_T_search_entry    */
 /************************************************************/
 /** Scan the table for an entry
  *  If the entry was found, return discard
@@ -426,9 +430,8 @@ integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* 
 /* 		PRP_DiscardAlgorithm_PRP1_T_do_aging	            */
 /************************************************************/
 /** Call this function every 100ms (aging time 400ms)
- *  If the entry pointer has not increased for at least 1/4
- *  of the table, delete the valid flags of the next quarter
- *  of the table
+ *  Aging time callcullation: Count(seq_nr) / Max Frames per ms
+ *  -> 2^16 / ~144 = ~450 ms 
  * */
 void PRP_DiscardAlgorithm_PRP1_T_do_aging(PRP_DiscardAlgorithm_PRP1_T* const me)
 {
@@ -436,7 +439,9 @@ void PRP_DiscardAlgorithm_PRP1_T_do_aging(PRP_DiscardAlgorithm_PRP1_T* const me)
 	struct timeval tv_now;
 	struct timeval tv_delta;
 	struct timeval tv;
+	#ifdef PRP_DEBUG_LOG
 	int i;
+	#endif
 
 	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *item;
 	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *new_oldest;
