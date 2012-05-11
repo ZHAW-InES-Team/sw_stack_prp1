@@ -562,6 +562,7 @@ int main(int argc, char* argv[])
     char manufacturer_name[] = "ZHAW InES";
     char version[] = "pcap + tap";
     struct timeval next;
+    struct timeval delta;
 
     exit_prp = FALSE;
 
@@ -716,7 +717,9 @@ int main(int argc, char* argv[])
     PRP_T_set_merge_layer_info(&merge_layer_info);
 
     fprintf(stderr,"entering main loop, press q to exit\n");
-    gettimeofday(&next,NULL);
+    gettimeofday( &next, 0 );
+    delta.tv_sec = 0;
+    delta.tv_usec = 20000;
 
     signal(SIGINT, sig_term);
     signal(SIGQUIT, sig_term);
@@ -742,15 +745,10 @@ int main(int argc, char* argv[])
 
         /* check for timer, replacement for timer_fd */
         struct timeval now;
-        gettimeofday(&now,NULL);
-        if((now.tv_sec > next.tv_sec) || ((now.tv_sec == next.tv_sec) && (now.tv_usec > next.tv_usec))) {
+        gettimeofday( &now, 0 );
+        if ( timercmp( &now, &next, > ) ) {
+            timeradd( &now, &delta, &next );
             PRP_T_timer();
-            next.tv_usec = now.tv_usec + PRP_TIMER_TICK_INTERVAL*1000;	/* in 100 ms */
-            next.tv_sec = now.tv_sec;
-            if(next.tv_usec > 1000000){
-                next.tv_usec -= 1000000;
-                next.tv_sec += 1;
-            }
         }
 
         if(retval < 0){

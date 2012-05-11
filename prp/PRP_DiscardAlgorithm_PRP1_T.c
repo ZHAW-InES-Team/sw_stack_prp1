@@ -213,8 +213,12 @@ void PRP_DiscardAlgorithm_PRP1_T_check_consistency(PRP_DiscardAlgorithm_PRP1_T* 
 			chronology_count++;
 			
 			if ( item->next_alt != 0 ) {
-				if ( timercmp( &item->tv, &item->next_alt->tv, > ) ) {
-					PRP_DISCARD_LOGOUT( 4, "!!! wrong chronology order\n", i );
+				if ( item->timestamp > item->next_alt->timestamp ) {
+					uinteger32 delta;
+					delta  = item->next_alt->timestamp + ( 0xFFFFFFFF - item->timestamp );
+					if ( delta > DISCARD_TICK_COUNT + 10 ) {
+						PRP_DISCARD_LOGOUT( 4, "!!! wrong chronology order\n", i );
+					}
 				}
 			} else {
 				if ( item != me->newest ) {
@@ -411,8 +415,8 @@ integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* 
 	item->src_mac[3] = mac[3];
 	item->src_mac[4] = mac[4];
 	item->src_mac[5] = mac[5];
-
-	gettimeofday( &item->tv, 0 );
+	
+	item->timestamp = me->time;
 
 	item->hash = hash;
 
@@ -429,16 +433,15 @@ integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* 
 /************************************************************/
 /* 		PRP_DiscardAlgorithm_PRP1_T_do_aging	            */
 /************************************************************/
-/** Call this function every 100ms (aging time 400ms)
+/** Call this function every 20ms (aging time 400ms)
  *  Aging time callcullation: Count(seq_nr) / Max Frames per ms
  *  -> 2^16 / ~144 = ~450 ms 
  * */
 void PRP_DiscardAlgorithm_PRP1_T_do_aging(PRP_DiscardAlgorithm_PRP1_T* const me)
 {
 
-	struct timeval tv_now;
-	struct timeval tv_delta;
-	struct timeval tv;
+	uinteger32 delta;
+
 	#ifdef PRP_DEBUG_LOG
 	int i;
 	#endif
@@ -448,10 +451,14 @@ void PRP_DiscardAlgorithm_PRP1_T_do_aging(PRP_DiscardAlgorithm_PRP1_T* const me)
 
 	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-	tv_delta.tv_sec = DISCARD_AGE_SEC;
-	tv_delta.tv_usec = DISCARD_AGE_USEC;
-	gettimeofday( &tv_now, 0 );
-	timersub( &tv_now, &tv_delta, &tv );
+	me->ageing_counter++;
+	me->time++;
+
+	if ( me->ageing_counter < 5 ) return;
+	
+	//all ~100 ms
+
+	me->ageing_counter = 0;
 
 	#ifdef PRP_DEBUG_LOG
 	i = 0;
@@ -461,7 +468,14 @@ void PRP_DiscardAlgorithm_PRP1_T_do_aging(PRP_DiscardAlgorithm_PRP1_T* const me)
 	item = me->chronology;
 	while ( item != 0 ) {
 
-		if ( timercmp( &item->tv, &tv, > ) ) {
+		if ( item->timestamp <= me->time ) {
+			delta = ( me->time - item->timestamp );
+		} else {
+			//me->time did roll over
+			delta  = me->time + ( 0xFFFFFFFF - item->timestamp );
+		}
+
+		if ( delta < DISCARD_TICK_COUNT ) {
 			new_oldest = item;
 			break;
 		} else {
@@ -565,6 +579,10 @@ void PRP_DiscardAlgorithm_PRP1_T_init(PRP_DiscardAlgorithm_PRP1_T* const me)
 	// init chronology
 	me->chronology = 0;
 	me->newest = 0;
+
+	// ageing
+	me->time = 0;
+	me->ageing_counter = 0;
 
 	me->used_item_count = 0;
 

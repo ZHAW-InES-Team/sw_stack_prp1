@@ -75,7 +75,7 @@
  * @brief Starts or restarts a timer.
  *
  * @param   me PRP_Timer_T this pointer
- * @param   timeout uinteger16 timeout in nanoseconds
+ * @param   timeout uinteger16 timeout in milliseconds
  */
 void PRP_Timer_T_start(PRP_Timer_T* const me, uinteger16 timeout) 
 {

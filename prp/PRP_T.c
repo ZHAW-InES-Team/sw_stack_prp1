@@ -152,7 +152,7 @@ integer32 PRP_T_transmit(octet* data, uinteger32* length)
  */
 void PRP_T_timer(void)
 {
-    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+    //PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
     if(initialized_ != TRUE)
     {

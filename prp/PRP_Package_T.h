@@ -70,42 +70,41 @@
 
 #include "PRP_DataTypes_T.h"
 
-#define PRP_TIMER_TICK_INTERVAL			100 /* in ms */
+#define PRP_TIMER_TICK_INTERVAL			20 /* in ms */
 
-#define PRP_RCT_LENGTH					4
-#define PRP_MTU							1496
+#define PRP_RCT_LENGTH				4
+#define PRP_MTU					1496
 
-#define PRP_ID_LAN_A					0xa
-#define PRP_ID_LAN_B					0xb
+#define PRP_ID_LAN_A				0xa
+#define PRP_ID_LAN_B				0xb
 
-#define PRP_KEEP_IN_ORDER				0
+#define PRP_KEEP_IN_ORDER			0
 #define PRP_KEEP_OUT_OF_ORDER			1
-#define PRP_DROP						2
-#define PRP_KEEP						0
+#define PRP_DROP				2
+#define PRP_KEEP				0
+#define PRP_NODETABLE_END			1
+#define PRP_NODE_DELETED			2
 
-#define PRP_NODETABLE_END				1
-#define PRP_NODE_DELETED				2
 
-
-#define PRP_ERROR_NULL_PTR 				1
-#define PRP_ERROR_WRONG_VAL 			2	
+#define PRP_ERROR_NULL_PTR 			1
+#define PRP_ERROR_WRONG_VAL 			2
 #define PRP_ERROR_NOT_SUPPORTED			3
-#define PRP_ERROR_ADAPTER				4
-#define PRP_ERROR_FRAME_COR				5
+#define PRP_ERROR_ADAPTER			4
+#define PRP_ERROR_FRAME_COR			5
 #define PRP_ERROR_NOT_INITIALIZED		6
 
 
 #define PRP_ETH_ADDR_LENGTH 			6
 #define PRP_NODE_NAME_LENGTH 			32
-#define PRP_MANUFACTURER_NAME_LENGTH 	256
-#define PRP_VERSION_LENGTH 				32
+#define PRP_MANUFACTURER_NAME_LENGTH 		256
+#define PRP_VERSION_LENGTH 			32
 
 #define PRP_LIFE_CHECK_INTERVAL			2000 /* in ms */
-#define PRP_CHECK_INTERVAL_AGING		100 /* in ms */
+#define PRP_CHECK_INTERVAL_AGING		20 /* in ms */
 #define PRP_NODE_FORGET_TIME			60 /* in seconds */
-#define PRP_LINK_TIME_OUT				6 /* in seconds */
+#define PRP_LINK_TIME_OUT			6 /* in seconds */
 #define PRP_DROP_WINDOW_SIZE			65535
-#define PRP_MAX_SKEW_TIME				10 /* in ms */
+#define PRP_MAX_SKEW_TIME			10 /* in ms */
 
 
 /*

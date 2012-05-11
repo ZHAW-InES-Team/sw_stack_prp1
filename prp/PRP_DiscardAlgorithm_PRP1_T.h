@@ -76,14 +76,14 @@
 #define DISCARD_ITEM_COUNT          1024
 #define DISCARD_LIST_ENTRY_COUNT    256      // 2^n, n is 8 in this case
 #define DISCARD_HASH_MASK           0x00FF   // Must select n bit in a range from 1 to 16
-#define DISCARD_AGE_SEC             0
-#define DISCARD_AGE_USEC            400000
+#define DISCARD_TICK_COUNT          20       // * 20ms -> 400ms
   
 //#define DISCARD_ITEM_COUNT          32
 //#define DISCARD_LIST_ENTRY_COUNT    16       // 2^n, n is 8 in this case
 //#define DISCARD_HASH_MASK           0x000F   // Must select n bit in a range from 1 to 16
-//#define DISCARD_AGE_SEC             3
-//#define DISCARD_AGE_USEC            0
+//#define DISCARD_TICK_COUNT          150      // * 20ms -> 3s
+//#define DISCARD_TICK_COUNT          100      // * 20ms -> 2s
+//#define DISCARD_TICK_COUNT          50      // * 20ms -> 1s
 
 struct PRP_DiscardAlgorithm_PRP1_T
 {
@@ -91,6 +91,9 @@ struct PRP_DiscardAlgorithm_PRP1_T
 	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *free_list;            // list of free items to use
 	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *chronology;           // from oldest to newest
 	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *newest;               // shortcut to newest item
+	
+	uinteger32 time;
+	uinteger8 ageing_counter;
 
 	int used_item_count;
 
@@ -101,9 +104,8 @@ struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T
 	unsigned short seq_nr;
 	unsigned char src_mac[6];
 	
-	struct timeval tv;           // timestamp
-
-	unsigned short hash;         // hash code
+	uinteger32 timestamp;
+	unsigned short hash;
 
 	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *previous;             // Used only for hash_list
 	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *next;                 // Used only for hash_list

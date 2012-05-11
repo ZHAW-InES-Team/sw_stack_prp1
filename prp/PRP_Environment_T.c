@@ -93,7 +93,7 @@ void PRP_Environment_T_process_timer(PRP_Environment_T* const me)
         /* check for link down */
 //         PRP_Bridging_T_supervise(&(me->bridging_));
         /* to detect link down fast */
-        PRP_Timer_T_start(&(me->bridging_timer_), PRP_TIMER_TICK_INTERVAL); 
+        PRP_Timer_T_start(&(me->bridging_timer_), (PRP_TIMER_TICK_INTERVAL*5)); 
     }
 
     if(TRUE == PRP_Timer_T_tick(&(me->supervise_timer_)))
