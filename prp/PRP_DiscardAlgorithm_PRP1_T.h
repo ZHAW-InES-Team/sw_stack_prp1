@@ -73,13 +73,17 @@
 #include "PRP_DataTypes_T.h"
 #include <sys/time.h>
 
-#define DISCARD_ITEM_COUNT          1024
-#define DISCARD_LIST_ENTRY_COUNT    256      // 2^n, n is 8 in this case
-#define DISCARD_HASH_MASK           0x00FF   // Must select n bit in a range from 1 to 16
+//#define DISCARD_ITEM_COUNT          1024
+//#define DISCARD_LIST_ENTRY_COUNT    256      // 2^n, n is 8 in this case
+//#define DISCARD_HASH_MASK           0x00FF   // Must select n bit in a range from 1 to 16
+//#define DISCARD_AGE_SEC             0
+//#define DISCARD_AGE_USEC            400000
   
-//#define DISCARD_ITEM_COUNT          32
-//#define DISCARD_LIST_ENTRY_COUNT    16       // 2^n, n is 8 in this case
-//#define DISCARD_HASH_MASK           0x000F   // Must select n bit in a range from 1 to 16
+#define DISCARD_ITEM_COUNT          32
+#define DISCARD_LIST_ENTRY_COUNT    16       // 2^n, n is 8 in this case
+#define DISCARD_HASH_MASK           0x000F   // Must select n bit in a range from 1 to 16
+#define DISCARD_AGE_SEC             3
+#define DISCARD_AGE_USEC            0
 
 struct PRP_DiscardAlgorithm_PRP1_T
 {

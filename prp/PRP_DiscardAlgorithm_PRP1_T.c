@@ -443,8 +443,8 @@ void PRP_DiscardAlgorithm_PRP1_T_do_aging(PRP_DiscardAlgorithm_PRP1_T* const me)
 
 	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-	tv_delta.tv_sec = 0;
-	tv_delta.tv_usec = 400000;
+	tv_delta.tv_sec = DISCARD_AGE_SEC;
+	tv_delta.tv_usec = DISCARD_AGE_USEC;
 	gettimeofday( &tv_now, 0 );
 	timersub( &tv_now, &tv_delta, &tv );
 
