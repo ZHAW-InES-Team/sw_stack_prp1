@@ -85,13 +85,27 @@ static struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *discardalgorithm_list_[DI
  * */
 void PRP_DiscardAlgorithm_PRP1_T_print(PRP_DiscardAlgorithm_PRP1_T* const me, uinteger32 level)
 {
-	//int i, j;
+	int i;
+	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *item;
 
 	PRP_PRP_LOGOUT(level, "[%s] entering \n", __FUNCTION__);
 	
 	if(me == NULL_PTR) return;
 
-	PRP_PRP_LOGOUT(level, "%s\n", "======= Discard Table ================");
+	//PRP_PRP_LOGOUT(level, "%s\n", "======= Discard Table ================");
+
+	for ( i=0; i<DISCARD_LIST_ENTRY_COUNT; i++ ) {
+		if ( me->hash_list[i] != 0 ) {
+			//prp_printf( "entry %i: ", i );
+			item = me->hash_list[i];
+			while ( item != 0 ) {
+				//prp_printf( "[0x%x] ", item );
+				item = item->next;
+			}
+			//prp_printf( "\n", i );
+		}
+	}
+
 	/*
 	for (i=0;i<TABLE_SIZE;i++){
 		PRP_PRP_LOGOUT(level,"%d ",i);
@@ -119,7 +133,7 @@ integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* 
 	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *item;
 
 	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
+
 	if(me == NULL_PTR) return(-PRP_ERROR_NULL_PTR);
 
 	seqnr_corr = seq_nr[1];
@@ -127,6 +141,8 @@ integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* 
 	hash = seqnr_corr & DISCARD_HASH_MASK;
 
 	// search entry
+
+	PRP_DISCARD_LOGOUT( 1, "New frame received, seqnr=%i, hash=%i\n", seqnr_corr, hash );
 
 	item = me->hash_list[hash];
 	while ( item != 0 ) {
@@ -173,7 +189,14 @@ integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* 
 				item->next_alt = me->free_list;
 				me->free_list = item;
 
-				PRP_PRP_LOGOUT(3,"\n---------- DROP ----------\n");
+				#ifdef PRP_DEBUG_LOG
+				me->used_item_count--;
+				#endif
+
+				//PRP_DiscardAlgorithm_PRP1_T_print
+
+				PRP_DISCARD_LOGOUT( 1, "DROP, %i items used\n", me->used_item_count );
+
 				return PRP_DROP;
 
 			}
@@ -188,6 +211,9 @@ integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* 
 	if ( item != 0 ) {
 
 		me->free_list = item->next_alt;
+		#ifdef PRP_DEBUG_LOG
+		me->used_item_count++;
+		#endif
 
 	} else {
 
@@ -236,7 +262,8 @@ integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* 
 
 	item->hash = hash;
 
-	PRP_PRP_LOGOUT(stderr,"\n---------- KEEP ----------\n");
+	PRP_DISCARD_LOGOUT( 1, "KEEP, %i items used\n", me->used_item_count );
+
 	return PRP_KEEP;
 }
 
@@ -254,14 +281,21 @@ void PRP_DiscardAlgorithm_PRP1_T_do_aging(PRP_DiscardAlgorithm_PRP1_T* const me)
 	struct timeval tv_now;
 	struct timeval tv_delta;
 	struct timeval tv;
+	int i;
 
 	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *item;
 	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *new_oldest;
+
+	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
 	tv_delta.tv_sec = 0;
 	tv_delta.tv_usec = 400000;
 	gettimeofday( &tv_now, 0 );
 	timersub( &tv_now, &tv_delta, &tv );
+
+	#ifdef PRP_DEBUG_LOG
+	i = 0;
+	#endif
 
 	new_oldest = 0;
 	item = me->chronology;
@@ -284,6 +318,11 @@ void PRP_DiscardAlgorithm_PRP1_T_do_aging(PRP_DiscardAlgorithm_PRP1_T* const me)
 				// item->previous still means - this is the first entry of the hash entry
 				me->hash_list[item->hash] = 0;
 			}
+
+			#ifdef PRP_DEBUG_LOG
+			i++;
+			#endif
+
 		}
 
 		item = item->next_alt;
@@ -293,6 +332,11 @@ void PRP_DiscardAlgorithm_PRP1_T_do_aging(PRP_DiscardAlgorithm_PRP1_T* const me)
 
 		if ( me->chronology != new_oldest ) {
 
+			#ifdef PRP_DEBUG_LOG
+			me->used_item_count -= i;	
+			#endif
+			PRP_DISCARD_LOGOUT( 1, "Free %i items, %i still used\n", i, me->used_item_count );
+			
 			// add to free list
 			new_oldest->previous_alt->next_alt = me->free_list;
 			me->free_list = me->chronology;
@@ -306,6 +350,11 @@ void PRP_DiscardAlgorithm_PRP1_T_do_aging(PRP_DiscardAlgorithm_PRP1_T* const me)
 	} else {
 
 		if ( me->chronology != 0 ) {
+
+			#ifdef PRP_DEBUG_LOG
+			me->used_item_count -= i;
+			#endif
+			PRP_DISCARD_LOGOUT( 1, "Free all %i items, %i still used\n", i, me->used_item_count );
 
 			// add to free list
 			me->newest->next_alt = me->free_list;
@@ -333,7 +382,7 @@ void PRP_DiscardAlgorithm_PRP1_T_init(PRP_DiscardAlgorithm_PRP1_T* const me)
 	int i;
 
 	PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-	
+
 	if(me == NULL_PTR) return;
 
 	// init hash list
@@ -352,6 +401,8 @@ void PRP_DiscardAlgorithm_PRP1_T_init(PRP_DiscardAlgorithm_PRP1_T* const me)
 	// init chronology
 	me->chronology = 0;
 	me->newest = 0;
+
+	me->used_item_count = 0;
 
 }
 

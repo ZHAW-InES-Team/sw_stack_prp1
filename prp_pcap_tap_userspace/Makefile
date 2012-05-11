@@ -42,8 +42,9 @@
 # *********************************************************************/
 
 #edit this for verbosity levels of debug output (5: very verbose)
-PRP_DEBUG_LEVEL=1
-DEBUG   = -DPRP_DEBUG_LOG -DPRP_DEBUG_LEVEL=$(PRP_DEBUG_LEVEL)
+PRP_DEBUG_LEVEL=0
+PRP_DISCARD_DEBUG_LEVEL=3
+DEBUG   = -DPRP_DEBUG_LOG -DPRP_DEBUG_LEVEL=$(PRP_DEBUG_LEVEL) -DPRP_DISCARD_DEBUG_LEVEL=$(PRP_DISCARD_DEBUG_LEVEL)
 CFLAGS	=  -Wall -g2 $(DEBUG)
 CFLAGS += $(DEBFLAGS) $(CFLAGS_EXTRA)
 LDFLAGS = -lm -lpcap $(LDFLAGS_EXTRA)

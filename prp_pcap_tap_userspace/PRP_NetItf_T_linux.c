@@ -109,7 +109,7 @@ Known problems:
 #include "../prp/PRP_NetItf_T.h"
 
 //#define PRP_DEBUG_LOG
-// #define PRP_DEBUG_LEVEL 2
+//#define PRP_DEBUG_LEVEL 2
 
 
 
@@ -140,6 +140,7 @@ static void sig_term(int sig)
     extern int debug_level;
     extern int net_itf_debug_level;
     extern int prp_debug_level;
+    extern int discard_debug_level;
 #endif
 
 /********************************************************************/
@@ -568,6 +569,11 @@ int main(int argc, char* argv[])
     debug_level = PRP_DEBUG_LEVEL;
     net_itf_debug_level = PRP_DEBUG_LEVEL;
     prp_debug_level = PRP_DEBUG_LEVEL;
+    #ifdef PRP_DISCARD_DEBUG_LEVEL
+    discard_debug_level = PRP_DISCARD_DEBUG_LEVEL;
+    #else
+    discard_debug_level = PRP_DEBUG_LEVEL;
+    #endif
 #endif
 
     /* parse IP interface parameter */

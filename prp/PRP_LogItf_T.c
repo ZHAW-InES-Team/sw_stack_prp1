@@ -71,5 +71,6 @@
     integer32 debug_level = 0;
     integer32 net_itf_debug_level = 0;
     integer32 prp_debug_level = 0;
+    integer32 discard_debug_level = 0;
 #endif
 

@@ -135,6 +135,13 @@
 #else
     #define PRP_NET_ITF_LOGOUT(level, format, args...)
 #endif
+#ifdef PRP_DEBUG_LOG
+    extern int discard_debug_level;
+    #define PRP_DISCARD_LOGOUT(level, format, args...) if (discard_debug_level >= level) \
+        PRP_LOG("<DISCARD_LOG> " format, args)
+#else
+    #define PRP_DISCARD_LOGOUT(level, format, args...)
+#endif
 
 
 #endif /* PRP_LogItf_T_H */

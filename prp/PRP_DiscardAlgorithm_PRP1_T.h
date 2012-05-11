@@ -84,6 +84,9 @@ struct PRP_DiscardAlgorithm_PRP1_T
 	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *free_list;            // list of free items to use
 	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *chronology;           // from oldest to newest
 	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *newest;               // shortcut to newest item
+
+	int used_item_count;
+
 };
 
 struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T
