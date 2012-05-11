@@ -106,7 +106,6 @@ void PRP_DiscardAlgorithm_PRP1_T_print(PRP_DiscardAlgorithm_PRP1_T* const me)
 		}
 	}
 
-
 	if ( discard_debug_level >= 3 ) {
 
 		i=0;
@@ -128,6 +127,141 @@ void PRP_DiscardAlgorithm_PRP1_T_print(PRP_DiscardAlgorithm_PRP1_T* const me)
 	}
 
 	PRP_DISCARD_LOGOUT(2, "%s\n", "======= END Discard Table ============");
+
+}
+
+/************************************************************/
+/*       PRP_DiscardAlgorithm_PRP1_T_check_consistency      */
+/************************************************************/
+/** Check consistency of data structures
+ * */
+void PRP_DiscardAlgorithm_PRP1_T_check_consistency(PRP_DiscardAlgorithm_PRP1_T* const me)
+{
+
+	int i;
+
+	int hash_item_count;
+	int chronology_count;
+	int freelist_count;
+
+	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *item;
+	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *item2;
+
+	unsigned char b;
+
+	if ( discard_debug_level < 4 ) return;
+	
+	// check hash table
+
+	hash_item_count = 0;
+
+	for ( i=0; i<DISCARD_LIST_ENTRY_COUNT; i++ ) {
+		if ( me->hash_list[i] != 0 ) {
+			item = me->hash_list[i];
+
+			if ( item != 0 ) {
+				if ( item->previous != 0 ) {
+					PRP_DISCARD_LOGOUT( 4, "!!! item->previous of first hash-entry is not 0\n", i );
+				}
+			}
+
+			while ( item != 0 ) {
+				hash_item_count++;
+				
+				item2 = me->free_list;
+				while ( item2 != 0 ) {
+					if ( item == item2 ) {
+						PRP_DISCARD_LOGOUT( 4, "!!! hash item is in free list\n", i );
+						break;
+					}
+					item2 = item2->next_alt;
+				}
+
+				b = 0;
+				item2 = me->chronology;
+				while ( item2 != 0 ) {
+					if ( item == item2 ) {
+						b = 1;
+						break;
+					}
+					item2 = item2->next_alt;
+				}
+				if ( b == 0 ) {
+					PRP_DISCARD_LOGOUT( 4, "!!! hash item is not in chronology\n", i );
+				}
+ 
+				item = item->next;
+
+			}
+		}
+	}
+
+	// chronology
+
+	chronology_count = 0;
+	
+	if ( me->chronology != 0 ) {
+		
+		if ( me->chronology->previous_alt != 0 ) {
+			PRP_DISCARD_LOGOUT( 4, "!!! me->chronology->previous_alt is not 0\n", i );
+		}
+
+		item = me->chronology;
+		while ( item != 0 ) {
+			chronology_count++;
+			
+			if ( item->next_alt != 0 ) {
+				if ( timercmp( &item->tv, &item->next_alt->tv, > ) ) {
+					PRP_DISCARD_LOGOUT( 4, "!!! wrong chronology order\n", i );
+				}
+			} else {
+				if ( item != me->newest ) {
+					PRP_DISCARD_LOGOUT( 4, "!!! last item in chronology is not me->newest\n", i );
+				}
+			}
+			
+			item = item->next_alt;
+		}
+
+	} else {
+		if ( hash_item_count != 0 ) {
+			PRP_DISCARD_LOGOUT( 4, "!!! no chronology but hash items\n", i );
+		}
+	}
+
+	// free list
+
+	freelist_count = 0;
+	
+	if ( me->free_list != 0 ) {
+		
+		item = me->free_list;
+		while ( item != 0 ) {
+			freelist_count++;
+			item = item->next_alt;
+		}
+
+	} else {
+
+		if ( hash_item_count != DISCARD_ITEM_COUNT ) {
+			PRP_DISCARD_LOGOUT( 4, "!!! no free items but not all items used\n", i );
+		}
+
+		if ( chronology_count != DISCARD_ITEM_COUNT ) {
+			PRP_DISCARD_LOGOUT( 4, "!!! no free items but not all items in chronology\n", i );
+		}
+
+	}
+
+	// item count
+
+	if ( hash_item_count != chronology_count ) {
+		PRP_DISCARD_LOGOUT( 4, "!!! hash item count and chronology count is not equal\n", i );
+	}
+	
+	if ( (freelist_count + hash_item_count) != DISCARD_ITEM_COUNT ) {
+		PRP_DISCARD_LOGOUT( 4, "!!! items got lost somewhere in space!?\n", i );
+	}
 
 }
 
@@ -192,7 +326,7 @@ integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* 
 				}
 
 				if ( item->previous_alt != 0 )  {
-					item->previous_alt->next = item->next_alt;
+					item->previous_alt->next_alt = item->next_alt;
 				} else {
 					me->chronology = item->next_alt;
 				}
@@ -206,7 +340,10 @@ integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* 
 				me->used_item_count--;
 				#endif
 
+				#ifdef PRP_DEBUG_LOG
 				PRP_DiscardAlgorithm_PRP1_T_print( me );
+				PRP_DiscardAlgorithm_PRP1_T_check_consistency( me );
+				#endif
 
 				PRP_DISCARD_LOGOUT( 1, "DROP, %i items used\n", me->used_item_count );
 
@@ -277,7 +414,10 @@ integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* 
 
 	PRP_DISCARD_LOGOUT( 1, "KEEP, %i items used\n", me->used_item_count );
 
+	#ifdef PRP_DEBUG_LOG
 	PRP_DiscardAlgorithm_PRP1_T_print( me );
+	PRP_DiscardAlgorithm_PRP1_T_check_consistency( me );
+	#endif
 
 	return PRP_KEEP;
 }
@@ -382,6 +522,10 @@ void PRP_DiscardAlgorithm_PRP1_T_do_aging(PRP_DiscardAlgorithm_PRP1_T* const me)
 		}
 
 	}
+
+	#ifdef PRP_DEBUG_LOG
+	PRP_DiscardAlgorithm_PRP1_T_check_consistency( me );
+	#endif
 
 }
 

@@ -74,9 +74,12 @@
 #include <sys/time.h>
 
 #define DISCARD_ITEM_COUNT          1024
-
 #define DISCARD_LIST_ENTRY_COUNT    256      // 2^n, n is 8 in this case
 #define DISCARD_HASH_MASK           0x00FF   // Must select n bit in a range from 1 to 16
+  
+//#define DISCARD_ITEM_COUNT          32
+//#define DISCARD_LIST_ENTRY_COUNT    16       // 2^n, n is 8 in this case
+//#define DISCARD_HASH_MASK           0x000F   // Must select n bit in a range from 1 to 16
 
 struct PRP_DiscardAlgorithm_PRP1_T
 {
@@ -106,6 +109,8 @@ struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T
 };
 
 void PRP_DiscardAlgorithm_PRP1_T_print(PRP_DiscardAlgorithm_PRP1_T* const me);
+void PRP_DiscardAlgorithm_PRP1_T_check_consistency(PRP_DiscardAlgorithm_PRP1_T* const me);
+
 integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* const me, octet* mac, octet* seq_nr);
 void PRP_DiscardAlgorithm_PRP1_T_do_aging(PRP_DiscardAlgorithm_PRP1_T* const me);
 void PRP_DiscardAlgorithm_PRP1_T_init(PRP_DiscardAlgorithm_PRP1_T* const me);
