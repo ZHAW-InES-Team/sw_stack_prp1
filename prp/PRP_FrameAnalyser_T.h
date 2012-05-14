@@ -1,16 +1,16 @@
 /********************************************************************
-*  
+*
 *  Copyright (c) 2007, Institute of Embedded Systems at 
 *                      Zurich University of Applied Sciences 
 *                      (http://ines.zhaw.ch)
-*  
+*
 *  All rights reserved.
-* 
-* 
+*
+*
 *  Redistribution and use in source and binary forms, with or  
 *  without modification, are permitted provided that the 
 *  following conditions are met:
-*  
+*
 *  - Redistributions of source code must retain the above copyright 
 *    notice, this list of conditions and the following disclaimer. 
 *
@@ -38,7 +38,7 @@
 *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
 *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 *  POSSIBILITY OF SUCH DAMAGE.
-*  
+*
 *********************************************************************/
 
 
@@ -51,12 +51,12 @@
 *  |_____|_| |_|______|_____/   8401 Winterthur, Switzerland        *
 *                                                                   *
 *********************************************************************
-* 
+*
 *  Project     : Parallel Redundancy Protocol
-* 
+*
 *  Version     : 1.0
 *  Author      : Sven Meier
-* 
+*
 *********************************************************************
 *  Change History
 *
@@ -65,8 +65,8 @@
 *  17.12.07 | mesv     | file created
 *********************************************************************/
 
-#ifndef PRP_FrameAnalyser_T_H 
-#define PRP_FrameAnalyser_T_H 
+#ifndef PRP_FrameAnalyser_T_H
+#define PRP_FrameAnalyser_T_H
 
 #include "PRP_Package_T.h"
 #include "PRP_Frames_T.h"
@@ -84,4 +84,5 @@ integer32 PRP_FrameAnalyser_T_analyse_tx(PRP_FrameAnalyser_T* const me, octet* d
 void PRP_FrameAnalyser_T_init(PRP_FrameAnalyser_T* const me, PRP_Environment_T* const environment);
 void PRP_FrameAnalyser_T_cleanup(PRP_FrameAnalyser_T* const me);
 
-#endif
+#endif /* PRP_FrameAnalyser_T_H */
+

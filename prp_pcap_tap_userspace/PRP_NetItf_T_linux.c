@@ -1,16 +1,16 @@
 /********************************************************************
-*  
+*
 *  Copyright (c) 2010, Institute of Embedded Systems at 
 *                      Zurich University of Applied Sciences 
 *                      (http://ines.zhaw.ch)
-*  
+*
 *  All rights reserved.
-* 
-* 
+*
+*
 *  Redistribution and use in source and binary forms, with or  
 *  without modification, are permitted provided that the 
 *  following conditions are met:
-*  
+*
 *  - Redistributions of source code must retain the above copyright 
 *    notice, this list of conditions and the following disclaimer. 
 *
@@ -38,7 +38,7 @@
 *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
 *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 *  POSSIBILITY OF SUCH DAMAGE.
-*  
+*
 *********************************************************************/
 
 /********************************************************************
@@ -50,12 +50,12 @@
 *  |_____|_| |_|______|_____/   8401 Winterthur, Switzerland        *
 *                                                                   *
 *********************************************************************
-* 
+*
 *  Project     : Parallel Redundancy Protocol
-* 
+*
 *  Version     : 1.0
 *  Author      : Sven Meier/Patrick Staehlin/David Gunzinger
-* 
+*
 *********************************************************************
 *  Change History
 *
@@ -88,7 +88,7 @@ Known problems:
 #include <string.h>
 #include <stdio.h>
 #include <sys/socket.h>
-#include <arpa/inet.h>    
+#include <arpa/inet.h>
 #include <netinet/in.h>
 #include <unistd.h>
 #include <signal.h>
@@ -98,19 +98,13 @@ Known problems:
 #include <fcntl.h>
 #include <pthread.h>
 #include <sys/ioctl.h>
-#include <net/if.h>  
-
+#include <net/if.h>
 #include <pcap.h>
 #include <linux/if_tun.h>
-
 
 #include "../prp/PRP_T.h"
 #include "../prp/PRP_LogItf_T.h"
 #include "../prp/PRP_NetItf_T.h"
-
-//#define PRP_DEBUG_LOG
-//#define PRP_DEBUG_LEVEL 2
-
 
 
 /********************************************************************/
@@ -153,8 +147,8 @@ int set_mac(char *dev, unsigned char *buffer);
  * @brief Enable or disable adapter A
  *
  * @param   value boolean TRUE activates the adapter
- * @return  integer32 0 : OK
- *          integer32 <0 : ERROR (code)
+ * @retval  integer32 0 : OK
+ * @retval  integer32 <0 : ERROR (code)
  */
 integer32 PRP_NetItf_T_set_active_A(boolean value)
 {
@@ -165,10 +159,10 @@ integer32 PRP_NetItf_T_set_active_A(boolean value)
 /**
  * @fn integer32 PRP_NetItf_T_set_active_B(boolean value)
  * @brief Enable or disable adapter B
- * 
+ *
  * @param   value boolean TRUE activates the adapter
- * @return  integer32 0 : OK
- *          integer32 <0 : ERROR (code)
+ * @retval  integer32 0 : OK
+ * @retval  integer32 <0 : ERROR (code)
  */
 integer32 PRP_NetItf_T_set_active_B(boolean value)
 {
@@ -179,10 +173,10 @@ integer32 PRP_NetItf_T_set_active_B(boolean value)
 /**
  * @fn integer32 PRP_NetItf_T_set_mac_address_A(octet* mac)
  * @brief Sets the MAC address of the adapter A
- * 
+ *
  * @param   mac octet array[6] Mac address to set
- * @return  integer32 0 : OK
- *          integer32 <0 : ERROR (code)
+ * @retval  integer32 0 : OK
+ * @retval  integer32 <0 : ERROR (code)
  */
 integer32 PRP_NetItf_T_set_mac_address_A(octet* mac)
 {
@@ -194,8 +188,8 @@ integer32 PRP_NetItf_T_set_mac_address_A(octet* mac)
  * @fn integer32 PRP_NetItf_T_set_mac_address_B(octet* mac)
  * @brief Sets the MAC address of the adapter B
  * @param   mac octet array[6] Mac address to set
- * @return  integer32 0 : OK
- *          integer32 <0 : ERROR (code)
+ * @retval  integer32 0 : OK
+ * @retval  integer32 <0 : ERROR (code)
  */
 integer32 PRP_NetItf_T_set_mac_address_B(octet* mac)
 {
@@ -208,7 +202,7 @@ integer32 PRP_NetItf_T_set_mac_address_B(octet* mac)
  * @brief Sets the MAC address for the supervision frames
  *
  * @param   mac octet array[6] Mac address to set
- * 
+ *
  * MACs have to know the multicast mac, or they go into promiscuous mode
  */
 integer32 PRP_NetItf_T_set_supervision_address(octet* mac)
@@ -225,8 +219,8 @@ integer32 PRP_NetItf_T_set_supervision_address(octet* mac)
  * @param   data octet pointer to the beginning of the frame (dest mac)
  * @param   length uinteger32 length in bytes of the frame
  * @param   lan_id octet LAN to send the frame
- * @return  integer32 0 : OK
- *          integer32 <0 : ERROR (code)
+ * @retval  integer32 0 : OK
+ * @retval  integer32 <0 : ERROR (code)
  */
 integer32 PRP_NetItf_T_transmit(octet* data, uinteger32* length, octet lan_id)
 {
@@ -275,9 +269,9 @@ void PcapReceive_callback(unsigned char *Args, const struct pcap_pkthdr* Pkthdr,
  * @brief Open new virtual TAP PRP device
  *
  * @param   dev char pointer to the device
- * @return  int 0 : OK
- *          int <0 : ERROR (code)
- */ 
+ * @retval  int 0 : OK
+ * @retval  int <0 : ERROR (code)
+ */
 int tap_open(char *dev)
 {
     struct ifreq ifr;
@@ -298,9 +292,9 @@ int tap_open(char *dev)
     if (ioctl(fd, TUNSETIFF, (void *) &ifr) < 0) {
           fprintf(stderr,"ioctl failed\n");
           goto failed;
-    } 
+    }
     strcpy(dev, ifr.ifr_name);
-    
+
     /* set nonblocking */
     if(-1==(flags=fcntl(fd,F_GETFL,0))){
         flags = 0;
@@ -321,8 +315,8 @@ failed:
  * @brief Open pcap live for sniffing
  *
  * @param   dev char pointer to the device
- * @return  pointer to a pcap_t struct
- *          NULL : ERROR
+ * @retval  pointer to a pcap_t struct
+ * @retval  NULL : ERROR
  */
 pcap_t*  raw_open(char *dev)
 {
@@ -330,7 +324,7 @@ pcap_t*  raw_open(char *dev)
     char    errbuf[PCAP_ERRBUF_SIZE];
 
     pcap_handle = pcap_open_live(dev,ETHER_MAX_LEN,1,1,errbuf);
-   
+
    if(pcap_handle == NULL)
    {
     fprintf(stderr, "Could not open device \"%s\": %s\n", dev, errbuf);
@@ -352,8 +346,8 @@ pcap_t*  raw_open(char *dev)
  *
  * @param   dev pcap_t pointer to the pcap device
  * @param   mac unsigned char pointer to the mac
- * @return  int 0 : OK
- *          int <0 : ERROR
+ * @retval  int 0 : OK
+ * @retval  int <0 : ERROR
  */
 int set_mac_filter(pcap_t* dev,unsigned char *mac)
 {
@@ -378,8 +372,8 @@ int set_mac_filter(pcap_t* dev,unsigned char *mac)
  *
  * @param   dev char pointer to the device
  * @param   buffer unsigned char pointer to the buffer
- * @return  int 0 : OK
- *          int <0 : ERROR
+ * @retval  int 0 : OK
+ * @retval  int <0 : ERROR
  */
 int get_mac(char *dev, unsigned char *buffer)
 {
@@ -409,8 +403,8 @@ int get_mac(char *dev, unsigned char *buffer)
  *
  * @param   dev char pointer to the device
  * @param   buffer unsigned char pointer to the buffer
- * @return  int 0 : OK
- *          int <0 : ERROR
+ * @retval  int 0 : OK
+ * @retval  int <0 : ERROR
  */
 int set_mac(char *dev, unsigned char *buffer)
 {
@@ -432,7 +426,7 @@ int set_mac(char *dev, unsigned char *buffer)
         perror("ioctl SIOCGIFFLAGS");
         close(sd);
         return -1;
-    }        
+    }
     /* save flags */
     flags = ifr.ifr_flags;
     /*set interface down*/
@@ -441,7 +435,7 @@ int set_mac(char *dev, unsigned char *buffer)
         perror("ioctl SIOCSIFFLAGS");
         close(sd);
         return -1;
-    }            
+    }
 
     /* set the mac addres */
     addr = (struct sockaddr*)&ifr.ifr_hwaddr;
@@ -459,8 +453,8 @@ int set_mac(char *dev, unsigned char *buffer)
         close(sd);
         return -1;
     }
-    close(sd);           
-    return 0; 
+    close(sd);
+    return 0;
 }
 
 /**
@@ -468,8 +462,8 @@ int set_mac(char *dev, unsigned char *buffer)
  * @brief Device flags for redundancy network cards
  *
  * @param   dev char pointer to the device
- * @return  int 0 : OK
- *          int <0: ERROR
+ * @retval  int 0 : OK
+ * @retval  int <0: ERROR
  */
 int set_flags_red(char *dev)
 {
@@ -497,21 +491,18 @@ int set_flags_red(char *dev)
         perror("ioctl SIOCSIFMTU");
         close(sd);
         return -1;
-    }       
-    close(sd);              
-    return 0; 
+    }
+    close(sd);
+    return 0;
 }
 
-/*********************************************************************/
-/*** set_flags_prp(char *dev)   -   device flags for virtual prp   ***/
-/*********************************************************************/
 /**
  * @fn int set_flags_prp(char *dev)
  * @brief Device flags for the virtual PRP interface
  *
  * @param   dev char pointer to the device
- * @return  int 0 : OK
- *          int <0: ERROR
+ * @retval  int 0 : OK
+ * @retval  int <0: ERROR
  */
 int set_flags_prp(char *dev)
 {
@@ -541,8 +532,8 @@ int set_flags_prp(char *dev)
         close(sd);
         return -1;
     }
-    close(sd);    
-    return 0; 
+    close(sd);
+    return 0;
 }
 
 /**
@@ -571,9 +562,9 @@ int main(int argc, char* argv[])
     net_itf_debug_level = PRP_DEBUG_LEVEL;
     prp_debug_level = PRP_DEBUG_LEVEL;
     #ifdef PRP_DISCARD_DEBUG_LEVEL
-    discard_debug_level = PRP_DISCARD_DEBUG_LEVEL;
+        discard_debug_level = PRP_DISCARD_DEBUG_LEVEL;
     #else
-    discard_debug_level = PRP_DEBUG_LEVEL;
+        discard_debug_level = PRP_DEBUG_LEVEL;
     #endif
 #endif
 
@@ -613,15 +604,15 @@ int main(int argc, char* argv[])
     merge_layer_info.adapter_active_A_ = FALSE;
     merge_layer_info.adapter_active_B_ = FALSE;
     PRP_T_set_merge_layer_info(&merge_layer_info);
-    
+
     /* open tap device */
     strcpy(devname,"prp1");
     if((tap = tap_open(devname)) > 0){
         fprintf(stderr,"tap open %s: done\n",devname);
     }else {
         fprintf(stderr,"tap open %s: failed\n",devname);
-        return -1;        
-    }        
+        return -1;
+    }
 
     /* copy mac address from port a to prp1 */
     if(get_mac(port_a_name,addr_A) >= 0){
@@ -645,7 +636,7 @@ int main(int argc, char* argv[])
     } else {
         fprintf(stderr,"set mac address of %s: failed\n",port_a_name);
         return -1;
-    }   
+    }
 
     if(set_mac(port_b_name,new_lamo) >= 0){
         fprintf(stderr,"set mac address of %s: done\n",port_b_name);
@@ -678,7 +669,7 @@ int main(int argc, char* argv[])
     } else {
         fprintf(stderr,"set flags of %s: failed\n",devname);
         return -1;
-    }       
+    }
 
     /* open port a */
     if((port_a = raw_open(port_a_name)) != NULL){
@@ -734,7 +725,7 @@ int main(int argc, char* argv[])
         port_a_fd = pcap_fileno(port_a);
         port_b_fd = pcap_fileno(port_b);
         unsigned char args;
-        
+
         FD_ZERO(&descriptors);
         FD_SET(tap,&descriptors);
         FD_SET(port_a_fd,&descriptors);
@@ -782,7 +773,6 @@ int main(int argc, char* argv[])
                 args = PRP_ID_LAN_B;
                 pcap_dispatch(port_b, 1, (void *) PcapReceive_callback, &args);
             }
-            
         }
     }
 

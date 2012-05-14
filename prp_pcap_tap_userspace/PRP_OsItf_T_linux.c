@@ -1,16 +1,16 @@
 /********************************************************************
-*  
+*
 *  Copyright (c) 2008, Institute of Embedded Systems at 
 *                      Zurich University of Applied Sciences 
 *                      (http://ines.zhaw.ch)
-*  
+*
 *  All rights reserved.
-* 
-* 
+*
+*
 *  Redistribution and use in source and binary forms, with or  
 *  without modification, are permitted provided that the 
 *  following conditions are met:
-*  
+*
 *  - Redistributions of source code must retain the above copyright 
 *    notice, this list of conditions and the following disclaimer. 
 *
@@ -38,7 +38,7 @@
 *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
 *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 *  POSSIBILITY OF SUCH DAMAGE.
-*  
+*
 *********************************************************************/
 
 /********************************************************************
@@ -50,12 +50,12 @@
 *  |_____|_| |_|______|_____/   8401 Winterthur, Switzerland        *
 *                                                                   *
 *********************************************************************
-* 
+*
 *  Project     : Parallel Redundancy Protocol
-* 
+*
 *  Version     : 1.0
 *  Author      : Sven Meier/Patrick Staehlin
-* 
+*
 *********************************************************************
 *  Change History
 *
@@ -85,8 +85,8 @@
  * @fn uinteger64 prp_time(void)
  * @brief Get the system time in nano seconds
  *
- * @return  uinteger64 >0 : OK
- *          uinteger64 <0 : ERROR
+ * @retval  uinteger64 >0 : OK
+ * @retval  uinteger64 <0 : ERROR
  */
 uinteger64 prp_time(void)
 {
@@ -105,7 +105,7 @@ uinteger64 prp_time(void)
  * @brief Converts a long from host to network order
  *
  * @param   host uinteger32 host byte order
- * @return  uinteger32 network byte order
+ * @retval  uinteger32 network byte order
  */
 uinteger32 prp_htonl(uinteger32 host)
 {
@@ -117,7 +117,7 @@ uinteger32 prp_htonl(uinteger32 host)
  * @brief Converts a short from host to network order
  *
  * @param   host uinteger16 host byte order
- * @return  uinteger16 network byte order
+ * @retval  uinteger16 network byte order
  */
 uinteger16 prp_htons(uinteger16 host)
 {
@@ -129,7 +129,7 @@ uinteger16 prp_htons(uinteger16 host)
  * @brief Converts a long from network to host order
  *
  * @param   net network byte order
- * @return  uinteger32 host byte order
+ * @retval  uinteger32 host byte order
  */
 uinteger32 prp_ntohl(uinteger32 net)
 {
@@ -141,7 +141,7 @@ uinteger32 prp_ntohl(uinteger32 net)
  * @brief Converts a short from network to host order
  *
  * @param   net network byte order
- * @return  uinteger16 host byte order
+ * @retval  uinteger16 host byte order
  */
 uinteger16 prp_ntohs(uinteger16 net)
 {
@@ -153,8 +153,8 @@ uinteger16 prp_ntohs(uinteger16 net)
  * @brief Prints to the output of the Kernel
  *
  * @param   format const char pointer to the string
- * @return  integer32 >=0 : OK (nr of bytes written)
- *          integer32 <0 : ERROR (code)
+ * @retval  integer32 >=0 : OK (nr of bytes written)
+ * @retval  integer32 <0 : ERROR (code)
  */
 int prp_printf(const char *format, ...)
 {
@@ -172,8 +172,8 @@ int prp_printf(const char *format, ...)
  * @brief Allocates memory and returns a pointer to the memory region
  *
  * @param   size uinteger32 size of memory to allocate
- * @return  void ptr !NULL : OK (pointer to the memory)
-            void ptr NULL : ERROR
+ * @retval  void ptr !NULL : OK (pointer to the memory)
+ * @retval  void ptr NULL : ERROR
  */
 void* prp_malloc(uinteger32 size)
 {
@@ -211,9 +211,9 @@ void prp_memcpy(void *dest_ptr, const void *src_ptr, uinteger32 size)
  * @param   left_ptr left void pointer
  * @param   right_ptr right void pointer
  * @param   size uinteger32 number of bytes to copy
- * @return  integer32 >0 bigger
- *          integer32 =0 equal
- *          integer32 <0 less
+ * @retval  integer32 >0 bigger
+ * @retval  integer32 =0 equal
+ * @retval  integer32 <0 less
  */
 integer32 prp_memcmp( const void *left_ptr, const void *right_ptr, uinteger32 size)
 {
@@ -274,9 +274,8 @@ void destroy_lock(void* lock)
  * @brief Blocks on the semaphore if in use
  *
  * @param   lock void pointer to the semaphore
- * @return  integer32 >=0 : OK (nr of bytes written)
- *          integer32 <0 : ERROR (code)
- * 
+ * @retval  integer32 >=0 : OK (nr of bytes written)
+ * @retval  integer32 <0 : ERROR (code)
  */
 void lock_down(void* lock)
 {
@@ -291,8 +290,8 @@ void lock_down(void* lock)
  * @brief Unlocks the semaphore
  *
  * @param   lock void pointer to the semaphore
- * @return  integer32 >=0 : OK (nr of bytes written)
- *          integer32 <0 : ERROR (code)
+ * @retval  integer32 >=0 : OK (nr of bytes written)
+ * @retval  integer32 <0 : ERROR (code)
  */
 void lock_up(void* lock)
 {

@@ -1,16 +1,16 @@
 /********************************************************************
-*  
+*
 *  Copyright (c) 2007, Institute of Embedded Systems at 
 *                      Zurich University of Applied Sciences 
 *                      (http://ines.zhaw.ch)
-*  
+*
 *  All rights reserved.
-* 
-* 
+*
+*
 *  Redistribution and use in source and binary forms, with or  
 *  without modification, are permitted provided that the 
 *  following conditions are met:
-*  
+*
 *  - Redistributions of source code must retain the above copyright 
 *    notice, this list of conditions and the following disclaimer. 
 *
@@ -38,7 +38,7 @@
 *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
 *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 *  POSSIBILITY OF SUCH DAMAGE.
-*  
+*
 *********************************************************************/
 
 
@@ -51,12 +51,12 @@
 *  |_____|_| |_|______|_____/   8401 Winterthur, Switzerland        *
 *                                                                   *
 *********************************************************************
-* 
+*
 *  Project     : Parallel Redundancy Protocol
-* 
+*
 *  Version     : 1.0
 *  Author      : Sven Meier
-* 
+*
 *********************************************************************
 *  Change History
 *
@@ -84,7 +84,6 @@
 /**
  * @fn void PRP_Frames_T_print(PRP_Frames_T* const me, octet* data, uinteger32* length, uinteger32 level)
  * @brief Print the PRP_Frames status information
- *
  * @param   me PRP_Frames_T this pointer
  * @param   data octet pointer to the beginning of the frame (dest mac)
  * @param   length uinteger32 pointer to the length in bytes of the frame
@@ -124,13 +123,12 @@ void PRP_Frames_T_print(PRP_Frames_T* const me, octet* data, uinteger32* length,
 /**
  * @fn integer32 PRP_Frames_T_replace_src_mac(PRP_Frames_T* const me, octet* data, uinteger32* length, octet* mac)
  * @brief Replaces the source mac address in the frame with the mac passed as argument.
- *
  * @param   me PRP_Frames_T this pointer
  * @param   data octet pointer to the beginning of the frame (dest mac)
  * @param   length uinteger32 pointer to the length in bytes of the frame
  * @param   mac octet pointer to the mac
- * @return  integer32 0 : OK
- *          integer32 <0 : ERROR (code)
+ * @retval  0 integer32 OK
+ * @retval  <0 integer32 ERROR (code)
  */
 integer32 PRP_Frames_T_replace_src_mac(PRP_Frames_T* const me, octet* data, uinteger32* length, octet* mac)
 {
@@ -154,13 +152,12 @@ integer32 PRP_Frames_T_replace_src_mac(PRP_Frames_T* const me, octet* data, uint
 /**
  * @fn integer32 PRP_Frames_T_replace_dest_mac(PRP_Frames_T* const me, octet* data, uinteger32* length, octet* mac)
  * @brief Replaces the destination mac address in the frame with the mac passed as argument.
- *
  * @param   me PRP_Frames_T this pointer
  * @param   data octet pointer to the beginning of the frame (dest mac)
  * @param   length uinteger32 pointer to the length in bytes of the frame
  * @param   mac octet pointer to the mac
- * @return  integer32 0 : OK
- *          integer32 <0 : ERROR (code)
+ * @retval  0 integer32 OK
+ * @retval  <0 integer32 ERROR (code)
  */
 integer32 PRP_Frames_T_replace_dest_mac(PRP_Frames_T* const me, octet* data, uinteger32* length, octet* mac)
 {
@@ -184,14 +181,13 @@ integer32 PRP_Frames_T_replace_dest_mac(PRP_Frames_T* const me, octet* data, uin
 /**
  * @fn integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32* length, octet lan_id)
  * @brief Actual processing of a received frame
- *
  * @param   me PRP_Frames_T this pointer
  * @param   data octet pointer to the beginning of the frame (dest mac)
  * @param   length uinteger32 pointer to the length in bytes of the frame
  * @param   lan_id octet on which LAN it was received
- * @return  integer32 1 : DROP
- *          integer32 0 : KEEP
- *          integer32 <0 : ERROR (code)
+ * @retval  1 integer32 DROP
+ * @retval  0 integer32 KEEP
+ * @retval  <0 integer32 ERROR (code)
  */
 integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32* length, octet lan_id)
 {
@@ -245,34 +241,6 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
     {
         return(PRP_DROP);
     }
-
-//     if(me->frame_analyser_->environment_->environment_configuration_.bridging_ == TRUE) /* if in bridging mode */
-//     {
-//         if(lan_id == PRP_ID_LAN_A)
-//         {
-//             me->frame_analyser_->environment_->environment_configuration_.cnt_total_received_A_++;
-//             if(me->frame_analyser_->environment_->bridging_.state_A_ == PRP_RAPID_SPANNING_TREE_ALTERNATE) /* decide whether to keep frame or not */
-//             {
-//                 return(PRP_DROP); /* should be only BPDUs */
-//             }
-//             else
-//             {
-//                 return(PRP_KEEP);
-//             }
-//         }
-//         else
-//         {
-//             me->frame_analyser_->environment_->environment_configuration_.cnt_total_received_B_++;
-//             if(me->frame_analyser_->environment_->bridging_.state_B_ == PRP_RAPID_SPANNING_TREE_ALTERNATE)
-//             {
-//                 return(PRP_DROP);
-//             }
-//             else
-//             {
-//                 return(PRP_KEEP);
-//             }
-//         }
-//     }
 
     trailer = PRP_Trailer_T_get_trailer(&(me->trailer_rx_), data, length);
     if(trailer != NULL_PTR) /* lan id out of the trailer */
@@ -399,14 +367,12 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
 /**
  * @fn integer32 PRP_Frames_T_normal_tx(PRP_Frames_T* const me, octet* data, uinteger32* length, octet lan_id)
  * @brief Actual processing of a transmitting frame.
- *
- * @param   
- * @return  me PRP_Frames_T this pointer
+ * @retval  me PRP_Frames_T this pointer
  * @param   data octet pointer to the beginning of the frame (dest mac)
  * @param   length uinteger32 pointer to the length in bytes of the frame
  * @param   lan_id octet on which LAN it was received
- * @return  integer32 0 : OK
- *          integer32 <0 : ERROR (code)
+ * @retval  0 integer32 OK
+ * @retval  <0 integer32 ERROR (code)
  */
 integer32 PRP_Frames_T_normal_tx(PRP_Frames_T* const me, octet* data, uinteger32* length, octet lan_id)
 {
@@ -435,33 +401,6 @@ integer32 PRP_Frames_T_normal_tx(PRP_Frames_T* const me, octet* data, uinteger32
         dest_mac[i] = data[i];
         /* src_mac[i] = data[(6 + i)]; */
     }
-
-//     if(me->frame_analyser_->environment_->environment_configuration_.bridging_ == TRUE) /* if in bridging mode */
-//     {
-//         if((me->frame_analyser_->environment_->bridging_.state_A_ != PRP_RAPID_SPANNING_TREE_ALTERNATE) && ((lan_id == PRP_ID_LAN_A) || (lan_id == 0x00))) /* check if this frame should be sent over LAN A */
-//         {
-//             if(me->frame_analyser_->environment_->environment_configuration_.adapter_active_A_ == FALSE)
-//             {
-//                 return(0);
-//             }
-//             PRP_NetItf_T_transmit(data, length, PRP_ID_LAN_A);
-//             me->frame_analyser_->environment_->environment_configuration_.cnt_total_sent_A_++;
-//         }
-// 
-//         if((me->frame_analyser_->environment_->bridging_.state_B_ != PRP_RAPID_SPANNING_TREE_ALTERNATE) && ((lan_id == PRP_ID_LAN_B) || (lan_id == 0x00))) /* check if this frame should be sent over LAN B */
-//         {
-//             if(me->frame_analyser_->environment_->environment_configuration_.adapter_active_B_ == FALSE)
-//             {
-//                 return(0);
-//             }
-// 
-//             PRP_NetItf_T_transmit(data, length, PRP_ID_LAN_B);
-//             me->frame_analyser_->environment_->environment_configuration_.cnt_total_sent_B_++;
-//         }
-// 
-//         return(0);
-//     }
-
 
     /* get node table entry with this dest mac */
     node = PRP_NodeTable_T_get_node(&(me->frame_analyser_->environment_->node_table_), dest_mac);
@@ -582,7 +521,6 @@ integer32 PRP_Frames_T_normal_tx(PRP_Frames_T* const me, octet* data, uinteger32
 /**
  * @fn void PRP_Frames_T_init(PRP_Frames_T* const me, PRP_FrameAnalyser_T* const frame_analyser)
  * @brief Initialize the PRP_Frames interface
- *
  * @param   me PRP_Frames_T this pointer
  * @param   frame_analyser PRP_FrameAnalyser_T pointer to the frame analyser interface
  */
@@ -608,7 +546,6 @@ void PRP_Frames_T_init(PRP_Frames_T* const me, PRP_FrameAnalyser_T* const frame_
 /**
  * @fn void PRP_Frames_T_cleanup(PRP_Frames_T* const me)
  * @brief Clean up the PRP_frames interface
- *
  * @param   me PRP_Frames_T this pointer
  */
 void PRP_Frames_T_cleanup(PRP_Frames_T* const me)

@@ -1,16 +1,16 @@
 /********************************************************************
-*  
+*
 *  Copyright (c) 2007, Institute of Embedded Systems at 
 *                      Zurich University of Applied Sciences 
 *                      (http://ines.zhaw.ch)
-*  
+*
 *  All rights reserved.
-* 
-* 
+*
+*
 *  Redistribution and use in source and binary forms, with or  
 *  without modification, are permitted provided that the 
 *  following conditions are met:
-*  
+*
 *  - Redistributions of source code must retain the above copyright 
 *    notice, this list of conditions and the following disclaimer. 
 *
@@ -38,7 +38,7 @@
 *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
 *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 *  POSSIBILITY OF SUCH DAMAGE.
-*  
+*
 *********************************************************************/
 
 
@@ -51,9 +51,9 @@
 *  |_____|_| |_|______|_____/   8401 Winterthur, Switzerland        *
 *                                                                   *
 *********************************************************************
-* 
+*
 *  Project     : Parallel Redundancy Protocol
-* 
+*
 *  Version     : 1.0
 *  Author      : Sven Meier
 * 
@@ -74,7 +74,6 @@
 #include "PRP_Environment_T.h"
 #include "PRP_Node_T.h"
 #include "PRP_Lock_T.h"
-#include "PRP_Bridging_T.h"
 
 /* All API functions are using this lock to have atomic access */
 static PRP_Environment_T environment_;
@@ -89,13 +88,12 @@ static boolean initialized_ = FALSE;
 /**
  * @fn integer32 PRP_T_receive(octet* data, uinteger32* length, octet lan_id)
  * @brief Receive function for all incoming frames of the PRP network adapters
- *
  * @param   data octet pointer to the beginning of the frame (dest mac)
  * @param   length uinteger32 length in bytes of the frame
  * @param   lan_id octet on which LAN it was received
- * @return  integer32 1: DROP
- *          integer32 0: KEEP
- *          integer32 <0: ERROR (code)
+ * @retval  1 integer32 DROP
+ * @retval  0 integer32 KEEP
+ * @retval  <0 integer32 ERROR (code)
  */
 integer32 PRP_T_receive(octet* data, uinteger32* length, octet lan_id)
 {
@@ -120,11 +118,10 @@ integer32 PRP_T_receive(octet* data, uinteger32* length, octet lan_id)
 /**
  * @fn integer32 PRP_T_transmit(octet* data, uinteger32* length)
  * @brief Transmit function for all frames of the PRP network adapters
- *
  * @param   data octet pointer to the beginning of the frame (dest mac)
  * @param   length uinteger32 length in bytes of the frame
- * @return  integer32 0 : OK
- *          integer32 <0 : ERROR (code)
+ * @retval  0 integer32 OK
+ * @retval  <0 integer32 ERROR (code)
  */
 integer32 PRP_T_transmit(octet* data, uinteger32* length)
 {
@@ -152,8 +149,6 @@ integer32 PRP_T_transmit(octet* data, uinteger32* length)
  */
 void PRP_T_timer(void)
 {
-    //PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-
     if(initialized_ != TRUE)
     {
     return;
@@ -164,7 +159,6 @@ void PRP_T_timer(void)
     PRP_Environment_T_process_timer(&environment_);
 
     PRP_Lock_T_up(&lock_);
-
 }
 
 /**
@@ -181,11 +175,6 @@ void PRP_T_link_down_A(void)
     }
 
     PRP_Lock_T_down(&lock_); /* API calls are mutex */
-
-//     if(environment_.environment_configuration_.bridging_ == TRUE)
-//     {
-//         PRP_Bridging_T_statemachine(&(environment_.bridging_), PRP_RAPID_SPANNING_TREE_LINK_DOWN, NULL_PTR, PRP_ID_LAN_A);
-//     }
 
     PRP_Lock_T_up(&lock_);
 }
@@ -205,22 +194,15 @@ void PRP_T_link_down_B(void)
 
     PRP_Lock_T_down(&lock_); /* API calls are mutex */
 
-//     if(environment_.environment_configuration_.bridging_ == TRUE)
-//     {
-//         PRP_Bridging_T_statemachine(&(environment_.bridging_), PRP_RAPID_SPANNING_TREE_LINK_DOWN, NULL_PTR, PRP_ID_LAN_B);
-//     }
-
     PRP_Lock_T_up(&lock_);
 }
 
 /**
  * @fn integer32 PRP_T_get_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
  * @brief Copies the Merge Layer information to the object passed as argument.
- *
- * @param   merge_layer PRP_MergeLayerInfo_T pointer to a Merge Layer Info
- *          object where the info shall be copied to
- * @return  integer32 0 : OK
- *          integer32 <0 : ERROR (code)
+ * @param   merge_layer PRP_MergeLayerInfo_T pointer to a Merge Layer Info object where the info shall be copied to
+ * @retval  0 integer32 OK
+ * @retval  <0 integer32 ERROR (code)
  */
 integer32 PRP_T_get_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
 {
@@ -247,7 +229,6 @@ integer32 PRP_T_get_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
     merge_layer->adapter_active_B_ = environment_.environment_configuration_.adapter_active_B_;
     merge_layer->duplicate_discard_ = environment_.environment_configuration_.duplicate_discard_;
     merge_layer->transparent_reception_ = environment_.environment_configuration_.transparent_reception_;
-//     merge_layer->bridging_ = environment_.environment_configuration_.bridging_;
     merge_layer->clear_node_table_ = FALSE; /* write only */
     merge_layer->node_table_empty_ = environment_.node_table_.node_table_empty_;
     prp_memcpy(merge_layer->supervision_address_, environment_.supervision_.supervision_address_, PRP_ETH_ADDR_LENGTH);
@@ -268,11 +249,9 @@ integer32 PRP_T_get_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
 /**
  * @fn integer32 PRP_T_set_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
  * @brief Sets the Merge Layer info parameters to the values passed as argument.
- *
- * @param   merge_layer PRP_MergeLayerInfo_T pointer to a Merge Layer Info
- *          object where the info shall be copied from
- * @return  integer32 0 : OK
- *          integer32 <0 : ERROR (code)
+ * @param   merge_layer PRP_MergeLayerInfo_T pointer to a Merge Layer Info object where the info shall be copied from
+ * @retval  0 integer32 OK
+ * @retval  <0 integer32 ERROR (code)
  */
 integer32 PRP_T_set_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
 {
@@ -370,21 +349,6 @@ integer32 PRP_T_set_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
         return(-PRP_ERROR_WRONG_VAL);
     }
 
-    if((merge_layer->bridging_ == TRUE) || (merge_layer->bridging_ == FALSE))
-    {
-        if((merge_layer->bridging_ == TRUE) && (environment_.environment_configuration_.bridging_ == FALSE))
-        {
-            PRP_NodeTable_T_cleanup(&(environment_.node_table_));
-        }
-        environment_.environment_configuration_.bridging_ = merge_layer->bridging_;
-    }
-    else
-    {
-        PRP_Lock_T_up(&lock_);
-        return(-PRP_ERROR_WRONG_VAL);
-    }
-
-
     /* environment_.node_table_.node_table_empty_ = merge_layer->node_table_empty_; read only */
     if(0 !=	prp_memcmp(environment_.supervision_.supervision_address_, merge_layer->supervision_address_, PRP_ETH_ADDR_LENGTH))
     {
@@ -410,12 +374,6 @@ integer32 PRP_T_set_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
     environment_.supervision_.node_forget_time_ = merge_layer->node_forget_time_;
     environment_.supervision_.link_time_out_ = merge_layer->link_time_out_;
 
-    /* environment_.environment_configuration_.cnt_total_sent_A_ = merge_layer->cnt_total_sent_A_; read only */
-    /* environment_.environment_configuration_.cnt_total_sent_B_ = merge_layer->cnt_total_sent_B_; read only */
-    /* environment_.environment_configuration_.cnt_total_errors_A_ = merge_layer->cnt_total_errors_A_; read only */
-    /* environment_.environment_configuration_.cnt_total_errors_B_ = merge_layer->cnt_total_errors_B_; read only */
-    /* environment_.node_table_.cnt_nodes_ = merge_layer->cnt_nodes_; read only */
-
     PRP_Lock_T_up(&lock_);
 
     return(0);
@@ -424,11 +382,10 @@ integer32 PRP_T_set_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
 /**
  * @fn integer32 PRP_T_get_node_table_entry(PRP_NodeTableEntry_T* node_table_entry)
  * @brief Copies the node info into to the structure passed as argument
- *
  * @param   node_table_entry PRP_NodeTableEntry_T pointer to a Node Table Entry
  *          Info object where the info shall be copied to.
- * @return  integer32 0 : OK
- *          integer32 <0 : ERROR (code)
+ * @retval  0 integer32 OK
+ * @retval  <0 integer32 ERROR (code)
  */
 integer32 PRP_T_get_node_table_entry(PRP_NodeTableEntry_T* node_table_entry)
 {
@@ -474,15 +431,14 @@ integer32 PRP_T_get_node_table_entry(PRP_NodeTableEntry_T* node_table_entry)
 /**
  * @fn integer32 PRP_T_go_to_first_node_table_entry(void)
  * @brief Goes to the first node in the node table
- *
- * @return  integer32 0 : OK
- *          integer32 1 : PRP_NODETABLE_END
- *          integer32 <0 : ERROR (code)
+ * @retval  0 integer32 OK
+ * @retval  1 integer32 PRP_NODETABLE_END
+ * @retval  <0 integer32 ERROR (code)
  *
  * This function has to be called before go_to_next_node_table_entry
  */
 integer32 PRP_T_go_to_first_node_table_entry(void)
-{         
+{
     PRP_Node_T* temp_node;
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
@@ -509,18 +465,17 @@ integer32 PRP_T_go_to_first_node_table_entry(void)
 
     PRP_Lock_T_up(&lock_);
     return(0);
-}         
+}
 
 /**
  * @fn integer32 PRP_T_go_to_next_node_table_entry(void)
  * @brief Goes to the next node in the node table.
- *
- * @return  integer32 0 : OK
- *          integer32 1 : PRP_NODETABLE_END
- *          integer32 <0 : ERROR (code)
+ * @retval  0 integer32 OK
+ * @retval  1 integer32 PRP_NODETABLE_END
+ * @retval  <0 integer32 ERROR (code)
  */
 integer32 PRP_T_go_to_next_node_table_entry(void)
-{    
+{
     PRP_Node_T* temp_node;
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
@@ -547,18 +502,17 @@ integer32 PRP_T_go_to_next_node_table_entry(void)
 
     PRP_Lock_T_up(&lock_);
     return(0);
-}         
+}
 
 /**
  * @fn void PRP_T_delete_node_table_entry(PRP_Node_T* node)
  * @brief Deletes the node passed as argument
- *
  * @param   node PRP_Node_T Pointer to a node structure
- * @return  integer32 0 : OK
- *          integer32 <0 : ERROR (code)
+ * @retval  0 integer32 OK
+ * @retval  <0 integer32 ERROR (code)
  */
 void PRP_T_delete_node_table_entry(PRP_Node_T* node)
-{         
+{
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
     if(initialized_ != TRUE)

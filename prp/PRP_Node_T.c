@@ -1,16 +1,16 @@
 /********************************************************************
-*  
+*
 *  Copyright (c) 2007, Institute of Embedded Systems at 
 *                      Zurich University of Applied Sciences 
 *                      (http://ines.zhaw.ch)
-*  
+*
 *  All rights reserved.
-* 
-* 
+*
+*
 *  Redistribution and use in source and binary forms, with or  
 *  without modification, are permitted provided that the 
 *  following conditions are met:
-*  
+*
 *  - Redistributions of source code must retain the above copyright 
 *    notice, this list of conditions and the following disclaimer. 
 *
@@ -38,7 +38,7 @@
 *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
 *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 *  POSSIBILITY OF SUCH DAMAGE.
-*  
+*
 *********************************************************************/
 
 
@@ -51,12 +51,12 @@
 *  |_____|_| |_|______|_____/   8401 Winterthur, Switzerland        *
 *                                                                   *
 *********************************************************************
-* 
+*
 *  Project     : Parallel Redundancy Protocol
-* 
+*
 *  Version     : 1.0
 *  Author      : Sven Meier
-* 
+*
 *********************************************************************
 *  Change History
 *
@@ -73,7 +73,6 @@
 /**
  * @fn void PRP_Node_T_print(PRP_Node_T* const me, uinteger32 level)
  * @brief Print the PRP_Node status information
- *
  * @param   me PRP_Node_T this pointer
  * @param   level importance
  */
@@ -130,7 +129,6 @@ void PRP_Node_T_print(PRP_Node_T* const me, uinteger32 level)
 /**
  * @fn void PRP_Node_T_init(PRP_Node_T* const me)
  * @brief Initialize the PRP_Node interface
- *
  * @param   me PRP_Node_T this pointer
  */
 void PRP_Node_T_init(PRP_Node_T* const me)
@@ -172,7 +170,6 @@ void PRP_Node_T_init(PRP_Node_T* const me)
 /**
  * @fn void PRP_Node_T_cleanup(PRP_Node_T* const me)
  * @brief Clean up the PRP_Node interface
- *
  * @param   me PRP_Node_T this pointer
  */
 void PRP_Node_T_cleanup(PRP_Node_T* const me)
@@ -214,9 +211,8 @@ void PRP_Node_T_cleanup(PRP_Node_T* const me)
 /**
  * @fn PRP_Node_T* PRP_Node_T_create(void)
  * @brief Create a new PRP node
- *
- * @return  PRP_Node_T !NULL : OK
- *          PRP_Node_T NULL : ERROR (code)
+ * @retval  node !NULL : OK
+ * @retval  NULL_PTR ERROR (code)
  */
 PRP_Node_T* PRP_Node_T_create(void)
 {
@@ -234,11 +230,9 @@ PRP_Node_T* PRP_Node_T_create(void)
     return(node);
 }
 
-
 /**
  * @fn void PRP_Node_T_destroy(PRP_Node_T* const me)
  * @brief Remove a PRP node
- *
  * @param   me PRP_Node_T this pointer
  */
 void PRP_Node_T_destroy(PRP_Node_T* const me)

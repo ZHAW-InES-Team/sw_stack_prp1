@@ -1,16 +1,16 @@
 /********************************************************************
-*  
+*
 *  Copyright (c) 2007, Institute of Embedded Systems at 
 *                      Zurich University of Applied Sciences 
 *                      (http://ines.zhaw.ch)
-*  
+*
 *  All rights reserved.
-* 
-* 
+*
+*
 *  Redistribution and use in source and binary forms, with or  
 *  without modification, are permitted provided that the 
 *  following conditions are met:
-*  
+*
 *  - Redistributions of source code must retain the above copyright 
 *    notice, this list of conditions and the following disclaimer. 
 *
@@ -38,7 +38,7 @@
 *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
 *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 *  POSSIBILITY OF SUCH DAMAGE.
-*  
+*
 *********************************************************************/
 
 
@@ -51,12 +51,12 @@
 *  |_____|_| |_|______|_____/   8401 Winterthur, Switzerland        *
 *                                                                   *
 *********************************************************************
-* 
+*
 *  Project     : Parallel Redundancy Protocol
-* 
+*
 *  Version     : 1.0
 *  Author      : Sven Meier
-* 
+*
 *********************************************************************
 *  Change History
 *
@@ -65,19 +65,18 @@
 *  17.12.07 | mesv     | file created
 *********************************************************************/
 
-#ifndef PRP_Environment_T_H 
-#define PRP_Environment_T_H 
+#ifndef PRP_Environment_T_H
+#define PRP_Environment_T_H
 
 #include "PRP_Package_T.h"
 #include "PRP_Timer_T.h"
 #include "PRP_EnvironmentConfiguration_T.h"
 #include "PRP_NodeTable_T.h"
 #include "PRP_Supervision_T.h"
-// #include "PRP_Bridging_T.h"
 #include "PRP_DiscardAlgorithm_PRP1_T.h"
 #include "PRP_FrameAnalyser_T.h"
 
-struct PRP_Environment_T 
+struct PRP_Environment_T
 {
     /* Instance to check of the link, for bridging */
     PRP_Timer_T bridging_timer_;
@@ -91,8 +90,6 @@ struct PRP_Environment_T
     PRP_EnvironmentConfiguration_T environment_configuration_;
     /* Instance of the supervision part of the protocol engine */
     PRP_Supervision_T supervision_;
-//     /* Instance of the bridging part of the protocol engine */
-//     PRP_Bridging_T bridging_;
     /* Instance of the node table */
     PRP_NodeTable_T node_table_;
     /* Instance of the discard algorithm part of the protocol engine */
@@ -108,5 +105,5 @@ integer32 PRP_Environment_T_process_tx(PRP_Environment_T* const me, octet* data,
 void PRP_Environment_T_init(PRP_Environment_T* const me);
 void PRP_Environment_T_cleanup(PRP_Environment_T* const me);
 
-#endif  
+#endif /* PRP_Environment_T_H */
 

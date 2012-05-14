@@ -1,16 +1,16 @@
 /********************************************************************
-*  
+*
 *  Copyright (c) 2007, Institute of Embedded Systems at 
 *                      Zurich University of Applied Sciences 
 *                      (http://ines.zhaw.ch)
-*  
+*
 *  All rights reserved.
-* 
-* 
+*
+*
 *  Redistribution and use in source and binary forms, with or  
 *  without modification, are permitted provided that the 
 *  following conditions are met:
-*  
+*
 *  - Redistributions of source code must retain the above copyright 
 *    notice, this list of conditions and the following disclaimer. 
 *
@@ -38,7 +38,7 @@
 *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
 *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 *  POSSIBILITY OF SUCH DAMAGE.
-*  
+*
 *********************************************************************/
 
 
@@ -51,12 +51,12 @@
 *  |_____|_| |_|______|_____/   8401 Winterthur, Switzerland        *
 *                                                                   *
 *********************************************************************
-* 
+*
 *  Project     : Parallel Redundancy Protocol
-* 
+*
 *  Version     : 1.0
 *  Author      : Sven Meier
-* 
+*
 *********************************************************************
 *  Change History
 *
@@ -75,13 +75,12 @@
 /**
  * @fn void PRP_Trailer_T_add_trailer(PRP_Trailer_T* const me, octet* data, uinteger32* length, PRP_RedundancyControlTrailer_T* trailer) 
  * @brief Adds a Trailer to the frame
- *
  * @param   me PRP_Trailer_T this pointer
  * @param   data octet pointer to the beginning of the frame (dest mac)
  * @param   length uinteger32 pointer to the length in bytes of the frame
  * @param   trailer PRP_RedundancyControlTrailer_T pointer to the trailer
- * @return  PRP_RedundancyControlTrailer_T !NULL : OK
- *          PRP_RedundancyControlTrailer_T NULL : ERROR (or no trailer)
+ * @retval  !NULL OK
+ * @retval  NULL_PTR ERROR (or no trailer)
  *
  * This function adds a Trailer to the frame. Changes the values passed as
  * argument into network byte order and changes the field length etc.
@@ -125,18 +124,17 @@ void PRP_Trailer_T_add_trailer(PRP_Trailer_T* const me, octet* data, uinteger32*
 
 /**
  * @fn PRP_RedundancyControlTrailer_T* PRP_Trailer_T_get_trailer(PRP_Trailer_T* const me, octet* data, uinteger32* length) 
- * @brief Extracts the Trailer out the frame.
- *
+ * @brief Extracts the Trailer out the frame
  * @param   me PRP_Trailer_T this pointer
  * @param   data octet pointer to the beginning of the frame (dest mac)
  * @param   length uinteger32 pointer to the length in bytes of the frame
- * @return  PRP_RedundancyControlTrailer_T !NULL : OK
- *          PRP_RedundancyControlTrailer_T NULL : ERROR (or no trailer)
+ * @retval  redundancy_control_trailer_ OK
+ * @retval  NULL_PTR ERROR (or no trailer)
  *
  * This function extracts the trailer out the frame, and fills it into a
  * structure in host byte order. Returns a Pointer to a RCT object if
  * there is a Trailer, else NULL.
- */ 
+ */
 PRP_RedundancyControlTrailer_T* PRP_Trailer_T_get_trailer(PRP_Trailer_T* const me, octet* data, uinteger32* length) 
 {
     uinteger16 size_offset;
@@ -194,8 +192,7 @@ PRP_RedundancyControlTrailer_T* PRP_Trailer_T_get_trailer(PRP_Trailer_T* const m
 
 /**
  * @fn void PRP_Trailer_T_remove_trailer(PRP_Trailer_T* const me, octet* data, uinteger32* length) 
- * @brief Removes a RCT from a frame, if there is one.
- *
+ * @brief Removes a RCT from a frame, if there is one
  * @param   me PRP_Trailer_T this pointer
  * @param   data octet pointer to the beginning of the frame (dest mac)
  * @param   length uinteger32 pointer to the length in bytes of the frame
@@ -217,7 +214,6 @@ void PRP_Trailer_T_remove_trailer(PRP_Trailer_T* const me, octet* data, uinteger
 /**
  * @fn void PRP_Trailer_T_init(PRP_Trailer_T* const me)
  * @brief Initialize the PRP_Trailer interface
- *
  * @param   me PRP_Trailer_T this pointer
  */
 void PRP_Trailer_T_init(PRP_Trailer_T* const me)
@@ -235,9 +231,7 @@ void PRP_Trailer_T_init(PRP_Trailer_T* const me)
 /**
  * @fn void PRP_Trailer_T_cleanup(PRP_Trailer_T* const me)
  * @brief Clean up the PRP_Trailer interface
- *
- * @param
- * @return
+ * @param   me PRP_Trailer_T this pointer
  */
 void PRP_Trailer_T_cleanup(PRP_Trailer_T* const me)
 {

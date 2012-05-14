@@ -1,16 +1,16 @@
 /********************************************************************
-*  
+*
 *  Copyright (c) 2007, Institute of Embedded Systems at 
 *                      Zurich University of Applied Sciences 
 *                      (http://ines.zhaw.ch)
-*  
+*
 *  All rights reserved.
-* 
-* 
+*
+*
 *  Redistribution and use in source and binary forms, with or  
 *  without modification, are permitted provided that the 
 *  following conditions are met:
-*  
+*
 *  - Redistributions of source code must retain the above copyright 
 *    notice, this list of conditions and the following disclaimer. 
 *
@@ -38,7 +38,7 @@
 *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
 *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 *  POSSIBILITY OF SUCH DAMAGE.
-*  
+*
 *********************************************************************/
 
 
@@ -51,12 +51,12 @@
 *  |_____|_| |_|______|_____/   8401 Winterthur, Switzerland        *
 *                                                                   *
 *********************************************************************
-* 
+*
 *  Project     : Parallel Redundancy Protocol
-* 
+*
 *  Version     : 1.0
 *  Author      : Sven Meier
-* 
+*
 *********************************************************************
 *  Change History
 *
@@ -86,7 +86,6 @@ octet supervision_frame_[64];
 /**
  * @fn void PRP_Supervision_T_print(PRP_Supervision_T* const me, uinteger32 level)
  * @brief Print PRP_Supervision status information
- *
  * @param   me PRP_Supervision_T this pointer
  * @param   level uinteger32 importance
  */
@@ -118,10 +117,9 @@ void PRP_Supervision_T_print(PRP_Supervision_T* const me, uinteger32 level)
 /**
  * @fn integer32 PRP_Supervision_T_supervise(PRP_Supervision_T* const me)
  * @brief Supervision of the node table.
- *
  * @param   me PRP_Supervision_T this pointer
- * @return  integer32 0 : OK
- *          integer32 <0 : ERROR (code)
+ * @retval  0 integer32 OK
+ * @retval  <0 integer32 ERROR (code)
  */
 integer32 PRP_Supervision_T_supervise(PRP_Supervision_T* const me)
 {
@@ -207,13 +205,12 @@ integer32 PRP_Supervision_T_supervise(PRP_Supervision_T* const me)
 /**
  * @fn integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* data, uinteger32* length, octet lan_id)
  * @brief Receives a supervision frame and does the actual processing.
- *
  * @param   me PRP_Supervision_T this pointer
  * @param   data octet pointer to the beginning of the frame (dest mac)
  * @param   length uinteger32 pointer to the length in bytes of the frame
  * @param   lan_id octet on which LAN it was received
- * @return  integer32 0 : OK
- *          integer32 <0 : ERROR (code)
+ * @retval  0 integer32 OK
+ * @retval  <0 integer32 ERROR (code)
  */
 integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* data, uinteger32* length, octet lan_id)
 {
@@ -256,12 +253,6 @@ integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* d
         return(-PRP_ERROR_FRAME_COR);
     }
     pos += 2;
-
-    if(me->environment_->environment_configuration_.bridging_ == TRUE)
-    {
-        PRP_Frames_T_normal_rx(&(me->environment_->frame_analyser_.frames_), data, length, lan_id);
-        return(PRP_DROP);
-    }
 
     PRP_Node_T_init(&temp_node);
 
@@ -452,10 +443,9 @@ integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* d
 /**
  * @fn integer32 PRP_Supervision_T_supervision_tx(PRP_Supervision_T* const me)
  * @brief Transmission of a supervision frame.
- *
  * @param   me PRP_Supervision_T this pointer
- * @return  integer32 0 : OK
- *          integer32 <0 : ERROR (code)
+ * @retval  0 integer32 OK
+ * @retval  <0 integer32 ERROR (code)
  */
 integer32 PRP_Supervision_T_supervision_tx(PRP_Supervision_T* const me)
 {
@@ -467,11 +457,6 @@ integer32 PRP_Supervision_T_supervision_tx(PRP_Supervision_T* const me)
     if(me == NULL_PTR)
     {
         return(-PRP_ERROR_NULL_PTR);
-    }
-
-    if(me->environment_->environment_configuration_.bridging_ == TRUE)
-    {
-        return(0);
     }
 
     length = 0;
@@ -536,13 +521,11 @@ integer32 PRP_Supervision_T_supervision_tx(PRP_Supervision_T* const me)
 /**
  * @fn void PRP_Supervision_T_init(PRP_Supervision_T* const me, PRP_Environment_T* const environment)
  * @brief Initialize the PRP_Supervision interface
- *
  * @param   me PRP_Supervision_T this pointer
  * @param   environment PRP_Environment_T pointer to the environment type
  */
 void PRP_Supervision_T_init(PRP_Supervision_T* const me, PRP_Environment_T* const environment)
 {
-
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
     if(me == NULL_PTR)
@@ -570,7 +553,6 @@ void PRP_Supervision_T_init(PRP_Supervision_T* const me, PRP_Environment_T* cons
 /**
  * @fn void PRP_Supervision_T_cleanup(PRP_Supervision_T* const me)
  * @brief Clean up the PRP_Supervision interface
- *
  * @param   me PRP_Supervision_T this pointer
  */
 void PRP_Supervision_T_cleanup(PRP_Supervision_T* const me)

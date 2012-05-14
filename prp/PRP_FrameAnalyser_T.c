@@ -1,16 +1,16 @@
 /********************************************************************
-*  
+*
 *  Copyright (c) 2007, Institute of Embedded Systems at 
 *                      Zurich University of Applied Sciences 
 *                      (http://ines.zhaw.ch)
-*  
+*
 *  All rights reserved.
-* 
-* 
+*
+*
 *  Redistribution and use in source and binary forms, with or  
 *  without modification, are permitted provided that the 
 *  following conditions are met:
-*  
+*
 *  - Redistributions of source code must retain the above copyright 
 *    notice, this list of conditions and the following disclaimer. 
 *
@@ -38,7 +38,7 @@
 *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
 *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 *  POSSIBILITY OF SUCH DAMAGE.
-*  
+*
 *********************************************************************/
 
 
@@ -51,12 +51,12 @@
 *  |_____|_| |_|______|_____/   8401 Winterthur, Switzerland        *
 *                                                                   *
 *********************************************************************
-* 
+*
 *  Project     : Parallel Redundancy Protocol
-* 
+*
 *  Version     : 1.0
 *  Author      : Sven Meier
-* 
+*
 *********************************************************************
 *  Change History
 *
@@ -74,14 +74,13 @@
 /**
  * @fn integer32 PRP_FrameAnalyser_T_analyse_rx(PRP_FrameAnalyser_T* const me, octet* data, uinteger32* length, octet lan_id)
  * @brief Checks the frame type and forwards it to the respective frame handler for the receive path.
- *
  * @param   me PRP_FrameAnalyser_T this pointer
  * @param   data octet pointer to the beginning of the frame (dest mac)
  * @param   length uinteger32 pointer to the length in bytes of the frame
  * @param   lan_id octet on which LAN it was received
- * @return  integer32 1 : DROP
- *          integer32 0 : KEEP
- *          integer32 <0 : ERROR (code)
+ * @retval  1 integer32 DROP
+ * @retval  0 integer32 KEEP
+ * @retval  <0 integer32 ERROR (code)
  */
 integer32 PRP_FrameAnalyser_T_analyse_rx(PRP_FrameAnalyser_T* const me, octet* data, uinteger32* length, octet lan_id)
 {
@@ -119,12 +118,6 @@ integer32 PRP_FrameAnalyser_T_analyse_rx(PRP_FrameAnalyser_T* const me, octet* d
         {
             return(PRP_Supervision_T_supervision_rx(&(me->environment_->supervision_), data, length, lan_id));
         }
-//         if((data[12] == 0x00) && (data[13] == 0x27) &&
-//             (data[14] == 0x42) && (data[15] == 0x42) &&
-//             (data[16] == 0x03)) /* if RSTP */
-//         {
-//             return(PRP_Bridging_T_bridging_rx(&(me->environment_->bridging_), data, length, lan_id));
-//         }
         else
         {
             return(PRP_Frames_T_normal_rx(&(me->frames_), data, length, lan_id));
@@ -139,13 +132,12 @@ integer32 PRP_FrameAnalyser_T_analyse_rx(PRP_FrameAnalyser_T* const me, octet* d
 /**
  * @fn integer32 PRP_FrameAnalyser_T_analyse_tx(PRP_FrameAnalyser_T* const me, octet* data, uinteger32* length, octet lan_id)
  * @brief Checks the frame type and forwards it to the respective frame handler for the transmit path.
- *
  * @param   me PRP_FrameAnalyser_T this pointer
  * @param   data octet pointer to the beginning of the frame (dest mac)
  * @param   length uinteger32 pointer to the length in bytes of the frame
  * @param   lan_id octet on which LAN it is going to send
- * @return  integer32 0 : OK
- *          integer32 <0 : ERROR (code)
+ * @retval  0 integer32 OK
+ * @retval  <0 integer32 ERROR (code)
  */
 integer32 PRP_FrameAnalyser_T_analyse_tx(PRP_FrameAnalyser_T* const me, octet* data, uinteger32* length, octet lan_id)
 {
@@ -172,7 +164,6 @@ integer32 PRP_FrameAnalyser_T_analyse_tx(PRP_FrameAnalyser_T* const me, octet* d
 /**
  * @fn void PRP_FrameAnalyser_T_init(PRP_FrameAnalyser_T* const me, PRP_Environment_T* const environment)
  * @brief Initialize the frame analyser interface
- *
  * @param   me PRP_FrameAnalyser_T this pointer
  * @param   environment PRP_Environment_T pointer to the environment
  */
@@ -197,7 +188,6 @@ void PRP_FrameAnalyser_T_init(PRP_FrameAnalyser_T* const me, PRP_Environment_T* 
 /**
  * @fn void PRP_FrameAnalyser_T_cleanup(PRP_FrameAnalyser_T* const me)
  * @brief Clean up the frame analyser interface
- *
  * @param   me PRP_FrameAnalyser_T this pointer
  */
 void PRP_FrameAnalyser_T_cleanup(PRP_FrameAnalyser_T* const me)

@@ -1,16 +1,16 @@
 /********************************************************************
-*  
+*
 *  Copyright (c) 2007, Institute of Embedded Systems at 
 *                      Zurich University of Applied Sciences 
 *                      (http://ines.zhaw.ch)
-*  
+*
 *  All rights reserved.
-* 
-* 
+*
+*
 *  Redistribution and use in source and binary forms, with or  
 *  without modification, are permitted provided that the 
 *  following conditions are met:
-*  
+*
 *  - Redistributions of source code must retain the above copyright 
 *    notice, this list of conditions and the following disclaimer. 
 *
@@ -38,7 +38,7 @@
 *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
 *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 *  POSSIBILITY OF SUCH DAMAGE.
-*  
+*
 *********************************************************************/
 
 
@@ -51,12 +51,12 @@
 *  |_____|_| |_|______|_____/   8401 Winterthur, Switzerland        *
 *                                                                   *
 *********************************************************************
-* 
+*
 *  Project     : Parallel Redundancy Protocol
-* 
+*
 *  Version     : 1.0
 *  Author      : Sven Meier
-* 
+*
 *********************************************************************
 *  Change History
 *
@@ -86,33 +86,30 @@
 /**
  * @fn PRP_INFOOUT(format, args...)
  * @brief Informational output
- *
  * @param   format const octet pointer to the display string
  * @param   args Variables etc.
- * @return  integer32 >=0 : OK (nr of bytes written)
- *          integer32 <0 : ERROR (code)
+ * @retval  >=0 integer32 OK (nr of bytes written)
+ * @retval  <0 integer32 ERROR (code)
  */
 #define PRP_INFOOUT(format, args...) PRP_LOG("<INFO> "format, args)
 
 /**
  * @fn PRP_ERROUT(format, args...)
  * @brief Error output
- *
  * @param   format const octet pointer to the display string
  * @param   args Variables etc.
- * @return  integer32 >=0 : OK (nr of bytes written)
- *          integer32 <0 : ERROR (code)
+ * @retval  >=0 integer32 OK (nr of bytes written)
+ * @retval  <0 integer32 ERROR (code)
  */
 #define PRP_ERROUT(format, args...) PRP_LOG("<ERROR> " format, args)
 
 /**
  * @fn PRP_LOGOUT(level, format, args...)
  * @brief General output
- *
  * @param   level uinteger32 importance
  * @param   format const octet pointer to the display string
- * @return  integer32 >=0 : OK (nr of bytes written)
- *          integer32 <0 : ERROR (code)
+ * @retval  >=0 integer32 OK (nr of bytes written)
+ * @retval  <0 integer32 ERROR (code)
  */
 #ifdef PRP_DEBUG_LOG
     extern int debug_level;
@@ -148,3 +145,4 @@
 
 
 #endif /* PRP_LogItf_T_H */
+

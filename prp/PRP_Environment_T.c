@@ -1,16 +1,16 @@
 /********************************************************************
-*  
+*
 *  Copyright (c) 2007, Institute of Embedded Systems at 
 *                      Zurich University of Applied Sciences 
 *                      (http://ines.zhaw.ch)
-*  
+*
 *  All rights reserved.
-* 
-* 
+*
+*
 *  Redistribution and use in source and binary forms, with or  
 *  without modification, are permitted provided that the 
 *  following conditions are met:
-*  
+*
 *  - Redistributions of source code must retain the above copyright 
 *    notice, this list of conditions and the following disclaimer. 
 *
@@ -38,7 +38,7 @@
 *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
 *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 *  POSSIBILITY OF SUCH DAMAGE.
-*  
+*
 *********************************************************************/
 
 
@@ -51,12 +51,12 @@
 *  |_____|_| |_|______|_____/   8401 Winterthur, Switzerland        *
 *                                                                   *
 *********************************************************************
-* 
+*
 *  Project     : Parallel Redundancy Protocol
-* 
+*
 *  Version     : 1.0
 *  Author      : Sven Meier
-* 
+*
 *********************************************************************
 *  Change History
 *
@@ -67,6 +67,7 @@
 *  14.01.08 | mesv     | added some comments
 ************|**********|*********************************************
 *  13.07.11 | itin     | integration of discard algorithm for PRP1
+*  11.05.12 | asdo     | discard algorithm improvement
 *********************************************************************/
 
 #include "PRP_Environment_T.h"
@@ -76,7 +77,6 @@
 /**
  * @fn void PRP_Environment_T_process_timer(PRP_Environment_T* const me)
  * @brief Runs the timers and if the timer expired calls the respective supervision function
- *
  * @param   me PRP_Environment_T this pointer
  */
 void PRP_Environment_T_process_timer(PRP_Environment_T* const me)
@@ -90,8 +90,6 @@ void PRP_Environment_T_process_timer(PRP_Environment_T* const me)
 
     if(TRUE == PRP_Timer_T_tick(&(me->bridging_timer_)))
     {
-        /* check for link down */
-//         PRP_Bridging_T_supervise(&(me->bridging_));
         /* to detect link down fast */
         PRP_Timer_T_start(&(me->bridging_timer_), (PRP_TIMER_TICK_INTERVAL*5)); 
     }
@@ -121,14 +119,13 @@ void PRP_Environment_T_process_timer(PRP_Environment_T* const me)
 /**
  * @fn integer32 PRP_Environment_T_process_rx(PRP_Environment_T* const me, octet* data, uinteger32* length, octet lan_id)
  * @brief Forwards the API call receive to the frame analyser
- *
  * @param   me PRP_Environment_T this pointer
  * @param   data octet pointer to the beginning of the frame (dest mac)
  * @param   length uinteger32 length in bytes of the frame
  * @param   lan_id octet on which LAN it was received
- * @return  integer32 1 : DROP
- *          integer32 0 : KEEP
- *          integer32 <0 : ERROR (code)
+ * @retval  1 integer32 DROP
+ * @retval  0 integer32 KEEP
+ * @retval  <0 integer32 ERROR (code)
  */
 integer32 PRP_Environment_T_process_rx(PRP_Environment_T* const me, octet* data, uinteger32* length, octet lan_id)
 {
@@ -145,13 +142,12 @@ integer32 PRP_Environment_T_process_rx(PRP_Environment_T* const me, octet* data,
 /**
  * @fn integer32 PRP_Environment_T_process_tx(PRP_Environment_T* const me, octet* data, uinteger32* length, octet lan_id)
  * @brief Forwards the API call transmit to the frame analyser
- *
  * @param   me PRP_Environment_T this pointer
  * @param   data octet pointer to the beginning of the frame (dest mac)
  * @param   length uinteger32 length in bytes of the frame
  * @param   lan_id octet on which LAN it is going send
- * @return  integer32 0 : OK
- *          integer32 <0 : ERROR (code)
+ * @retval  0 integer32 OK
+ * @retval  <0 integer32 ERROR (code)
  */
 integer32 PRP_Environment_T_process_tx(PRP_Environment_T* const me, octet* data, uinteger32* length, octet lan_id)
 {
@@ -169,7 +165,6 @@ integer32 PRP_Environment_T_process_tx(PRP_Environment_T* const me, octet* data,
 /**
  * @fn void PRP_Environment_T_init(PRP_Environment_T* const me)
  * @brief Initialize the PRP_Environment interface
- *
  * @param   me PRP_Environment_T this pointer
  */
 void PRP_Environment_T_init(PRP_Environment_T* const me)
@@ -184,7 +179,6 @@ void PRP_Environment_T_init(PRP_Environment_T* const me)
     /* start all the modules */
     PRP_EnvironmentConfiguration_T_init(&(me->environment_configuration_));
     PRP_Supervision_T_init(&(me->supervision_), me);
-//     PRP_Bridging_T_init(&(me->bridging_), me);
     PRP_NodeTable_T_init(&(me->node_table_));
     PRP_DiscardAlgorithm_PRP1_T_init(&(me->discard_algorithm_prp1_));
     PRP_FrameAnalyser_T_init(&(me->frame_analyser_), me);
@@ -201,7 +195,6 @@ void PRP_Environment_T_init(PRP_Environment_T* const me)
 /**
  * @fn void PRP_Environment_T_cleanup(PRP_Environment_T* const me)
  * @brief Clean up the PRP_Environment interface
- *
  * @param   me PRP_Environment_T this pointer
  */
 void PRP_Environment_T_cleanup(PRP_Environment_T* const me)
@@ -220,7 +213,6 @@ void PRP_Environment_T_cleanup(PRP_Environment_T* const me)
     PRP_Timer_T_cleanup(&(me->aging_timer_));
     PRP_EnvironmentConfiguration_T_cleanup(&(me->environment_configuration_));
     PRP_Supervision_T_cleanup(&(me->supervision_));
-//     PRP_Bridging_T_cleanup(&(me->bridging_));
     PRP_NodeTable_T_cleanup(&(me->node_table_));
     PRP_FrameAnalyser_T_cleanup(&(me->frame_analyser_));
 }

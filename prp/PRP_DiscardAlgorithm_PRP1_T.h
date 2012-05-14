@@ -1,16 +1,16 @@
 /********************************************************************
-*  
+*
 *  Copyright (c) 2011, Institute of Embedded Systems at
 *                      Zurich University of Applied Sciences 
 *                      (http://ines.zhaw.ch)
-*  
+*
 *  All rights reserved.
-* 
-* 
+*
+*
 *  Redistribution and use in source and binary forms, with or  
 *  without modification, are permitted provided that the 
 *  following conditions are met:
-*  
+*
 *  - Redistributions of source code must retain the above copyright 
 *    notice, this list of conditions and the following disclaimer. 
 *
@@ -38,7 +38,7 @@
 *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
 *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 *  POSSIBILITY OF SUCH DAMAGE.
-*  
+*
 *********************************************************************/
 
 
@@ -51,18 +51,19 @@
 *  |_____|_| |_|______|_____/   8401 Winterthur, Switzerland        *
 *                                                                   *
 *********************************************************************
-* 
+*
 *  Project     : Parallel Redundancy Protocol
-* 
+*
 *  Version     : 1.1
 *  Author      : itin
-* 
+*
 *********************************************************************
 *  Change History
 *
 *  Date     | Name     | Modification
 ************|**********|*********************************************
 *  17.06.11 | itin     | file created
+*  11.05.12 | asdo     | discard algorithm modification
 *********************************************************************/
 
 #ifndef PRP_DiscardAlgorithm_PRP1_T_H
@@ -77,41 +78,34 @@
 #define DISCARD_LIST_ENTRY_COUNT    256      // 2^n, n is 8 in this case
 #define DISCARD_HASH_MASK           0x00FF   // Must select n bit in a range from 1 to 16
 #define DISCARD_TICK_COUNT          20       // * 20ms -> 400ms
-  
-//#define DISCARD_ITEM_COUNT          32
-//#define DISCARD_LIST_ENTRY_COUNT    16       // 2^n, n is 8 in this case
-//#define DISCARD_HASH_MASK           0x000F   // Must select n bit in a range from 1 to 16
-//#define DISCARD_TICK_COUNT          150      // * 20ms -> 3s
-//#define DISCARD_TICK_COUNT          100      // * 20ms -> 2s
-//#define DISCARD_TICK_COUNT          50      // * 20ms -> 1s
+
 
 struct PRP_DiscardAlgorithm_PRP1_T
 {
-	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T **hash_list;           // first list orded by hash, second list orded from newest to oldest because we dont want to process dead items all the time
-	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *free_list;            // list of free items to use
-	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *chronology;           // from oldest to newest
-	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *newest;               // shortcut to newest item
-	
-	uinteger32 time;
-	uinteger8 ageing_counter;
+    struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T **hash_list; // first list orded by hash, second list orded from newest to oldest because we dont want to process dead items all the time
+    struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *free_list;  // list of free items to use
+    struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *chronology; // from oldest to newest
+    struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *newest;     // shortcut to newest item
 
-	int used_item_count;
+    uinteger32 time;
+    uinteger8 ageing_counter;
 
+    int used_item_count;
 };
 
 struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T
 {
-	unsigned short seq_nr;
-	unsigned char src_mac[6];
-	
-	uinteger32 timestamp;
-	unsigned short hash;
+    unsigned short seq_nr;
+    unsigned char src_mac[6];
 
-	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *previous;             // Used only for hash_list
-	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *next;                 // Used only for hash_list
+    uinteger32 timestamp;
+    unsigned short hash;
 
-	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *previous_alt;         // Used only for chronology
-	struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *next_alt;             // Used only for free_list and chronology
+    struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *previous;       // Used only for hash_list
+    struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *next;           // Used only for hash_list
+
+    struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *previous_alt;   // Used only for chronology
+    struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *next_alt;       // Used only for free_list and chronology
 };
 
 #ifdef PRP_DEBUG_LOG
@@ -124,5 +118,5 @@ void PRP_DiscardAlgorithm_PRP1_T_do_aging(PRP_DiscardAlgorithm_PRP1_T* const me)
 void PRP_DiscardAlgorithm_PRP1_T_init(PRP_DiscardAlgorithm_PRP1_T* const me);
 void PRP_DiscardAlgorithm_PRP1_T_cleanup(PRP_DiscardAlgorithm_PRP1_T* const me);
 
-#endif  
+#endif /* PRP_DiscardAlgorithm_PRP1_T_H */
 

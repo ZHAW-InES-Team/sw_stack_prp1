@@ -1,16 +1,16 @@
 /********************************************************************
-*  
+*
 *  Copyright (c) 2007, Institute of Embedded Systems at 
 *                      Zurich University of Applied Sciences 
 *                      (http://ines.zhaw.ch)
-*  
+*
 *  All rights reserved.
-* 
-* 
+*
+*
 *  Redistribution and use in source and binary forms, with or  
 *  without modification, are permitted provided that the 
 *  following conditions are met:
-*  
+*
 *  - Redistributions of source code must retain the above copyright 
 *    notice, this list of conditions and the following disclaimer. 
 *
@@ -38,7 +38,7 @@
 *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
 *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 *  POSSIBILITY OF SUCH DAMAGE.
-*  
+*
 *********************************************************************/
 
 
@@ -51,12 +51,12 @@
 *  |_____|_| |_|______|_____/   8401 Winterthur, Switzerland        *
 *                                                                   *
 *********************************************************************
-* 
+*
 *  Project     : Parallel Redundancy Protocol
-* 
+*
 *  Version     : 1.0
 *  Author      : Sven Meier
-* 
+*
 *********************************************************************
 *  Change History
 *
@@ -72,8 +72,7 @@
 
 /**
  * @fn void PRP_Timer_T_start(PRP_Timer_T* const me, uinteger16 timeout) 
- * @brief Starts or restarts a timer.
- *
+ * @brief Starts or restarts a timer
  * @param   me PRP_Timer_T this pointer
  * @param   timeout uinteger16 timeout in milliseconds
  */
@@ -99,7 +98,6 @@ void PRP_Timer_T_start(PRP_Timer_T* const me, uinteger16 timeout)
 /**
  * @fn void PRP_Timer_T_stop(PRP_Timer_T* const me) 
  * @brief Stops a running timer
- *
  * @param   me PRP_Timer_T this pointer
  */
 void PRP_Timer_T_stop(PRP_Timer_T* const me) 
@@ -116,11 +114,10 @@ void PRP_Timer_T_stop(PRP_Timer_T* const me)
 
 /**
  * @fn boolean PRP_Timer_T_tick(PRP_Timer_T* const me)  
- * @brief Decrements the value_ variable until timeout happened.
- *
+ * @brief Decrements the value_ variable until timeout happened
  * @param   me PRP_Timer_T this pointer
- * @return  boolean TRUE : Timer expired
- *          boolean FALSE : Timer decremented
+ * @retval  TRUE Timer expired
+ * @retval  FALSE Timer decremented
  */
 boolean PRP_Timer_T_tick(PRP_Timer_T* const me)  
 {
@@ -153,7 +150,6 @@ boolean PRP_Timer_T_tick(PRP_Timer_T* const me)
 /**
  * @fn void PRP_Timer_T_init(PRP_Timer_T* const me) 
  * @brief Initialize the PRP_Timer interface
- *
  * @param   me PRP_Timer_T this pointer
  */
 void PRP_Timer_T_init(PRP_Timer_T* const me) 
@@ -172,7 +168,6 @@ void PRP_Timer_T_init(PRP_Timer_T* const me)
 /**
  * @fn void PRP_Timer_T_cleanup(PRP_Timer_T* const me) 
  * @brief Clean up the PRP_Timer interface
- *
  * @param   me PRP_Timer_T this pointer
  */
 void PRP_Timer_T_cleanup(PRP_Timer_T* const me) 

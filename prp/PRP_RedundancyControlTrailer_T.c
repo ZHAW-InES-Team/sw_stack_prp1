@@ -1,16 +1,16 @@
 /********************************************************************
-*  
+*
 *  Copyright (c) 2007, Institute of Embedded Systems at 
 *                      Zurich University of Applied Sciences 
 *                      (http://ines.zhaw.ch)
-*  
+*
 *  All rights reserved.
-* 
-* 
+*
+*
 *  Redistribution and use in source and binary forms, with or  
 *  without modification, are permitted provided that the 
 *  following conditions are met:
-*  
+*
 *  - Redistributions of source code must retain the above copyright 
 *    notice, this list of conditions and the following disclaimer. 
 *
@@ -38,7 +38,7 @@
 *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
 *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 *  POSSIBILITY OF SUCH DAMAGE.
-*  
+*
 *********************************************************************/
 
 
@@ -51,12 +51,12 @@
 *  |_____|_| |_|______|_____/   8401 Winterthur, Switzerland        *
 *                                                                   *
 *********************************************************************
-* 
+*
 *  Project     : Parallel Redundancy Protocol
-* 
+*
 *  Version     : 1.0
 *  Author      : Sven Meier
-* 
+*
 *********************************************************************
 *  Change History
 *
@@ -73,7 +73,6 @@
 /**
  * @fn void PRP_RedundancyControlTrailer_T_print(PRP_RedundancyControlTrailer_T* const me, uinteger32 level)
  * @brief Print PRP_RedundancyControlTrailer status information
- *
  * @param   me PRP_RedundancyControlTrailer_T this pointer
  * @param   level uinteger32 importance
  */
@@ -95,7 +94,6 @@ void PRP_RedundancyControlTrailer_T_print(PRP_RedundancyControlTrailer_T* const 
 /**
  * @fn void PRP_RedundancyControlTrailer_T_init(PRP_RedundancyControlTrailer_T* const me)
  * @brief Initialize the PRP_RedundancyControlTrailer interface
- *
  * @param   me PRP_RedundancyControlTrailer_T this pointer
  */
 void PRP_RedundancyControlTrailer_T_init(PRP_RedundancyControlTrailer_T* const me)
@@ -114,7 +112,6 @@ void PRP_RedundancyControlTrailer_T_init(PRP_RedundancyControlTrailer_T* const m
 /**
  * @fn void PRP_RedundancyControlTrailer_T_cleanup(PRP_RedundancyControlTrailer_T* const me)
  * @brief Clean up the PRP_RedundancyControlTrailer interface
- *
  * @param   me PRP_RedundancyControlTrailer_T this pointer
  */
 void PRP_RedundancyControlTrailer_T_cleanup(PRP_RedundancyControlTrailer_T* const me)

@@ -1,16 +1,16 @@
 # /********************************************************************
-# *  
+# *
 # *  Copyright (c) 2008, Institute of Embedded Systems at 
 # *                      Zurich University of Applied Sciences 
 # *                      (http://ines.zhaw.ch)
-# *  
+# *
 # *  All rights reserved.
-# * 
-# * 
+# *
+# *
 # *  Redistribution and use in source and binary forms, with or  
 # *  without modification, are permitted provided that the 
 # *  following conditions are met:
-# *  
+# *
 # *  - Redistributions of source code must retain the above copyright 
 # *    notice, this list of conditions and the following disclaimer. 
 # *
@@ -38,27 +38,24 @@
 # *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
 # *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # *  POSSIBILITY OF SUCH DAMAGE.
-# *  
+# *
 # *********************************************************************/
 
 #edit this for verbosity levels of debug output (5: very verbose)
-PRP_DEBUG_LEVEL=0
-PRP_DISCARD_DEBUG_LEVEL=4
-DEBUG   = -DPRP_DEBUG_LOG -DPRP_DEBUG_LEVEL=$(PRP_DEBUG_LEVEL) -DPRP_DISCARD_DEBUG_LEVEL=$(PRP_DISCARD_DEBUG_LEVEL)
+PRP_DEBUG_LEVEL		=	0
+PRP_DISCARD_DEBUG_LEVEL	=	4
+# DEBUG   = -DPRP_DEBUG_LOG -DPRP_DEBUG_LEVEL=$(PRP_DEBUG_LEVEL) -DPRP_DISCARD_DEBUG_LEVEL=$(PRP_DISCARD_DEBUG_LEVEL)
 CFLAGS	=  -Wall -g2 $(DEBUG)
-CFLAGS += $(DEBFLAGS) $(CFLAGS_EXTRA)
+CFLAGS	+= $(DEBFLAGS) $(CFLAGS_EXTRA)
 LDFLAGS = -lm -lpcap $(LDFLAGS_EXTRA)
 
-TARGET = prp_pcap_tap_userspace
+TARGET 	= prp_pcap_tap_userspace
 
 all: clean $(TARGET)
 
 OBJ = PRP_NetItf_T_linux.o
 OBJ += PRP_OsItf_T_linux.o
-#OBJ += ../prp/PRP_DiscardAlgorithm_T.o
 OBJ += ../prp/PRP_DiscardAlgorithm_PRP1_T.o
-#OBJ += ../prp/PRP_DropWindow_T.o
-#OBJ += ../prp/PRP_DropWindowTable_T.o
 OBJ += ../prp/PRP_Environment_T.o
 OBJ += ../prp/PRP_EnvironmentConfiguration_T.o
 OBJ += ../prp/PRP_Frames_T.o
@@ -68,8 +65,6 @@ OBJ += ../prp/PRP_Node_T.o
 OBJ += ../prp/PRP_NodeTable_T.o
 OBJ += ../prp/PRP_RedundancyControlTrailer_T.o
 OBJ += ../prp/PRP_Supervision_T.o
-# OBJ += ../prp/PRP_Bridging_T.o
-# OBJ += ../prp/PRP_BridgingFrame_T.o
 OBJ += ../prp/PRP_T.o
 OBJ += ../prp/PRP_Timer_T.o
 OBJ += ../prp/PRP_Trailer_T.o

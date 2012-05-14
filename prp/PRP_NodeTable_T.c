@@ -1,16 +1,16 @@
 /********************************************************************
-*  
+*
 *  Copyright (c) 2007, Institute of Embedded Systems at 
 *                      Zurich University of Applied Sciences 
 *                      (http://ines.zhaw.ch)
-*  
+*
 *  All rights reserved.
-* 
-* 
+*
+*
 *  Redistribution and use in source and binary forms, with or  
 *  without modification, are permitted provided that the 
 *  following conditions are met:
-*  
+*
 *  - Redistributions of source code must retain the above copyright 
 *    notice, this list of conditions and the following disclaimer. 
 *
@@ -38,7 +38,7 @@
 *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
 *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 *  POSSIBILITY OF SUCH DAMAGE.
-*  
+*
 *********************************************************************/
 
 
@@ -51,12 +51,12 @@
 *  |_____|_| |_|______|_____/   8401 Winterthur, Switzerland        *
 *                                                                   *
 *********************************************************************
-* 
+*
 *  Project     : Parallel Redundancy Protocol
-* 
+*
 *  Version     : 1.0
 *  Author      : Sven Meier
-* 
+*
 *********************************************************************
 *  Change History
 *
@@ -75,7 +75,6 @@
 /**
  * @fn void PRP_NodeTable_T_print(PRP_NodeTable_T* const me, uinteger32 level)
  * @brief Print the PRP_NodeTable status information
- *
  * @param   me PRP_NodeTable_T this pointer
  * @param   level uinteger32 importance
  */
@@ -97,7 +96,6 @@ void PRP_NodeTable_T_print(PRP_NodeTable_T* const me, uinteger32 level)
 /**
  * @fn void PRP_NodeTable_T_set_mac_address_A(PRP_NodeTable_T* const me, PRP_Node_T* node, octet* mac)
  * @brief Set mac address A
- *
  * @param   me PRP_NodeTable_T this pointer
  * @param   node PRP_Node_T pointer to the node
  * @param   mac octet array[6] to the mac address
@@ -127,7 +125,6 @@ void PRP_NodeTable_T_set_mac_address_A(PRP_NodeTable_T* const me, PRP_Node_T* no
 /**
  * @fn void PRP_NodeTable_T_set_mac_address_B(PRP_NodeTable_T* const me, PRP_Node_T* node, octet* mac)
  * @brief Set mac address B
- *
  * @param   me PRP_NodeTable_T this pointer
  * @param   node PRP_Node_T pointer to the node
  * @param   mac octet array[6] to the mac address
@@ -157,12 +154,10 @@ void PRP_NodeTable_T_set_mac_address_B(PRP_NodeTable_T* const me, PRP_Node_T* no
 /**
  * @fn  PRP_Node_T* PRP_NodeTable_T_add_node(PRP_NodeTable_T* const me, PRP_Node_T* node)
  * @brief Creates a new node with the values passed as arguments
- *
  * @param   me PRP_NodeTable_T this pointer
- * @param   node PRP_Node_T to add to the table. Mac address A or B in the
- *          node structure are mandatory
- * @return  PRP_Node_T !NULL : OK (pointer to the memory of the new added node)
- *          PRP_Node_T NULL : ERROR
+ * @param   node PRP_Node_T to add to the table. Mac address A or B in the node structure are mandatory
+ * @retval  new_node OK (pointer to the memory of the new added node)
+ * @retval  NULL_PTR ERROR (code)
  */
 PRP_Node_T* PRP_NodeTable_T_add_node(PRP_NodeTable_T* const me, PRP_Node_T* node)
 {
@@ -211,7 +206,6 @@ PRP_Node_T* PRP_NodeTable_T_add_node(PRP_NodeTable_T* const me, PRP_Node_T* node
 /**
  * @fn void PRP_NodeTable_T_remove_node(PRP_NodeTable_T* const me, PRP_Node_T* node)
  * @brief Removes the node passed as argument from the table.
- *
  * @param   me PRP_NodeTable_T this pointer
  * @param   node PRP_Node_T pointer to the node to remove
  */
@@ -266,11 +260,10 @@ void PRP_NodeTable_T_remove_node(PRP_NodeTable_T* const me, PRP_Node_T* node)
 /**
  * @fn PRP_Node_T* PRP_NodeTable_T_get_node(PRP_NodeTable_T* const me, octet* node_mac)
  * @brief Searches for a node in the table which matches the mac address
- *
  * @param   me PRP_NodeTable_T this pointer
  * @param   node_mac octet pointer to the node's mac address
- * @return  PRP_Node_T !NULL : OK (pointer to the node)
- *          PRP_Node_T NULL : ERROR
+ * @retval  node OK (pointer to the node)
+ * @retval  NULL_PTR ERROR
  *
  * This function searches for a node in the table which matches the mac
  * address passed as argument. If found returns a pointer to the Node object
@@ -312,10 +305,9 @@ PRP_Node_T* PRP_NodeTable_T_get_node(PRP_NodeTable_T* const me, octet* node_mac)
 /**
  * @fn PRP_Node_T* PRP_NodeTable_T_get_first_node(PRP_NodeTable_T* const me)
  * @brief Returns a pointer to the first Node object in the table
- * 
  * @param   me PRP_NodeTable_T this pointer
- * @return  PRP_Node_T !NULL : OK (pointer to the node)
- *          PRP_Node_T NULL : ERROR (or table is empty)
+ * @retval  first_node_ OK (pointer to the node)
+ * @retval  NULL_PTR ERROR (or table is empty)
  */
 PRP_Node_T* PRP_NodeTable_T_get_first_node(PRP_NodeTable_T* const me)
 {
@@ -332,10 +324,9 @@ PRP_Node_T* PRP_NodeTable_T_get_first_node(PRP_NodeTable_T* const me)
 /**
  * @fn PRP_Node_T* PRP_NodeTable_T_get_last_node(PRP_NodeTable_T* const me)
  * @brief Returns a pointer to the last Node object in the table
- *
  * @param   me PRP_NodeTable_T this pointer
- * @return  PRP_Node_T !NULL : OK (pointer to the node)
- *          PRP_Node_T NULL : ERROR (or table is empty)
+ * @retval  last_node_ OK (pointer to the node)
+ * @retval  NULL_PTR ERROR (or table is empty)
  */
 PRP_Node_T* PRP_NodeTable_T_get_last_node(PRP_NodeTable_T* const me)
 {
@@ -352,11 +343,10 @@ PRP_Node_T* PRP_NodeTable_T_get_last_node(PRP_NodeTable_T* const me)
 /**
  * @fn PRP_Node_T* PRP_NodeTable_T_get_previous_node(PRP_NodeTable_T* const me, PRP_Node_T* node)
  * @brief Returns a pointer to the previous Node object
- *
  * @param   me PRP_NodeTable_T this pointer
  * @param   node PRP_Node_T pointer to the node
- * @return  PRP_Node_T !NULL : OK (pointer to the node)
- *          PRP_Node_T NULL : ERROR (or start of table)
+ * @retval  previous_node_ OK (pointer to the node)
+ * @retval  NULL_PTR ERROR (or start of table)
  *
  * This function returns a pointer to the next Node object from the current
  * object, passed as argument. Node that is passed has to be received by
@@ -383,11 +373,10 @@ PRP_Node_T* PRP_NodeTable_T_get_previous_node(PRP_NodeTable_T* const me, PRP_Nod
 /**
  * @fn PRP_Node_T* PRP_NodeTable_T_get_next_node(PRP_NodeTable_T* const me, PRP_Node_T* node)
  * @brief Returns a pointer to the next Node object.
- *
  * @param   me PRP_NodeTable_T this pointer
  * @param   node PRP_Node_T pointer to the node
- * @return  PRP_Node_T !NULL : OK (pointer to the node)
- *          PRP_Node_T NULL : ERROR (or end of table)
+ * @retval  next_node_ OK (pointer to the node)
+ * @retval  NULL_PTR ERROR (or end of table)
  *
  * This function returns a pointer to the next Node object from the current
  * object, passed as argument. Node that is passed has to be received by
@@ -414,7 +403,6 @@ PRP_Node_T* PRP_NodeTable_T_get_next_node(PRP_NodeTable_T* const me, PRP_Node_T*
 /**
  * @fn void PRP_NodeTable_T_init(PRP_NodeTable_T* const me)
  * @brief Initialize the PRP_NodeTable interface
- *
  * @param   me PRP_NodeTable_T this pointer
  */
 void PRP_NodeTable_T_init(PRP_NodeTable_T* const me)
@@ -435,7 +423,6 @@ void PRP_NodeTable_T_init(PRP_NodeTable_T* const me)
 /**
  * @fn void PRP_NodeTable_T_cleanup(PRP_NodeTable_T* const me)
  * @brief Clean up the PRP_NodeTable interface
- *
  * @param   me PRP_NodeTable_T this pointer
  */
 void PRP_NodeTable_T_cleanup(PRP_NodeTable_T* const me)

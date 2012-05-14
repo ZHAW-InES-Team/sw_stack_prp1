@@ -1,16 +1,16 @@
 /********************************************************************
-*  
+*
 *  Copyright (c) 2007, Institute of Embedded Systems at 
 *                      Zurich University of Applied Sciences 
 *                      (http://ines.zhaw.ch)
-*  
+*
 *  All rights reserved.
-* 
-* 
+*
+*
 *  Redistribution and use in source and binary forms, with or  
 *  without modification, are permitted provided that the 
 *  following conditions are met:
-*  
+*
 *  - Redistributions of source code must retain the above copyright 
 *    notice, this list of conditions and the following disclaimer. 
 *
@@ -38,7 +38,7 @@
 *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
 *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 *  POSSIBILITY OF SUCH DAMAGE.
-*  
+*
 *********************************************************************/
 
 
@@ -51,12 +51,12 @@
 *  |_____|_| |_|______|_____/   8401 Winterthur, Switzerland        *
 *                                                                   *
 *********************************************************************
-* 
+*
 *  Project     : Parallel Redundancy Protocol
-* 
+*
 *  Version     : 1.0
 *  Author      : Sven Meier
-* 
+*
 *********************************************************************
 *  Change History
 *
@@ -70,11 +70,9 @@
 #include "PRP_NetItf_T.h"
 
 
-
 /**
  * @fn void PRP_EnvironmentConfiguration_T_print(PRP_EnvironmentConfiguration_T* const me, uinteger32 level)
  * @brief Print the PRP_EnvironmentConfiguration_T status information
- *
  * @param   me PRP_Environment_T this pointer
  * @param   level uinteger32 importance
  */
@@ -110,7 +108,6 @@ void PRP_EnvironmentConfiguration_T_print(PRP_EnvironmentConfiguration_T* const 
     PRP_PRP_LOGOUT(level, "adapter_active_B_:\t%u\n", me->adapter_active_B_);
     PRP_PRP_LOGOUT(level, "duplicate_discard_:\t%u\n", me->duplicate_discard_);
     PRP_PRP_LOGOUT(level, "transparent_reception_:\t%u\n", me->transparent_reception_);
-    PRP_PRP_LOGOUT(level, "bridging_:\t%u\n", me->bridging_);
     PRP_PRP_LOGOUT(level, "cnt_total_sent_A_:\t%u\n", me->cnt_total_sent_A_);
     PRP_PRP_LOGOUT(level, "cnt_total_sent_B_:\t%u\n", me->cnt_total_sent_B_);
     PRP_PRP_LOGOUT(level, "cnt_total_received_A_:\t%u\n", me->cnt_total_received_A_);
@@ -124,7 +121,6 @@ void PRP_EnvironmentConfiguration_T_print(PRP_EnvironmentConfiguration_T* const 
 /**
  * @fn void PRP_EnvironmentConfiguration_T_init(PRP_EnvironmentConfiguration_T* const me)
  * @brief Initialize the PRP_EnvironmentConfiguration interface
- *
  * @param   me PRP_Environment_T this pointer
  */
 void PRP_EnvironmentConfiguration_T_init(PRP_EnvironmentConfiguration_T* const me)
@@ -145,7 +141,6 @@ void PRP_EnvironmentConfiguration_T_init(PRP_EnvironmentConfiguration_T* const m
     me->adapter_active_B_ = FALSE;
     me->duplicate_discard_ = TRUE;
     me->transparent_reception_ = FALSE;
-    me->bridging_ = FALSE;
     me->cnt_total_sent_A_ = 0;
     me->cnt_total_sent_B_ = 0;
     me->cnt_total_received_A_ = 0;
@@ -157,7 +152,6 @@ void PRP_EnvironmentConfiguration_T_init(PRP_EnvironmentConfiguration_T* const m
 /**
  * @fn void PRP_EnvironmentConfiguration_T_cleanup(PRP_EnvironmentConfiguration_T* const me)
  * @brief Clean up the PRP_EnvironmentConfiguration interface
- *
  * @param   me PRP_Environment_T this pointer
  */
 void PRP_EnvironmentConfiguration_T_cleanup(PRP_EnvironmentConfiguration_T* const me)
@@ -178,7 +172,6 @@ void PRP_EnvironmentConfiguration_T_cleanup(PRP_EnvironmentConfiguration_T* cons
     me->adapter_active_B_ = FALSE;
     me->duplicate_discard_ = TRUE;
     me->transparent_reception_ = FALSE;
-    me->bridging_ = FALSE;
     me->cnt_total_sent_A_ = 0;
     me->cnt_total_sent_B_ = 0;
     me->cnt_total_received_A_ = 0;
