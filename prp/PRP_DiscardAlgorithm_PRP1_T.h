@@ -77,7 +77,7 @@
 #define DISCARD_ITEM_COUNT          1024
 #define DISCARD_LIST_ENTRY_COUNT    256      // 2^n, n is 8 in this case
 #define DISCARD_HASH_MASK           0x00FF   // Must select n bit in a range from 1 to 16
-#define DISCARD_TICK_COUNT          20       // * 20ms -> 400ms
+#define DISCARD_TICK_COUNT          20       // 20ms -> 400ms
 
 
 struct PRP_DiscardAlgorithm_PRP1_T

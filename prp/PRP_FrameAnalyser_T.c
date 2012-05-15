@@ -65,6 +65,8 @@
 *  17.12.07 | mesv     | file created
 ************|**********|*********************************************
 *  14.01.08 | mesv     | added some comments
+*********************************************************************
+*  14.05.12 | walh     | prp-1 modification
 *********************************************************************/
 
 #include "PRP_FrameAnalyser_T.h"
@@ -86,45 +88,33 @@ integer32 PRP_FrameAnalyser_T_analyse_rx(PRP_FrameAnalyser_T* const me, octet* d
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return(-PRP_ERROR_NULL_PTR);
     }
 
     /* basic checks */
-    if(data == NULL_PTR)
-    {
+    if (data == NULL_PTR) {
         return(-PRP_ERROR_NULL_PTR);
     }
-
-    if(length == NULL_PTR)
-    {
+    if (length == NULL_PTR) {
         return(-PRP_ERROR_NULL_PTR);
     }
-
-    if((lan_id != PRP_ID_LAN_A) && (lan_id != PRP_ID_LAN_B))
-    {
+    if ((lan_id != PRP_ID_LAN_A) && (lan_id != PRP_ID_LAN_B)) {
         return(-PRP_ERROR_WRONG_VAL);
     }
-
-    if(*length > 18)
-    {
-        if((data[12] == 0x88) && (data[13] == 0xFB)) /* if Supervision frame */
-        {
+    if (*length > 18) {
+        /* if Supervision frame */
+        if ((data[12] == 0x88) && (data[13] == 0xFB)) {
             return(PRP_Supervision_T_supervision_rx(&(me->environment_->supervision_), data, length, lan_id));
         }
-        else if((data[12] == 0x81) && (data[13] == 0x00) &&
-                (data[16] == 0x88) && (data[17] == 0xFB)) /* if VLAN tagged Supervision frame */
-        {
+        /* if VLAN tagged Supervision frame */
+        else if ((data[12] == 0x81) && (data[13] == 0x00) &&
+                 (data[16] == 0x88) && (data[17] == 0xFB)) {
             return(PRP_Supervision_T_supervision_rx(&(me->environment_->supervision_), data, length, lan_id));
-        }
-        else
-        {
+        } else {
             return(PRP_Frames_T_normal_rx(&(me->frames_), data, length, lan_id));
         }
-    }
-    else
-    {
+    } else {
         return(PRP_Frames_T_normal_rx(&(me->frames_), data, length, lan_id));
     }
 }
@@ -143,21 +133,16 @@ integer32 PRP_FrameAnalyser_T_analyse_tx(PRP_FrameAnalyser_T* const me, octet* d
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return(-PRP_ERROR_NULL_PTR);
     }
-
-    if(data == NULL_PTR)
-    {
+    if (data == NULL_PTR) {
         return(-PRP_ERROR_NULL_PTR);
     }
-
-    if(length == NULL_PTR)
-    {
+    if (length == NULL_PTR) {
         return(-PRP_ERROR_NULL_PTR);
     }
-
+    /* forward to PRP_Frames interface */
     return(PRP_Frames_T_normal_tx(&(me->frames_), data, length, lan_id));
 }
 
@@ -171,13 +156,10 @@ void PRP_FrameAnalyser_T_init(PRP_FrameAnalyser_T* const me, PRP_Environment_T* 
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
-
-    if(environment == NULL_PTR)
-    {
+    if (environment == NULL_PTR) {
         return;
     }
 
@@ -194,8 +176,7 @@ void PRP_FrameAnalyser_T_cleanup(PRP_FrameAnalyser_T* const me)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 

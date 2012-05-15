@@ -63,12 +63,16 @@
 *  Date     | Name     | Modification
 ************|**********|*********************************************
 *  17.12.07 | mesv     | file created
+*********************************************************************
+*  15.05.12 | walh     | prp-1 modification
 *********************************************************************/
 
 #ifndef PRP_NetItf_T_H 
 #define PRP_NetItf_T_H 
 
 #include "PRP_Package_T.h"
+
+extern uinteger16 tx_seq_nr;    /* global TX sequenc number */
 
 integer32 PRP_NetItf_T_set_active_A(boolean value);
 integer32 PRP_NetItf_T_set_active_B(boolean value);

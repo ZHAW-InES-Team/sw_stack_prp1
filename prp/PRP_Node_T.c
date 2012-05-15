@@ -82,24 +82,19 @@ void PRP_Node_T_print(PRP_Node_T* const me, uinteger32 level)
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
     PRP_PRP_LOGOUT(level, "%s\n", "====Node============================");
 
     PRP_PRP_LOGOUT(level, "%s\n", "mac_address_A_:");
-    for(i=0; i<PRP_ETH_ADDR_LENGTH; i++)
-    {
+    for (i=0; i<PRP_ETH_ADDR_LENGTH; i++) {
         PRP_PRP_LOGOUT(level, "%x\n", me->mac_address_A_[i]);
-
     }
     PRP_PRP_LOGOUT(level, "%s\n", "mac_address_B_:");
-    for(i=0; i<PRP_ETH_ADDR_LENGTH; i++)
-    {
+    for (i=0; i<PRP_ETH_ADDR_LENGTH; i++) {
         PRP_PRP_LOGOUT(level, "%x\n", me->mac_address_B_[i]);
-
     }
 
     PRP_PRP_LOGOUT(level, "cnt_received_A_:\t%u\n", me->cnt_received_A_);
@@ -135,8 +130,7 @@ void PRP_Node_T_init(PRP_Node_T* const me)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
@@ -176,8 +170,7 @@ void PRP_Node_T_cleanup(PRP_Node_T* const me)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
@@ -222,8 +215,7 @@ PRP_Node_T* PRP_Node_T_create(void)
 
     node = (PRP_Node_T*)prp_malloc(sizeof(PRP_Node_T));
 
-    if(node != NULL_PTR)
-    {
+    if (node != NULL_PTR) {
         PRP_Node_T_init(node);
     }
 
@@ -239,8 +231,7 @@ void PRP_Node_T_destroy(PRP_Node_T* const me)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 

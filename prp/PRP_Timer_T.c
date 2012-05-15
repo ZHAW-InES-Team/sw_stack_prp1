@@ -80,19 +80,18 @@ void PRP_Timer_T_start(PRP_Timer_T* const me, uinteger16 timeout)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
     me->enabled_ = TRUE;
 
-    if((timeout % PRP_TIMER_TICK_INTERVAL) != 0)
-    {
+    if ((timeout % PRP_TIMER_TICK_INTERVAL) != 0) {
         PRP_PRP_LOGOUT(3, "%s\n", "Timerinterval to coarse, normalised timeout is not an integer");
     }
 
-    me->timer_ = timeout / PRP_TIMER_TICK_INTERVAL; /* logical timer in number of timer ticks */
+    /* logical timer in number of timer ticks */
+    me->timer_ = timeout / PRP_TIMER_TICK_INTERVAL;
 }
 
 /**
@@ -104,8 +103,7 @@ void PRP_Timer_T_stop(PRP_Timer_T* const me)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
@@ -123,23 +121,21 @@ boolean PRP_Timer_T_tick(PRP_Timer_T* const me)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return(FALSE);
     }
 
-    if(me->enabled_ == FALSE)
-    {
+    if (me->enabled_ == FALSE) {
         return(FALSE);
     }
 
-    if( me->timer_ >  0 ) /* countdown */
-    {
+    /* countdown */
+    if ( me->timer_ >  0 ) {
         me->timer_--;
     }
 
-    if( me->timer_ <= 0 ) /* timeout */
-    {
+    /* timeout */
+    if ( me->timer_ <= 0 ) {
         me->enabled_ = FALSE;
         return(TRUE);
     }
@@ -156,8 +152,7 @@ void PRP_Timer_T_init(PRP_Timer_T* const me)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
@@ -174,8 +169,7 @@ void PRP_Timer_T_cleanup(PRP_Timer_T* const me)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR){
         return;
     }
     me->enabled_ = FALSE;

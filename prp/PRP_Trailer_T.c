@@ -91,23 +91,21 @@ void PRP_Trailer_T_add_trailer(PRP_Trailer_T* const me, octet* data, uinteger32*
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
-    if((data[12] == 0x81) && (data[13] == 0x00))
-    {
-        // calculate LSDU_size for VLAN-Tagged frame
+    if ((data[12] == 0x81) && (data[13] == 0x00)) {
+        /* calculate LSDU_size for VLAN-Tagged frame */
         size = *length - 16 + PRP_RCT_LENGTH;
     }
-    else
-    {
-        // calculate LSDU_size for not VLAN-Tagged frame
+    else {
+        /* calculate LSDU_size for not VLAN-Tagged frame */
         size = *length - 12 + PRP_RCT_LENGTH;
     }
 
-    // pad such that length would be >=60 bytes (without CRC, without VLAN tag, without PRP trailer)
+    /* pad such that length would be >=60 bytes
+     * (without CRC, without VLAN tag, without PRP trailer) */
     while (size < 60-8) {
         data[(*length)++] = 0;
         size++;
@@ -135,7 +133,7 @@ void PRP_Trailer_T_add_trailer(PRP_Trailer_T* const me, octet* data, uinteger32*
  * structure in host byte order. Returns a Pointer to a RCT object if
  * there is a Trailer, else NULL.
  */
-PRP_RedundancyControlTrailer_T* PRP_Trailer_T_get_trailer(PRP_Trailer_T* const me, octet* data, uinteger32* length) 
+PRP_RedundancyControlTrailer_T* PRP_Trailer_T_get_trailer(PRP_Trailer_T* const me, octet* data, uinteger32* length)
 {
     uinteger16 size_offset;
     octet lan_id;
@@ -143,42 +141,34 @@ PRP_RedundancyControlTrailer_T* PRP_Trailer_T_get_trailer(PRP_Trailer_T* const m
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return(NULL_PTR);
     }
 
-    // PRP-1 frames are not allowed to be shorter than 60 bytes (without CRC)
-    if(*length < 60)
-    {
+    /* PRP-1 frames are not allowed to be shorter than 60 bytes (without CRC) */
+    if (*length < 60) {
         PRP_PRP_LOGOUT(2, "%s\n", "short frame");
         return(NULL_PTR);
     }
-
     if (data[*length-2] != 0x88 || data[*length-1] != 0xFB) {
         PRP_PRP_LOGOUT(2, "%s\n", "frame without PRP-1 suffix 0x88FB");
         return(NULL_PTR);
     }
-
-    if((data[12] == 0x81) && (data[13] == 0x00))
-    {
+    if ((data[12] == 0x81) && (data[13] == 0x00)) {
         PRP_PRP_LOGOUT(2, "%s\n", "vlan tagged frame");
         size_offset = 18;
-    }
-    else
-    {
+    } else {
         PRP_PRP_LOGOUT(2, "%s\n", "no vlan tagged frame");
         size_offset = 14;
     }
 
     /* trailer_offset = 0; */
-
     lan_id = data[*length-4] >> 4;
     lsdu_size = ((data[*length-4] & 0xF) << 8) | data[*length-3];
 
-    if((lan_id == 0xA || lan_id == 0xB) && (lsdu_size == *length-size_offset))
-    {
-        PRP_PRP_LOGOUT(2, "frame with PRP-1 trailer, last 6 bytes: %02x %02x %02x %02x %02x %02x\n", data[(*length-6)],data[(*length-5)], data[(*length-4)],data[(*length-3)], data[(*length-2)], data[(*length-1)]);
+    if ((lan_id == 0xA || lan_id == 0xB) && (lsdu_size == *length-size_offset)) {
+        PRP_PRP_LOGOUT(2, "frame with PRP-1 trailer, last 6 bytes: %02x %02x %02x %02x %02x %02x\n",
+                       data[(*length-6)],data[(*length-5)],data[(*length-4)],data[(*length-3)],data[(*length-2)],data[(*length-1)]);
 
         me->redundancy_control_trailer_.seq_ = (data[*length-6] << 8) | data[*length-5];
         me->redundancy_control_trailer_.seq_octet_[0] = data[*length-6];
@@ -186,8 +176,11 @@ PRP_RedundancyControlTrailer_T* PRP_Trailer_T_get_trailer(PRP_Trailer_T* const m
         me->redundancy_control_trailer_.lan_id_ = lan_id;
         return(&(me->redundancy_control_trailer_));
     }
-    PRP_PRP_LOGOUT(2, "frame with PRP-1 suffix, but no valid PRP-1 trailer, last 6 bytes: %x %x %x %x\n", data[(*length-6)],data[(*length-5)], data[(*length-4)],data[(*length-3)], data[(*length-2)], data[(*length-1)]);
-    return(NULL_PTR); /* No trailer found */
+    PRP_PRP_LOGOUT(2, "frame with PRP-1 suffix, but no valid PRP-1 trailer, last 6 bytes: %x %x %x %x\n",
+                   data[(*length-6)],data[(*length-5)], data[(*length-4)],data[(*length-3)], data[(*length-2)], data[(*length-1)]);
+
+    /* no trailer found */
+    return(NULL_PTR);
 }
 
 /**
@@ -201,11 +194,10 @@ void PRP_Trailer_T_remove_trailer(PRP_Trailer_T* const me, octet* data, uinteger
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if (PRP_Trailer_T_get_trailer(me, data, length))
-    {
-        // just set length field to new value
+    if (PRP_Trailer_T_get_trailer(me, data, length)) {
+        /* just set length field to new value */
         *length -= 6;
-        // we don't do padding here if length goes below 60 bytes
+        /* we don't do padding here if length goes below 60 bytes */
     } else {
         PRP_PRP_LOGOUT(2, "%s\n", "BUG? remove_trailer was called but there is no trailer.");
     }
@@ -220,8 +212,7 @@ void PRP_Trailer_T_init(PRP_Trailer_T* const me)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
@@ -237,8 +228,7 @@ void PRP_Trailer_T_cleanup(PRP_Trailer_T* const me)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 

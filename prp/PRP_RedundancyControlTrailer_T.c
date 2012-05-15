@@ -80,8 +80,7 @@ void PRP_RedundancyControlTrailer_T_print(PRP_RedundancyControlTrailer_T* const 
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
@@ -100,8 +99,7 @@ void PRP_RedundancyControlTrailer_T_init(PRP_RedundancyControlTrailer_T* const m
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
@@ -118,8 +116,7 @@ void PRP_RedundancyControlTrailer_T_cleanup(PRP_RedundancyControlTrailer_T* cons
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 

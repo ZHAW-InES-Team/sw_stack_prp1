@@ -108,7 +108,9 @@ struct PRP_Node_T
     boolean san_A_;
     /* TRUE if this node is a SAN on LAN B */
     boolean san_B_;
+    /* Time when the last supervision frame was received */
     uinteger64 time_last_seen_sf_;
+    /* TRUE if supervision frame */
     boolean received_sf_;
     /* Sending sequence number for this node */
     uinteger16 send_seq_;

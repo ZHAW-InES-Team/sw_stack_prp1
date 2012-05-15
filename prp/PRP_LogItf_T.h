@@ -63,6 +63,8 @@
 *  Date     | Name     | Modification
 ************|**********|*********************************************
 *  17.12.07 | mesv     | file created
+*********************************************************************
+*  15.05.12 | asdo     | discard debug implemented
 *********************************************************************/
 
 #ifndef PRP_LogItf_T_H 
@@ -72,7 +74,6 @@
 #include "PRP_OsItf_T.h"
 
 #define DRV_NAME "prp_dev"
-//#define PRP_DEBUG_LOG
 
 /* log a line to kernel log */
 #ifdef PRP_DEBUG_LOG_SRC

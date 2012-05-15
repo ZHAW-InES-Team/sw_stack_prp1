@@ -67,6 +67,7 @@
 *  14.01.08 | mesv     | added some comments
 ************|**********|*********************************************
 *  13.07.11 | itin     | integration of discard algorithm for PRP1
+************|**********|*********************************************
 *  11.05.12 | asdo     | discard algorithm improvement
 *********************************************************************/
 
@@ -83,33 +84,28 @@ void PRP_Environment_T_process_timer(PRP_Environment_T* const me)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
-    if(TRUE == PRP_Timer_T_tick(&(me->bridging_timer_)))
-    {
+    if (TRUE == PRP_Timer_T_tick(&(me->bridging_timer_))) {
         /* to detect link down fast */
         PRP_Timer_T_start(&(me->bridging_timer_), (PRP_TIMER_TICK_INTERVAL*5)); 
     }
 
-    if(TRUE == PRP_Timer_T_tick(&(me->supervise_timer_)))
-    {
+    if (TRUE == PRP_Timer_T_tick(&(me->supervise_timer_))) {
         /* check for aged out nodes and failed nodes etc */
         PRP_Supervision_T_supervise(&(me->supervision_));
         PRP_Timer_T_start(&(me->supervise_timer_), me->supervision_.life_check_interval_);
     }
 
-    if(TRUE == PRP_Timer_T_tick(&(me->supervision_tx_timer_)))
-    {
+    if (TRUE == PRP_Timer_T_tick(&(me->supervision_tx_timer_))) {
         /* send a new supervision frame */
         PRP_Supervision_T_supervision_tx(&(me->supervision_)); 
         PRP_Timer_T_start(&(me->supervision_tx_timer_), me->supervision_.life_check_interval_);
     }
 
-    if(TRUE == PRP_Timer_T_tick(&(me->aging_timer_)))
-    {
+    if (TRUE == PRP_Timer_T_tick(&(me->aging_timer_))) {
         /* execute aging*/
         PRP_DiscardAlgorithm_PRP1_T_do_aging(&(me->discard_algorithm_prp1_));
         PRP_Timer_T_start(&(me->aging_timer_), me->supervision_.check_interval_aging_);
@@ -131,8 +127,7 @@ integer32 PRP_Environment_T_process_rx(PRP_Environment_T* const me, octet* data,
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return(-PRP_ERROR_NULL_PTR);
     }
     /* forward to the frame analyser */
@@ -153,8 +148,7 @@ integer32 PRP_Environment_T_process_tx(PRP_Environment_T* const me, octet* data,
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return(-PRP_ERROR_NULL_PTR);
     }
     /* forward to the frame analyser */
@@ -171,8 +165,7 @@ void PRP_Environment_T_init(PRP_Environment_T* const me)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
@@ -201,8 +194,7 @@ void PRP_Environment_T_cleanup(PRP_Environment_T* const me)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 

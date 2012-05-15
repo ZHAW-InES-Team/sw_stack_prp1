@@ -95,8 +95,7 @@ void PRP_Supervision_T_print(PRP_Supervision_T* const me, uinteger32 level)
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
@@ -106,10 +105,8 @@ void PRP_Supervision_T_print(PRP_Supervision_T* const me, uinteger32 level)
     PRP_PRP_LOGOUT(level, "node_forget_time_:\t%u\n", me->node_forget_time_);
 
     PRP_PRP_LOGOUT(level, "%s\n", "supervision_address_:");
-    for(i=0; i<PRP_ETH_ADDR_LENGTH; i++)
-    {
+    for (i=0; i<PRP_ETH_ADDR_LENGTH; i++) {
         PRP_PRP_LOGOUT(level, "%x\n", me->supervision_address_[i]);
-
     }
     PRP_PRP_LOGOUT(level, "%s\n", "====================================");
 }
@@ -130,8 +127,7 @@ integer32 PRP_Supervision_T_supervise(PRP_Supervision_T* const me)
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return(-PRP_ERROR_NULL_PTR);
     }
 
@@ -139,63 +135,55 @@ integer32 PRP_Supervision_T_supervise(PRP_Supervision_T* const me)
 
     node = PRP_NodeTable_T_get_first_node(&(me->environment_->node_table_));
 
-    while(node != NULL_PTR) /* go thru the whole list */
-    {
+    /* go through the whole list */
+    while (node != NULL_PTR) {
         temp_node = PRP_NodeTable_T_get_next_node(&(me->environment_->node_table_), node);
 
-        if(((node->san_A_ == node->san_B_) || ((node->san_B_ == FALSE) && (node->san_A_ == TRUE))) && ((current_time - node->time_last_seen_A_) > ((uinteger64)me->link_time_out_ * PRP_SECOND_IN_NANOSECONDS)))
+        if (((node->san_A_ == node->san_B_) || ((node->san_B_ == FALSE) && (node->san_A_ == TRUE))) &&
+            ((current_time - node->time_last_seen_A_) > ((uinteger64)me->link_time_out_ * PRP_SECOND_IN_NANOSECONDS)))
         {
             /* TODO signal that link is down */
             node->failed_A_ = TRUE;
         }
-        else
-        {
+        else {
             node->failed_A_ = FALSE;
         }
 
-        if(((node->san_A_ == node->san_B_) || ((node->san_A_ == FALSE) && (node->san_B_ == TRUE))) && ((current_time - node->time_last_seen_B_) > ((uinteger64)me->link_time_out_ * PRP_SECOND_IN_NANOSECONDS)))
+        if (((node->san_A_ == node->san_B_) || ((node->san_A_ == FALSE) && (node->san_B_ == TRUE))) &&
+            ((current_time - node->time_last_seen_B_) > ((uinteger64)me->link_time_out_ * PRP_SECOND_IN_NANOSECONDS)))
         {
             /* TODO signal that link is down */
             node->failed_B_ = TRUE;
         }
-        else
-        {
+        else {
             node->failed_B_ = FALSE;
         }
 
-        if(node->san_A_ == node->san_B_)
-        {
-            if((node->failed_A_ == TRUE) && (node->failed_B_ == TRUE))
-            {
+        if (node->san_A_ == node->san_B_) {
+            if ((node->failed_A_ == TRUE) && (node->failed_B_ == TRUE)) {
                 node->failed_ = FALSE;
             }
-            else
-            {
+            else {
                 node->failed_ = FALSE;
             }
         }
-        else if((node->san_B_ == FALSE) && (node->san_A_ == TRUE))
-        {
+        else if ((node->san_B_ == FALSE) && (node->san_A_ == TRUE)) {
             node->failed_ = node->failed_A_;
         }
-        else if((node->san_A_ == FALSE) && (node->san_B_ == TRUE))
-        {
+        else if ((node->san_A_ == FALSE) && (node->san_B_ == TRUE)) {
             node->failed_ = node->failed_B_;
         }
 
-        if((current_time - node->time_last_seen_sf_) > ((uinteger64)me->node_forget_time_ * PRP_SECOND_IN_NANOSECONDS))
-        {
+        if ((current_time - node->time_last_seen_sf_) > ((uinteger64)me->node_forget_time_ * PRP_SECOND_IN_NANOSECONDS)) {
             node->received_sf_ = FALSE;
         }
 
-        if((current_time - node->time_last_seen_A_) > ((uinteger64)me->node_forget_time_ * PRP_SECOND_IN_NANOSECONDS) &&
-            (current_time - node->time_last_seen_B_) > ((uinteger64)me->node_forget_time_ * PRP_SECOND_IN_NANOSECONDS)) /* node timed out => delete */
-        {
+        /* node timed out => delete */
+        if ((current_time - node->time_last_seen_A_) > ((uinteger64)me->node_forget_time_ * PRP_SECOND_IN_NANOSECONDS) &&
+            (current_time - node->time_last_seen_B_) > ((uinteger64)me->node_forget_time_ * PRP_SECOND_IN_NANOSECONDS)) {
             /* TODO signal that node gets deleted */
             PRP_NodeTable_T_remove_node(&(me->environment_->node_table_), node); /* remove node */
         }
-
-
         node = temp_node;
     }
 
@@ -215,13 +203,11 @@ integer32 PRP_Supervision_T_supervise(PRP_Supervision_T* const me)
 integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* data, uinteger32* length, octet lan_id)
 {
     integer32 i;
-
     PRP_Node_T temp_node;
     PRP_Node_T* node_A;
     PRP_Node_T* node_B;
     PRP_Node_T* node;
     boolean node_valid;
-
     integer32 pos;
     octet sup_path;
     uinteger16 sup_version;
@@ -231,19 +217,17 @@ integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* d
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return(-PRP_ERROR_NULL_PTR);
     }
 
-    if(*length < 60) {
+    if (*length < 60) {
         PRP_PRP_LOGOUT(0, "%s\n", "frame too short for supervision");
         return(-PRP_ERROR_FRAME_COR);
     }
 
     pos = 12;
-    if (data[pos] == 0x81 && data[pos+1] == 0x00)
-    {
+    if (data[pos] == 0x81 && data[pos+1] == 0x00) {
         // skip VLAN tag
         pos += 4;
     }
@@ -268,20 +252,18 @@ integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* d
     sup_sequence_number |= data[pos++];
     PRP_PRP_LOGOUT(3, "sup_sequence_number:\t\t%u\n", sup_sequence_number);
 
-    if(sup_version == 0)
-    {
+    if (sup_version == 0) {
         PRP_PRP_LOGOUT(1, "%s\n", "Error: PRP-0 supervision frame received, should not happen in PRP-1 network! Dropping.");
         return(-PRP_ERROR_FRAME_COR);
     }
 
-    if(sup_version > 1)
-    {
+    if (sup_version > 1) {
         PRP_PRP_LOGOUT(2, "%s\n", "Warning: parsing supervision frame with version more recent than 1.");
-        /* "Implementation of version X of the protocol shall
-            interpret version >X as if they were version X" */
+        /* "Implementation of version X of the protocol shall interpret
+         * version >X as if they were version X" */
     }
 
-    // Starting to decode TLVs for the rest of this method.
+    /* Starting to decode TLVs for the rest of this method */
     node_valid = FALSE;
     while (1) {
         tlv_type   = data[pos++];
@@ -290,30 +272,30 @@ integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* d
         PRP_PRP_LOGOUT(3, "tlv_length:\t\t%u\n", tlv_length);
 
         if (tlv_type == 0) {
-            // end of TLV list
+            /* end of TLV list */
             break;
         }
 
         if (tlv_type == 20 || tlv_type == 21 || tlv_type == 23) {
             if (tlv_type == 20 || tlv_type == 23) {
-                // PRP node with duplicate discard, or HSR node
+                /* PRP node with duplicate discard, or HSR node */
                 PRP_PRP_LOGOUT(2, "%s\n", "node is running in duplicate discard mode");
                 temp_node.san_A_ = FALSE;
                 temp_node.san_B_ = FALSE;
             } else {
-                // PRP node with duplicate accept (FIXME: supposed to be removed from standard?)
+                /* PRP node with duplicate accept
+                 * (FIXME: supposed to be removed from standard?) */
                 PRP_PRP_LOGOUT(2, "%s\n", "node is running in duplicate accept mode");
                 temp_node.san_A_ = TRUE;
                 temp_node.san_B_ = TRUE;
             }
 
-            // HSR or PRP node MAC address
+            /* HSR or PRP node MAC address */
             if (tlv_length == PRP_ETH_ADDR_LENGTH || tlv_length == 2*PRP_ETH_ADDR_LENGTH) {
                 node_valid = TRUE;
 
                 PRP_PRP_LOGOUT(3, "%s\n", "source_mac_A_:");
-                for(i=0; i<PRP_ETH_ADDR_LENGTH; i++)
-                {
+                for (i=0; i<PRP_ETH_ADDR_LENGTH; i++) {
                     temp_node.mac_address_A_[i] = data[pos+i];
                     temp_node.mac_address_B_[i] = data[pos+i];
                     PRP_PRP_LOGOUT(3, "%x\n", data[pos+i]);
@@ -321,15 +303,13 @@ integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* d
 
                 if (tlv_length > PRP_ETH_ADDR_LENGTH) {
                     PRP_PRP_LOGOUT(3, "%s\n", "source_mac_B_:");
-                    for(i=0; i<PRP_ETH_ADDR_LENGTH; i++)
-                    {
+                    for (i=0; i<PRP_ETH_ADDR_LENGTH; i++) {
                         temp_node.mac_address_B_[i] = data[pos+PRP_ETH_ADDR_LENGTH+i];
                         PRP_PRP_LOGOUT(3, "%x\n", data[pos+PRP_ETH_ADDR_LENGTH+i]);
                     }
                 } else {
                     PRP_PRP_LOGOUT(3, "%s\n", "source_mac_B_: not given (assuming same as source_mac_A_)");
                 }
-
             } else {
                 PRP_PRP_LOGOUT(1, "%s\n", "Error: supervision with unknown MAC address format, ignoring node.");
             }
@@ -339,7 +319,7 @@ integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* d
 
         pos += tlv_length;
         if (pos >= *length) {
-            // next TLV would start beyond end of frame
+            /* next TLV would start beyond end of frame */
             PRP_PRP_LOGOUT(1, "%s\n", "Error: received supervision with TLV pointing beyond end of frame. Ignoring.");
             break;
         }
@@ -355,40 +335,38 @@ integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* d
     /* Check Node table for existence of node */
 
     /* if remote node has equal mac addresses on the two adapters */
-    if(0 == prp_memcmp(temp_node.mac_address_A_, temp_node.mac_address_B_, PRP_ETH_ADDR_LENGTH))
-    {
+    if (0 == prp_memcmp(temp_node.mac_address_A_, temp_node.mac_address_B_, PRP_ETH_ADDR_LENGTH)) {
         PRP_PRP_LOGOUT(2, "%s\n", "remote node has equal mac addresses on both adapters");
         node = PRP_NodeTable_T_get_node(&(me->environment_->node_table_), temp_node.mac_address_A_);
 
-        if(node == NULL_PTR)  /* node not yet in table? */
-        {
+        /* node not yet in table? */
+        if (node == NULL_PTR) {
             PRP_PRP_LOGOUT(2, "%s\n", "node was not in table, adding node");
             node = PRP_NodeTable_T_add_node(&(me->environment_->node_table_), &temp_node); /* add new node */
         }
     }
-    else
-    {
+    else {
         PRP_PRP_LOGOUT(2, "%s\n", "remote node has different mac addresses on both adapters");
         node_A = PRP_NodeTable_T_get_node(&(me->environment_->node_table_), temp_node.mac_address_A_);
         node_B = PRP_NodeTable_T_get_node(&(me->environment_->node_table_), temp_node.mac_address_B_);
 
-        if((node_A == NULL_PTR) && (node_B == NULL_PTR)) /* not yet in table? */
-        {
+        /* not yet in table? */
+        if ((node_A == NULL_PTR) && (node_B == NULL_PTR)) {
             PRP_PRP_LOGOUT(2, "%s\n", "node was not in table, adding node");
             node = PRP_NodeTable_T_add_node(&(me->environment_->node_table_), &temp_node); /* add a new node */
         }
-        else if((node_A != NULL_PTR) && (node_B != NULL_PTR)) /* entry with mac A and mac B exists*/
-        {
+        /* entry with mac A and mac B exists */
+        else if ((node_A != NULL_PTR) && (node_B != NULL_PTR)) {
             PRP_PRP_LOGOUT(2, "%s\n", "node for both mac addresses found");
 
-            if(node_A == node_B) /* the same entry? */
-            {
+            /* the same entry? */
+            if (node_A == node_B) {
                 PRP_PRP_LOGOUT(2, "%s\n", "same node object for both addresses");
                 node = node_A;
             }
-            else
-            {
-                /* happens only once when a node with two diffrent mac's already has sent traffic but didn't send a Supervision frame till now */
+            else {
+                /* happens only once when a node with two diffrent mac's already
+                 * has sent traffic but didn't send a Supervision frame till now */
                 PRP_PRP_LOGOUT(2, "%s\n", "different node object for both addresses");
 
                 /* remove both entries to get a new valid consistent entry */
@@ -400,25 +378,25 @@ integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* d
         }
         else if((node_A != NULL_PTR) && (node_B == NULL_PTR)) /* entry with mac A exists but not with mac B*/
         {
-            /* happens only once when a node with two diffrent mac's already has sent traffic but didn't send a Supervision frame till now */
+            /* happens only once when a node with two diffrent mac's already has
+             * sent traffic but didn't send a Supervision frame till now */
             PRP_PRP_LOGOUT(2, "%s\n", "node only for mac address A found");
             node = node_A;
         }
         else if((node_A == NULL_PTR) && (node_B != NULL_PTR)) /* entry with mac B exists but not with mac A*/
         {
-            /* happens only once when a node with two diffrent mac's already has sent traffic but didn't send a Supervision frame till now */
+            /* happens only once when a node with two diffrent mac's already has
+             * sent traffic but didn't send a Supervision frame till now */
             PRP_PRP_LOGOUT(2, "%s\n", "node only for mac address B found");
             node = node_B;
         }
-        else
-        {
+        else {
             PRP_PRP_LOGOUT(0, "%s\n", "never ever do that again!!!!!!");
             return(-PRP_ERROR_NULL_PTR);
         }
     }
 
-    if(node == NULL_PTR)
-    {
+    if (node == NULL_PTR) {
         PRP_PRP_LOGOUT(0, "%s\n", "something is very wrong with the node table");
         return(-PRP_ERROR_NULL_PTR);
     }
@@ -434,10 +412,11 @@ integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* d
 
     PRP_Frames_T_normal_rx(&(me->environment_->frame_analyser_.frames_), data, length, lan_id);
 
-    /* TODO probably add some information if a DAN is actualy a
-    VDAN or not (second TLV), not necessary for algorithm */
+    /* TODO probably add some information if a DAN is actualy a VDAN or
+     * not (second TLV), not necessary for algorithm */
 
-    return(PRP_DROP); /* always drop supervision frames because they are allready proceeded */
+    /* always drop supervision frames because they are allready proceeded */
+    return(PRP_DROP);
 }
 
 /**
@@ -454,48 +433,43 @@ integer32 PRP_Supervision_T_supervision_tx(PRP_Supervision_T* const me)
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return(-PRP_ERROR_NULL_PTR);
     }
 
     length = 0;
 
-    // ethernet DST
-    for(i=0; i<PRP_ETH_ADDR_LENGTH; i++)
-    {
+    /*  ethernet DST */
+    for (i=0; i<PRP_ETH_ADDR_LENGTH; i++) {
         supervision_frame_[length++] = me->supervision_address_[i];
     }
-    // ethernet SRC
-    for(i=0; i<PRP_ETH_ADDR_LENGTH; i++)
-    {
+    /* ethernet SRC */
+    for (i=0; i<PRP_ETH_ADDR_LENGTH; i++) {
         supervision_frame_[length++] = me->environment_->environment_configuration_.mac_address_A_[i];
     }
-    // ethertype
+    /* ethertype */
     supervision_frame_[length++] = 0x88;
     supervision_frame_[length++] = 0xFB;
 
-    // supervision frame payload
+    /* supervision frame payload */
     supervision_frame_[length++] = 0; // SupPath and MSB of SupVersion
     supervision_frame_[length++] = 1; // LSB of SupVersion
-    // SupSequenceNumber
+    /* SupSequenceNumber */
     supervision_frame_[length++] = me->supervision_seqno_ >> 8;
     supervision_frame_[length++] = me->supervision_seqno_;
     me->supervision_seqno_++;
 
-    // Supervision TLV1 (20 or 21)
-    if(me->environment_->environment_configuration_.duplicate_discard_ == TRUE) /* what mode are we running on */
-    {
+    /* Supervision TLV1 (20 or 21) */
+    /* what mode are we running on */
+    if (me->environment_->environment_configuration_.duplicate_discard_ == TRUE) {
         supervision_frame_[length++] = 20; // duplicate accept
     }
-    else
-    {
-        // FIXME: duplicate discard is expected to disappear in PRP-1
+    else {
+        /* duplicate accept is expected to disappear in PRP-1 */
         supervision_frame_[length++] = 21; // duplicate discard
     }
     supervision_frame_[length++] = PRP_ETH_ADDR_LENGTH;
-    for(i=0; i<PRP_ETH_ADDR_LENGTH; i++)
-    {
+    for (i=0; i<PRP_ETH_ADDR_LENGTH; i++) {
         supervision_frame_[length++] = me->environment_->environment_configuration_.mac_address_A_[i];
     }
     /*for(i=0; i<PRP_ETH_ADDR_LENGTH; i++)
@@ -528,8 +502,7 @@ void PRP_Supervision_T_init(PRP_Supervision_T* const me, PRP_Environment_T* cons
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
@@ -559,8 +532,7 @@ void PRP_Supervision_T_cleanup(PRP_Supervision_T* const me)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 

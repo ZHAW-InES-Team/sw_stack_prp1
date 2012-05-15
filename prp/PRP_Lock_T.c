@@ -77,8 +77,7 @@ void PRP_Lock_T_down(PRP_Lock_T* const me)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
@@ -94,8 +93,7 @@ void PRP_Lock_T_up(PRP_Lock_T* const me)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
@@ -111,8 +109,7 @@ void PRP_Lock_T_init(PRP_Lock_T* const me)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
@@ -126,8 +123,7 @@ void PRP_Lock_T_init(PRP_Lock_T* const me)
  */
 void PRP_Lock_T_cleanup(PRP_Lock_T* const me)
 {
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 

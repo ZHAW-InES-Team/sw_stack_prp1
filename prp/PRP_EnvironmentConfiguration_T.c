@@ -82,8 +82,7 @@ void PRP_EnvironmentConfiguration_T_print(PRP_EnvironmentConfiguration_T* const 
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
@@ -92,16 +91,12 @@ void PRP_EnvironmentConfiguration_T_print(PRP_EnvironmentConfiguration_T* const 
     PRP_PRP_LOGOUT(level, "manufacturer_:\t%s\n", me->manufacturer_);
     PRP_PRP_LOGOUT(level, "\version_:\t%s\n", me->version_);
     PRP_PRP_LOGOUT(level, "%s\n", "mac_address_A_:");
-    for(i=0; i<PRP_ETH_ADDR_LENGTH; i++)
-    {
+    for (i=0; i<PRP_ETH_ADDR_LENGTH; i++) {
         PRP_PRP_LOGOUT(level, "%x\n", me->mac_address_A_[i]);
-
     }
     PRP_PRP_LOGOUT(level, "%s\n", "mac_address_B_:");
-    for(i=0; i<PRP_ETH_ADDR_LENGTH; i++)
-    {
+    for (i=0; i<PRP_ETH_ADDR_LENGTH; i++) {
         PRP_PRP_LOGOUT(level, "%x\n", me->mac_address_B_[i]);
-
     }
 
     PRP_PRP_LOGOUT(level, "adapter_active_A_:\t%u\n", me->adapter_active_A_);
@@ -115,7 +110,6 @@ void PRP_EnvironmentConfiguration_T_print(PRP_EnvironmentConfiguration_T* const 
     PRP_PRP_LOGOUT(level, "cnt_total_errors_A_:\t%u\n", me->cnt_total_errors_A_);
     PRP_PRP_LOGOUT(level, "cnt_total_errors_B_:\t%u\n", me->cnt_total_errors_B_);
     PRP_PRP_LOGOUT(level, "%s\n", "====================================");
-
 }
 
 /**
@@ -127,8 +121,7 @@ void PRP_EnvironmentConfiguration_T_init(PRP_EnvironmentConfiguration_T* const m
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
@@ -158,8 +151,7 @@ void PRP_EnvironmentConfiguration_T_cleanup(PRP_EnvironmentConfiguration_T* cons
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 

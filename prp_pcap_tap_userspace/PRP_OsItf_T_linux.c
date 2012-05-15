@@ -298,8 +298,11 @@ void lock_up(void* lock)
     struct PRP_Semaphore_T* temp_lock;
     temp_lock = (struct PRP_Semaphore_T*)lock;
 
-    if ( sem_post( &temp_lock->handle_ ) != 0 ) printf(" Semaphore reached max Value, semaphore count is unchanged\n");
+    if (sem_post( &temp_lock->handle_ ) != 0 ) {
+        printf(" Semaphore reached max Value, semaphore count is unchanged\n");
+    }
 }
+
 #else /* if not def semaphore */
 void* create_lock(void) { return (void *) 1; }
 void destroy_lock(void* lock) { }

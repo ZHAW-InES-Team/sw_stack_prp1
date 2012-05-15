@@ -82,8 +82,7 @@ void PRP_NodeTable_T_print(PRP_NodeTable_T* const me, uinteger32 level)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
@@ -104,18 +103,15 @@ void PRP_NodeTable_T_set_mac_address_A(PRP_NodeTable_T* const me, PRP_Node_T* no
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
-    if(node == NULL_PTR)
-    {
+    if (node == NULL_PTR) {
         return;
     }
 
-    if(mac == NULL_PTR)
-    {
+    if (mac == NULL_PTR) {
         return;
     }
 
@@ -133,18 +129,15 @@ void PRP_NodeTable_T_set_mac_address_B(PRP_NodeTable_T* const me, PRP_Node_T* no
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
-    if(node == NULL_PTR)
-    {
+    if (node == NULL_PTR) {
         return;
     }
 
-    if(mac == NULL_PTR)
-    {
+    if (mac == NULL_PTR) {
         return;
     }
 
@@ -165,33 +158,27 @@ PRP_Node_T* PRP_NodeTable_T_add_node(PRP_NodeTable_T* const me, PRP_Node_T* node
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return(NULL_PTR);
     }
 
-    if(node == NULL_PTR)
-    {
+    if (node == NULL_PTR) {
         return(NULL_PTR);
     }
 
     new_node = PRP_Node_T_create(); /* create a new node */
 
-    if(new_node == NULL_PTR) /* memory full? */
-    {
+    if (new_node == NULL_PTR) { /* memory full? */
         return(NULL_PTR);
     }
 
     prp_memcpy(new_node, node, sizeof(PRP_Node_T)); /* copie the values to the new node */
 
     /* here you could add the nodes sorted, to make a binary search or so */
-    if(me->last_node_ == NULL_PTR) /* table empty ? */
-    {
-        me->first_node_ = new_node; /* the first entry in table */
-    }
-    else
-    {
-        me->last_node_->next_node_ = new_node; /* reconnect nodes */
+    if (me->last_node_ == NULL_PTR) {           /* table empty ? */
+        me->first_node_ = new_node;             /* the first entry in table */
+    } else {
+        me->last_node_->next_node_ = new_node;  /* reconnect nodes */
     }
 
     new_node->previous_node_ = me->last_node_;  /* added to the end */
@@ -213,41 +200,34 @@ void PRP_NodeTable_T_remove_node(PRP_NodeTable_T* const me, PRP_Node_T* node)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
-    if(node == NULL_PTR)
-    {
+    if (node == NULL_PTR) {
         return;
     }
 
     PRP_T_delete_node_table_entry(node);
 
     /* was deleted node first node in table? */
-    if(node->previous_node_ == NULL_PTR)
-    {
-        me->first_node_ = node->next_node_; /* new first entry */
+    if (node->previous_node_ == NULL_PTR) {
+        me->first_node_ = node->next_node_;     /* new first entry */
     }
-    else
-    {
+    else {
         node->previous_node_->next_node_ = node->next_node_; /* reconnect nodes */
     }
 
     /* was deleted node last node in table? */
-    if(node->next_node_ == NULL_PTR)
-    {
-        me->last_node_ = node->previous_node_; /* new last entry */
+    if (node->next_node_ == NULL_PTR) {
+        me->last_node_ = node->previous_node_;  /* new last entry */
     }
-    else
-    {
+    else {
         node->next_node_->previous_node_ = node->previous_node_; /* reconnect nodes */
     }
 
     me->cnt_nodes_--; /* decrement the number of entries in the table */
-    if(me->cnt_nodes_ <= 0) /* check if table is empty */
-    {
+    if (me->cnt_nodes_ <= 0) {                  /* check if table is empty */
         me->node_table_empty_ = TRUE;
     }
 
@@ -275,31 +255,30 @@ PRP_Node_T* PRP_NodeTable_T_get_node(PRP_NodeTable_T* const me, octet* node_mac)
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return(NULL_PTR);
     }
 
-    if(node_mac == NULL_PTR)
-    {
+    if (node_mac == NULL_PTR) {
         return(NULL_PTR);
     }
 
     /* here you could replace the linear search with a binary search or so */
     node = me->first_node_; /* beginning of the table */
 
-    while(NULL_PTR != node) /* check in worst case whole table, linear search*/
-    {
-        if((0 == prp_memcmp(node->mac_address_A_, node_mac, PRP_ETH_ADDR_LENGTH)) ||
-            (0 == prp_memcmp(node->mac_address_B_, node_mac, PRP_ETH_ADDR_LENGTH))) /* check if mac are equal => found */
-        {
+    /* check in worst case whole table, linear search */
+    while (NULL_PTR != node) {
+        /* check if mac are equal => found */
+        if ((0 == prp_memcmp(node->mac_address_A_, node_mac, PRP_ETH_ADDR_LENGTH)) ||
+            (0 == prp_memcmp(node->mac_address_B_, node_mac, PRP_ETH_ADDR_LENGTH))) {
             return(node);
         }
 
         node = node->next_node_; /* go to the next node */
     }
 
-    return(NULL_PTR); /* not found */
+    /* not found */
+    return(NULL_PTR);
 }
 
 /**
@@ -313,8 +292,7 @@ PRP_Node_T* PRP_NodeTable_T_get_first_node(PRP_NodeTable_T* const me)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return(NULL_PTR);
     }
 
@@ -332,8 +310,7 @@ PRP_Node_T* PRP_NodeTable_T_get_last_node(PRP_NodeTable_T* const me)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return(NULL_PTR);
     }
 
@@ -357,13 +334,11 @@ PRP_Node_T* PRP_NodeTable_T_get_previous_node(PRP_NodeTable_T* const me, PRP_Nod
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return(NULL_PTR);
     }
 
-    if(node == NULL_PTR)
-    {
+    if (node == NULL_PTR) {
         return(NULL_PTR);
     }
 
@@ -387,13 +362,11 @@ PRP_Node_T* PRP_NodeTable_T_get_next_node(PRP_NodeTable_T* const me, PRP_Node_T*
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return(NULL_PTR);
     }
 
-    if(node == NULL_PTR)
-    {
+    if (node == NULL_PTR) {
         return(NULL_PTR);
     }
 
@@ -409,8 +382,7 @@ void PRP_NodeTable_T_init(PRP_NodeTable_T* const me)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
@@ -431,15 +403,13 @@ void PRP_NodeTable_T_cleanup(PRP_NodeTable_T* const me)
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(me == NULL_PTR)
-    {
+    if (me == NULL_PTR) {
         return;
     }
 
-    node = me->first_node_; /* beginning of the table */
+    node = me->first_node_;                     /* beginning of the table */
 
-    while(NULL_PTR != node) /* go through whole list */
-    {
+    while (NULL_PTR != node) {                   /* go through whole list */
         /* deletes first node and sets the new first pointer*/
         PRP_NodeTable_T_remove_node(me, node);
         node = me->first_node_; /* new beginning of the table */

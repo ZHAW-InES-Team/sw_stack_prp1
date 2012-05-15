@@ -56,7 +56,7 @@
 *
 *  Version     : 1.0
 *  Author      : Sven Meier
-* 
+*
 *********************************************************************
 *  Change History
 *
@@ -101,15 +101,14 @@ integer32 PRP_T_receive(octet* data, uinteger32* length, octet lan_id)
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(initialized_ != TRUE)
-    {
+    if (initialized_ != TRUE) {
         return(-PRP_ERROR_NOT_INITIALIZED);
     }
 
     PRP_Lock_T_down(&lock_); /* API calls are mutex */
 
     ret = PRP_Environment_T_process_rx(&environment_, data, length, lan_id);
- 
+
     PRP_Lock_T_up(&lock_);
 
     return(ret);
@@ -129,12 +128,12 @@ integer32 PRP_T_transmit(octet* data, uinteger32* length)
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(initialized_ != TRUE)
-    {
+    if (initialized_ != TRUE) {
         return(-PRP_ERROR_NOT_INITIALIZED);
     }
 
-    PRP_Lock_T_down(&lock_); /* API calls are mutex */
+    /* API calls are mutex */
+    PRP_Lock_T_down(&lock_);
 
     ret = PRP_Environment_T_process_tx(&environment_, data, length, 0x00);
 
@@ -149,9 +148,8 @@ integer32 PRP_T_transmit(octet* data, uinteger32* length)
  */
 void PRP_T_timer(void)
 {
-    if(initialized_ != TRUE)
-    {
-    return;
+    if (initialized_ != TRUE) {
+        return;
     }
 
     PRP_Lock_T_down(&lock_); /* API calls are mutex */
@@ -169,8 +167,7 @@ void PRP_T_link_down_A(void)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(initialized_ != TRUE)
-    {
+    if (initialized_ != TRUE) {
         return;
     }
 
@@ -187,8 +184,7 @@ void PRP_T_link_down_B(void)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(initialized_ != TRUE)
-    {
+    if (initialized_ != TRUE) {
         return;
     }
 
@@ -208,13 +204,11 @@ integer32 PRP_T_get_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(initialized_ != TRUE)
-    {
+    if (initialized_ != TRUE) {
         return(-PRP_ERROR_NOT_INITIALIZED);
     }
 
-    if(merge_layer == NULL_PTR)
-    {
+    if (merge_layer == NULL_PTR) {
         return(-PRP_ERROR_NULL_PTR);
     }
 
@@ -257,13 +251,11 @@ integer32 PRP_T_set_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(initialized_ != TRUE)
-    {
+    if (initialized_ != TRUE) {
         return(-PRP_ERROR_NOT_INITIALIZED);
     }
 
-    if(merge_layer == NULL_PTR)
-    {
+    if (merge_layer == NULL_PTR) {
         return(-PRP_ERROR_NULL_PTR);
     }
 
@@ -272,98 +264,76 @@ integer32 PRP_T_set_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
     prp_memcpy(environment_.environment_configuration_.node_, merge_layer->node_, PRP_NODE_NAME_LENGTH);
     prp_memcpy(environment_.environment_configuration_.manufacturer_, merge_layer->manufacturer_, PRP_MANUFACTURER_NAME_LENGTH);
     prp_memcpy(environment_.environment_configuration_.version_, merge_layer->version_, PRP_VERSION_LENGTH);
-    if(merge_layer->clear_node_table_ == TRUE) /* clear the table */
-    {
+    /* clear the table */
+    if (merge_layer->clear_node_table_ == TRUE) {
         PRP_NodeTable_T_cleanup(&(environment_.node_table_));
         PRP_NodeTable_T_init(&(environment_.node_table_));
     }
     /* did mac address of adapter A change ? */
-    if(0 != prp_memcmp(environment_.environment_configuration_.mac_address_A_, merge_layer->mac_address_A_, PRP_ETH_ADDR_LENGTH))
-    {
+    if (0 != prp_memcmp(environment_.environment_configuration_.mac_address_A_, merge_layer->mac_address_A_, PRP_ETH_ADDR_LENGTH)) {
         /* change the mac on the card */
-        if(0 != PRP_NetItf_T_set_mac_address_A(merge_layer->mac_address_A_))
-        {
+        if (0 != PRP_NetItf_T_set_mac_address_A(merge_layer->mac_address_A_)) {
             PRP_Lock_T_up(&lock_);
             return(-PRP_ERROR_ADAPTER);
         }
         prp_memcpy(environment_.environment_configuration_.mac_address_A_, merge_layer->mac_address_A_, PRP_ETH_ADDR_LENGTH);
     }
-    if(0 !=	prp_memcmp(environment_.environment_configuration_.mac_address_B_, merge_layer->mac_address_B_, PRP_ETH_ADDR_LENGTH))
-    {
-        if(0 != PRP_NetItf_T_set_mac_address_B(merge_layer->mac_address_B_))
-        {
+    if (0 != prp_memcmp(environment_.environment_configuration_.mac_address_B_, merge_layer->mac_address_B_, PRP_ETH_ADDR_LENGTH)) {
+        if (0 != PRP_NetItf_T_set_mac_address_B(merge_layer->mac_address_B_)) {
             PRP_Lock_T_up(&lock_);
             return(-PRP_ERROR_ADAPTER);
         }
-
         prp_memcpy(environment_.environment_configuration_.mac_address_B_, merge_layer->mac_address_B_, PRP_ETH_ADDR_LENGTH);
     }
 
-    if((merge_layer->adapter_active_A_ == TRUE) || (merge_layer->adapter_active_A_ == FALSE))
-    {
-        if(0 != PRP_NetItf_T_set_active_A(merge_layer->adapter_active_A_))
-        {
+    if ((merge_layer->adapter_active_A_ == TRUE) || (merge_layer->adapter_active_A_ == FALSE)) {
+        if(0 != PRP_NetItf_T_set_active_A(merge_layer->adapter_active_A_)) {
             PRP_Lock_T_up(&lock_);
             return(-PRP_ERROR_ADAPTER);
         }
         environment_.environment_configuration_.adapter_active_A_ = merge_layer->adapter_active_A_;
-    }
-    else
-    {
+    } else {
         PRP_Lock_T_up(&lock_);
         return(-PRP_ERROR_WRONG_VAL);
     }
 
-    if((merge_layer->adapter_active_B_ == TRUE) || (merge_layer->adapter_active_B_ == FALSE))
-    {
-        if(0 != PRP_NetItf_T_set_active_B(merge_layer->adapter_active_B_))
-        {
+    if ((merge_layer->adapter_active_B_ == TRUE) || (merge_layer->adapter_active_B_ == FALSE)) {
+        if (0 != PRP_NetItf_T_set_active_B(merge_layer->adapter_active_B_)) {
             PRP_Lock_T_up(&lock_);
             return(-PRP_ERROR_ADAPTER);
         }
         environment_.environment_configuration_.adapter_active_B_ = merge_layer->adapter_active_B_;
-    }
-    else
-    {
+    } else {
         PRP_Lock_T_up(&lock_);
         return(-PRP_ERROR_WRONG_VAL);
     }
 
-    if((merge_layer->duplicate_discard_ == TRUE) || (merge_layer->duplicate_discard_ == FALSE))
-    {
+    if ((merge_layer->duplicate_discard_ == TRUE) || (merge_layer->duplicate_discard_ == FALSE)) {
         environment_.environment_configuration_.duplicate_discard_ = merge_layer->duplicate_discard_;
-    }
-    else
-    {
+    } else {
         PRP_Lock_T_up(&lock_);
         return(-PRP_ERROR_WRONG_VAL);
     }
 
-    if((merge_layer->duplicate_discard_ == TRUE) || (merge_layer->duplicate_discard_ == FALSE))
-    {
+    if ((merge_layer->duplicate_discard_ == TRUE) || (merge_layer->duplicate_discard_ == FALSE)) {
         environment_.environment_configuration_.transparent_reception_ = merge_layer->transparent_reception_;
-    }
-    else
-    {
+    } else {
         PRP_Lock_T_up(&lock_);
         return(-PRP_ERROR_WRONG_VAL);
     }
 
     /* environment_.node_table_.node_table_empty_ = merge_layer->node_table_empty_; read only */
-    if(0 !=	prp_memcmp(environment_.supervision_.supervision_address_, merge_layer->supervision_address_, PRP_ETH_ADDR_LENGTH))
-    {
-        if((merge_layer->supervision_address_[0] != 0x01) ||
+    if (0 != prp_memcmp(environment_.supervision_.supervision_address_, merge_layer->supervision_address_, PRP_ETH_ADDR_LENGTH)) {
+        if ((merge_layer->supervision_address_[0] != 0x01) ||
             (merge_layer->supervision_address_[1] != 0x15) ||
             (merge_layer->supervision_address_[2] != 0x4e) ||
             (merge_layer->supervision_address_[3] != 0x00) ||
-            (merge_layer->supervision_address_[4] != 0x01)) /* is it a valid supervision frame address? */
-        {
+            (merge_layer->supervision_address_[4] != 0x01)) { /* is it a valid supervision frame address? */
             PRP_Lock_T_up(&lock_);
             return(-PRP_ERROR_WRONG_VAL);
         }
         /* add the address to the multicast addresses of the adapters */
-        if(0 != PRP_NetItf_T_set_supervision_address(merge_layer->supervision_address_))
-        {
+        if (0 != PRP_NetItf_T_set_supervision_address(merge_layer->supervision_address_)) {
             PRP_Lock_T_up(&lock_);
             return(-PRP_ERROR_ADAPTER);
         }
@@ -391,15 +361,13 @@ integer32 PRP_T_get_node_table_entry(PRP_NodeTableEntry_T* node_table_entry)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(initialized_ != TRUE)
-    {
+    if (initialized_ != TRUE) {
         return(-PRP_ERROR_NOT_INITIALIZED);
     }
 
     PRP_Lock_T_down(&lock_);
 
-    if(node_.previous_node_ == NULL_PTR)
-    {
+    if (node_.previous_node_ == NULL_PTR) {
         PRP_Lock_T_up(&lock_);
         return(-PRP_NODE_DELETED);
     }
@@ -443,8 +411,7 @@ integer32 PRP_T_go_to_first_node_table_entry(void)
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(initialized_ != TRUE)
-    {
+    if (initialized_ != TRUE) {
         return(-PRP_ERROR_NOT_INITIALIZED);
     }
 
@@ -452,8 +419,7 @@ integer32 PRP_T_go_to_first_node_table_entry(void)
 
     temp_node = PRP_NodeTable_T_get_first_node(&(environment_.node_table_));
 
-    if(temp_node == NULL_PTR)
-    {
+    if (temp_node == NULL_PTR) {
         PRP_Lock_T_up(&lock_);
         return(PRP_NODETABLE_END);
     }
@@ -480,8 +446,7 @@ integer32 PRP_T_go_to_next_node_table_entry(void)
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(initialized_ != TRUE)
-    {
+    if (initialized_ != TRUE) {
         return(-PRP_ERROR_NOT_INITIALIZED);
     }
 
@@ -489,8 +454,7 @@ integer32 PRP_T_go_to_next_node_table_entry(void)
 
     temp_node = node_.next_node_;
 
-    if(temp_node == NULL_PTR)
-    {
+    if (temp_node == NULL_PTR) {
         PRP_Lock_T_up(&lock_);
         return(PRP_NODETABLE_END);
     }
@@ -515,23 +479,19 @@ void PRP_T_delete_node_table_entry(PRP_Node_T* node)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    if(initialized_ != TRUE)
-    {
+    if (initialized_ != TRUE) {
         return;
     }
 
-    if(node == NULL_PTR)
-    {
+    if (node == NULL_PTR) {
         return;
     }
 
-    if(node_.next_node_ == node)
-    {
-        node_.next_node_ = 	node->next_node_;
+    if (node_.next_node_ == node) {
+        node_.next_node_ = node->next_node_;
     }
-    if(node_.previous_node_ == node)
-    {
-        node_.previous_node_ = 	NULL_PTR;
+    if (node_.previous_node_ == node) {
+        node_.previous_node_ = NULL_PTR;
     }
 }
 
@@ -541,8 +501,7 @@ void PRP_T_delete_node_table_entry(PRP_Node_T* node)
  */
 void PRP_T_init(void)
 {
-    if(initialized_ != FALSE)
-    {
+    if (initialized_ != FALSE) {
         return;
     }
     PRP_Lock_T_init(&lock_); /* API calls are mutex */
@@ -557,8 +516,7 @@ void PRP_T_init(void)
  */
 void PRP_T_cleanup(void)
 {
-    if(initialized_ != TRUE)
-    {
+    if (initialized_ != TRUE) {
         return;
     }
     PRP_Lock_T_down(&lock_); /* API calls are mutex */
