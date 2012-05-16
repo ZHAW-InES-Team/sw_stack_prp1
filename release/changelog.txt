@@ -6,11 +6,12 @@ Release 1.1
     - Unused bridging interface removed (PRP-0 relict)
 - PRP_BridgingFrame_T
     - Unused interface removed (PRP-0 relict)
-
-Release 1.1
+- PRP_Frames_T
+    - PRP-1 quick fix, global tx sequence number implemented
+    - old node sequence number removed
 - Duplicate detection algorithm improved (hash table)
-- Bridging removed
-- RSTP components removed
 
 Release 1.0
-- PRP-1 functionality implemented
+- PRP-1 functionality for supervision generating implemented
+- Drop window algorithm removed
+- Linear discard table for duplicate detection implemented
