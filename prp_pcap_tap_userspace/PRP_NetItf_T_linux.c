@@ -117,7 +117,7 @@ int tap;
 char devname[IFNAMSIZ];
 char port_a_name[IFNAMSIZ];
 char port_b_name[IFNAMSIZ];
-uinteger16 tx_seq_nr;
+
 
 /**
  * @fn static void sig_term(int sig)
@@ -543,9 +543,6 @@ int main(int argc, char* argv[])
     struct timeval next;
     struct timeval delta;
     exit_prp = FALSE;
-
-    /* initialize send sequence number */
-    tx_seq_nr = 0;
 
 #ifdef PRP_DEBUG_LOG
     debug_level = PRP_DEBUG_LEVEL;

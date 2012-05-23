@@ -72,7 +72,6 @@
 
 #include "PRP_Package_T.h"
 
-extern uinteger16 tx_seq_nr;    /* global TX sequence number */
 
 integer32 PRP_NetItf_T_set_active_A(boolean value);
 integer32 PRP_NetItf_T_set_active_B(boolean value);

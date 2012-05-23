@@ -68,15 +68,23 @@
 #ifndef PRP_Frames_T_H 
 #define PRP_Frames_T_H 
 
+#include <pthread.h>
 #include "PRP_Package_T.h"
 #include "PRP_Trailer_T.h"
 
-struct PRP_Frames_T 
+struct PRP_Frames_T
 {
     PRP_FrameAnalyser_T* frame_analyser_;   /* Pointer to the frame analyzer */
     PRP_Trailer_T trailer_rx_;              /* Instance of a trailer object */
     PRP_Trailer_T trailer_tx_;              /* Instance of a trailer object */
 };
+
+struct PRP_Frames_T_seq_Nr
+{
+    uinteger16 tx_seq_nr_;
+    pthread_mutex_t mutex_;
+};
+
 
 void PRP_Frames_T_print(PRP_Frames_T* const me, octet* data, uinteger32* length, uinteger32 level);
 integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32* length, octet lan_id);
