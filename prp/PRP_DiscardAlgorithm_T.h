@@ -66,8 +66,8 @@
 *  11.05.12 | asdo     | discard algorithm modification
 *********************************************************************/
 
-#ifndef PRP_DiscardAlgorithm_PRP1_T_H
-#define PRP_DiscardAlgorithm_PRP1_T_H
+#ifndef PRP_DiscardAlgorithm_T_H
+#define PRP_DiscardAlgorithm_T_H
 
 #include "PRP_Package_T.h"
 #include "PRP_RedundancyControlTrailer_T.h"
@@ -75,17 +75,22 @@
 #include <sys/time.h>
 
 #define DISCARD_ITEM_COUNT          1024
-#define DISCARD_LIST_ENTRY_COUNT    256      // 2^n, n is 8 in this case
-#define DISCARD_HASH_MASK           0x00FF   // Must select n bit in a range from 1 to 16
-#define DISCARD_TICK_COUNT          20       // 20ms -> 400ms
+#define DISCARD_LIST_ENTRY_COUNT    256      /* 2^n, n is 8 in this case */
+#define DISCARD_HASH_MASK           0x00FF   /* Must select n bit in a range from 1 to 16 */
+#define DISCARD_TICK_COUNT          20       /* 20ms -> 400ms */
 
 
-struct PRP_DiscardAlgorithm_PRP1_T
+struct PRP_DiscardAlgorithm_T
 {
-    struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T **hash_list; // first list orded by hash, second list orded from newest to oldest because we dont want to process dead items all the time
-    struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *free_list;  // list of free items to use
-    struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *chronology; // from oldest to newest
-    struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *newest;     // shortcut to newest item
+    /* first list orded by hash, second list orded from newest to oldest
+     * because we dont want to process dead items all the time */
+    struct PRP_DiscardAlgorithm_DiscardItem_T **hash_list;
+    /* list of free items to use */
+    struct PRP_DiscardAlgorithm_DiscardItem_T *free_list;
+    /* from oldest to newest */
+    struct PRP_DiscardAlgorithm_DiscardItem_T *chronology;
+    /* shortcut to newest item */
+    struct PRP_DiscardAlgorithm_DiscardItem_T *newest;
 
     uinteger32 time;
     uinteger8 ageing_counter;
@@ -93,7 +98,7 @@ struct PRP_DiscardAlgorithm_PRP1_T
     int used_item_count;
 };
 
-struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T
+struct PRP_DiscardAlgorithm_DiscardItem_T
 {
     unsigned short seq_nr;
     unsigned char src_mac[6];
@@ -101,22 +106,22 @@ struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T
     uinteger32 timestamp;
     unsigned short hash;
 
-    struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *previous;       // Used only for hash_list
-    struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *next;           // Used only for hash_list
+    struct PRP_DiscardAlgorithm_DiscardItem_T *previous;       /* Used only for hash_list */
+    struct PRP_DiscardAlgorithm_DiscardItem_T *next;           /* Used only for hash_list */
 
-    struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *previous_alt;   // Used only for chronology
-    struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *next_alt;       // Used only for free_list and chronology
+    struct PRP_DiscardAlgorithm_DiscardItem_T *previous_alt;   /* Used only for chronology */
+    struct PRP_DiscardAlgorithm_DiscardItem_T *next_alt;       /* Used only for free_list and chronology */
 };
 
 #ifdef PRP_DEBUG_LOG
-void PRP_DiscardAlgorithm_PRP1_T_print(PRP_DiscardAlgorithm_PRP1_T* const me);
-void PRP_DiscardAlgorithm_PRP1_T_check_consistency(PRP_DiscardAlgorithm_PRP1_T* const me);
+void PRP_DiscardAlgorithm_T_print(PRP_DiscardAlgorithm_T* const me);
+void PRP_DiscardAlgorithm_T_check_consistency(PRP_DiscardAlgorithm_T* const me);
 #endif
 
-integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* const me, octet* mac, octet* seq_nr);
-void PRP_DiscardAlgorithm_PRP1_T_do_aging(PRP_DiscardAlgorithm_PRP1_T* const me);
-void PRP_DiscardAlgorithm_PRP1_T_init(PRP_DiscardAlgorithm_PRP1_T* const me);
-void PRP_DiscardAlgorithm_PRP1_T_cleanup(PRP_DiscardAlgorithm_PRP1_T* const me);
+integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, octet* mac, octet* seq_nr);
+void PRP_DiscardAlgorithm_T_do_aging(PRP_DiscardAlgorithm_T* const me);
+void PRP_DiscardAlgorithm_T_init(PRP_DiscardAlgorithm_T* const me);
+void PRP_DiscardAlgorithm_T_cleanup(PRP_DiscardAlgorithm_T* const me);
 
-#endif /* PRP_DiscardAlgorithm_PRP1_T_H */
+#endif /* PRP_DiscardAlgorithm_T_H */
 

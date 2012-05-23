@@ -66,25 +66,25 @@
 *  11.05.12 | asdo     | discard algorithm improved (hash table)
 ************|**********|*********************************************/
 
-#include "PRP_DiscardAlgorithm_PRP1_T.h"
+#include "PRP_DiscardAlgorithm_T.h"
 #include "PRP_LogItf_T.h"
 #include <stdio.h>
 
-static struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T discardalgorithm_items_[DISCARD_ITEM_COUNT];
-static struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *discardalgorithm_list_[DISCARD_LIST_ENTRY_COUNT];
+static struct PRP_DiscardAlgorithm_DiscardItem_T discardalgorithm_items_[DISCARD_ITEM_COUNT];
+static struct PRP_DiscardAlgorithm_DiscardItem_T *discardalgorithm_list_[DISCARD_LIST_ENTRY_COUNT];
 
 
 #ifdef PRP_DEBUG_LOG
 
 /**
- * @fn void PRP_DiscardAlgorithm_PRP1_T_print(PRP_DiscardAlgorithm_PRP1_T* const me)
+ * @fn void PRP_DiscardAlgorithm_T_print(PRP_DiscardAlgorithm_T* const me)
  * @brief Print the discard table
- * @param   me PRP_DiscardAlgorithm_PRP1_T this pointer
+ * @param   me PRP_DiscardAlgorithm_T this pointer
  */
-void PRP_DiscardAlgorithm_PRP1_T_print(PRP_DiscardAlgorithm_PRP1_T* const me)
+void PRP_DiscardAlgorithm_T_print(PRP_DiscardAlgorithm_T* const me)
 {
     int i;
-    struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *item;
+    struct PRP_DiscardAlgorithm_DiscardItem_T *item;
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
@@ -127,18 +127,18 @@ void PRP_DiscardAlgorithm_PRP1_T_print(PRP_DiscardAlgorithm_PRP1_T* const me)
 }
 
 /**
- * @fn void PRP_DiscardAlgorithm_PRP1_T_check_consistency(PRP_DiscardAlgorithm_PRP1_T* const me)
+ * @fn void PRP_DiscardAlgorithm_T_check_consistency(PRP_DiscardAlgorithm_T* const me)
  * @brief Check for duplicate consistency
- * @param   me PRP_DiscardAlgorithm_PRP1_T this pointer
+ * @param   me PRP_DiscardAlgorithm_T this pointer
  */
-void PRP_DiscardAlgorithm_PRP1_T_check_consistency(PRP_DiscardAlgorithm_PRP1_T* const me)
+void PRP_DiscardAlgorithm_T_check_consistency(PRP_DiscardAlgorithm_T* const me)
 {
     int i;
     int hash_item_count;
     int chronology_count;
     int freelist_count;
-    struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *item;
-    struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *item2;
+    struct PRP_DiscardAlgorithm_DiscardItem_T *item;
+    struct PRP_DiscardAlgorithm_DiscardItem_T *item2;
     unsigned char b;
 
     if (discard_debug_level < 4) {
@@ -255,19 +255,19 @@ void PRP_DiscardAlgorithm_PRP1_T_check_consistency(PRP_DiscardAlgorithm_PRP1_T* 
 #endif /* PRP_DEBUG_LOG */
 
 /**
- * @fn integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* const me, octet* mac, octet* seq_nr)
+ * @fn integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, octet* mac, octet* seq_nr)
  * @brief Scan the discard table for an entry
- * @param   me PRP_DiscardAlgorithm_PRP1_T this pointer
+ * @param   me PRP_DiscardAlgorithm_T this pointer
  * @param   mac octet pointer to the src mac
  * @param   seq_nr octet pointer to the sequence number
  * @retval  DROP 0, if entry was found
  * @retval  KEEP 1, if entry was not found
  */
-integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* const me, octet* mac, octet* seq_nr)
+integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, octet* mac, octet* seq_nr)
 {
     unsigned short seqnr_corr;
     unsigned short hash;
-    struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *item;
+    struct PRP_DiscardAlgorithm_DiscardItem_T *item;
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
@@ -327,8 +327,8 @@ integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* 
                 #endif
 
                 #ifdef PRP_DEBUG_LOG
-                PRP_DiscardAlgorithm_PRP1_T_print( me );
-                PRP_DiscardAlgorithm_PRP1_T_check_consistency( me );
+                PRP_DiscardAlgorithm_T_print(me);
+                PRP_DiscardAlgorithm_T_check_consistency(me);
                 #endif
 
                 PRP_DISCARD_LOGOUT(1, "DROP, %i items used\n", me->used_item_count);
@@ -393,23 +393,23 @@ integer32 PRP_DiscardAlgorithm_PRP1_T_search_entry(PRP_DiscardAlgorithm_PRP1_T* 
     PRP_DISCARD_LOGOUT(1, "KEEP, %i items used\n", me->used_item_count);
 
     #ifdef PRP_DEBUG_LOG
-    PRP_DiscardAlgorithm_PRP1_T_print(me);
-    PRP_DiscardAlgorithm_PRP1_T_check_consistency(me);
+    PRP_DiscardAlgorithm_T_print(me);
+    PRP_DiscardAlgorithm_T_check_consistency(me);
     #endif
 
     return(PRP_KEEP);
 }
 
 /**
- * @fn void PRP_DiscardAlgorithm_PRP1_T_do_aging(PRP_DiscardAlgorithm_PRP1_T* const me)
+ * @fn void PRP_DiscardAlgorithm_T_do_aging(PRP_DiscardAlgorithm_T* const me)
  * @brief Handle the discard table aging
- * @param   me PRP_DiscardAlgorithm_PRP1_T this pointer
+ * @param   me PRP_DiscardAlgorithm_T this pointer
  *
  * This function is called every 20ms (aging time 400ms)
  *  Aging time callcullation: Count(seq_nr) / Max Frames per ms
  *  -> 2^16 / ~144 = ~450 ms
  */
-void PRP_DiscardAlgorithm_PRP1_T_do_aging(PRP_DiscardAlgorithm_PRP1_T* const me)
+void PRP_DiscardAlgorithm_T_do_aging(PRP_DiscardAlgorithm_T* const me)
 {
     uinteger32 delta;
 
@@ -417,8 +417,8 @@ void PRP_DiscardAlgorithm_PRP1_T_do_aging(PRP_DiscardAlgorithm_PRP1_T* const me)
     int i;
     #endif
 
-    struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *item;
-    struct PRP_DiscardAlgorithm_DiscardItem_PRP1_T *new_oldest;
+    struct PRP_DiscardAlgorithm_DiscardItem_T *item;
+    struct PRP_DiscardAlgorithm_DiscardItem_T *new_oldest;
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
@@ -502,16 +502,16 @@ void PRP_DiscardAlgorithm_PRP1_T_do_aging(PRP_DiscardAlgorithm_PRP1_T* const me)
     }
 
     #ifdef PRP_DEBUG_LOG
-    PRP_DiscardAlgorithm_PRP1_T_check_consistency(me);
+    PRP_DiscardAlgorithm_T_check_consistency(me);
     #endif
 }
 
 /**
- * @fn void PRP_DiscardAlgorithm_PRP1_T_init(PRP_DiscardAlgorithm_PRP1_T* const me)
- * @brief Initialize the PRP_DiscardAlgorithm_PRP1 interface
- * @param   me PRP_DiscardAlgorithm_PRP1_T this pointer
+ * @fn void PRP_DiscardAlgorithm_T_init(PRP_DiscardAlgorithm_T* const me)
+ * @brief Initialize the PRP_DiscardAlgorithm_T interface
+ * @param   me PRP_DiscardAlgorithm_T this pointer
  */
-void PRP_DiscardAlgorithm_PRP1_T_init(PRP_DiscardAlgorithm_PRP1_T* const me)
+void PRP_DiscardAlgorithm_T_init(PRP_DiscardAlgorithm_T* const me)
 {
     int i;
 
@@ -546,11 +546,11 @@ void PRP_DiscardAlgorithm_PRP1_T_init(PRP_DiscardAlgorithm_PRP1_T* const me)
 }
 
 /**
- * @fn void PRP_DiscardAlgorithm_PRP1_T_cleanup(PRP_DiscardAlgorithm_PRP1_T* const me)
- * @brief Clean up the PRP_DiscardAlgorithm_PRP1 interface
- * @param   me PRP_DiscardAlgorithm_PRP1_T this pointer
+ * @fn void PRP_DiscardAlgorithm_T_cleanup(PRP_DiscardAlgorithm_T* const me)
+ * @brief Clean up the PRP_DiscardAlgorithm_T interface
+ * @param   me PRP_DiscardAlgorithm_T this pointer
  */
-void PRP_DiscardAlgorithm_PRP1_T_cleanup(PRP_DiscardAlgorithm_PRP1_T* const me)
+void PRP_DiscardAlgorithm_T_cleanup(PRP_DiscardAlgorithm_T* const me)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 

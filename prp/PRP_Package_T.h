@@ -78,12 +78,8 @@
 #define PRP_ID_LAN_A                    0xa
 #define PRP_ID_LAN_B                    0xb
 
-#define PRP_KEEP_IN_ORDER               0
-#define PRP_KEEP_OUT_OF_ORDER           1
 #define PRP_DROP                        2
 #define PRP_KEEP                        0
-#define PRP_NODETABLE_END               1
-#define PRP_NODE_DELETED                2
 
 #define PRP_ERROR_NULL_PTR              1
 #define PRP_ERROR_WRONG_VAL             2
@@ -99,22 +95,10 @@
 
 #define PRP_LIFE_CHECK_INTERVAL         2000    /* in ms */
 #define PRP_CHECK_INTERVAL_AGING        20      /* in ms */
-#define PRP_NODE_FORGET_TIME            60      /* in seconds */
-#define PRP_LINK_TIME_OUT               6       /* in seconds */
-#define PRP_DROP_WINDOW_SIZE            65535
-#define PRP_MAX_SKEW_TIME               10      /* in ms */
 
 #define PRP_SECOND_IN_NANOSECONDS       1000000000
 #define PRP_MILLISECOND_IN_NANOSECONDS  1000000
 
-#define PRP_RAPID_SPANNING_TREE_UNKOWN      0
-#define PRP_RAPID_SPANNING_TREE_ALTERNATE   1
-#define PRP_RAPID_SPANNING_TREE_ROOT        2
-
-#define PRP_RAPID_SPANNING_TREE_BETTER_RECEIVED     0
-#define PRP_RAPID_SPANNING_TREE_EQUAL_RECEIVED      1
-#define PRP_RAPID_SPANNING_TREE_WORSE_RECEIVED      2
-#define PRP_RAPID_SPANNING_TREE_LINK_DOWN           3
 
 struct PRP_Lock_T;
 typedef struct PRP_Lock_T PRP_Lock_T;
@@ -128,20 +112,8 @@ typedef struct PRP_Trailer_T PRP_Trailer_T;
 struct PRP_Supervision_T;
 typedef struct PRP_Supervision_T PRP_Supervision_T;
 
-struct PRP_BridgingFrame_T;
-typedef struct PRP_BridgingFrame_T PRP_BridgingFrame_T;
-
-struct PRP_Bridging_T;
-typedef struct PRP_Bridging_T PRP_Bridging_T;
-
 struct PRP_RedundancyControlTrailer_T;
 typedef struct PRP_RedundancyControlTrailer_T PRP_RedundancyControlTrailer_T;
-
-struct PRP_NodeTable_T;
-typedef struct PRP_NodeTable_T PRP_NodeTable_T;
-
-struct PRP_Node_T;
-typedef struct PRP_Node_T PRP_Node_T;
 
 struct PRP_Frames_T;
 typedef struct PRP_Frames_T PRP_Frames_T;
@@ -157,9 +129,6 @@ typedef struct PRP_Environment_T PRP_Environment_T;
 
 struct PRP_DiscardAlgorithm_T;
 typedef struct PRP_DiscardAlgorithm_T PRP_DiscardAlgorithm_T;
-
-struct PRP_DiscardAlgorithm_PRP1_T;
-typedef struct PRP_DiscardAlgorithm_PRP1_T PRP_DiscardAlgorithm_PRP1_T;
 
 #endif /* PRP_Package_T_H */
 

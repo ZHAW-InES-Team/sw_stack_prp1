@@ -224,7 +224,7 @@ integer32 PRP_NetItf_T_transmit(octet* data, uinteger32* length, octet lan_id)
         pcap_sendpacket(port_a,data,*length);
     }
     else if (lan_id == PRP_ID_LAN_B) {
-        pcap_sendpacket(port_b,data,*length); /* LAN B */
+        pcap_sendpacket(port_b,data,*length);
     } else {
         fprintf(stderr, "Invalid lan ID in %s\n", __FUNCTION__);
     }
@@ -533,9 +533,9 @@ int set_flags_prp(char *dev)
  */
 int main(int argc, char* argv[])
 {
-    int port_a_fd,port_b_fd;
+    int port_a_fd, port_b_fd;
     unsigned char addr_A[IFHWADDRLEN];
-    unsigned char new_lamo[IFHWADDRLEN] ;
+    unsigned char new_lamo[IFHWADDRLEN];
     PRP_MergeLayerInfo_T merge_layer_info;
     char node_name[] = "ZHAW PRP Node";
     char manufacturer_name[] = "ZHAW InES";
@@ -578,8 +578,19 @@ int main(int argc, char* argv[])
         return(-1);
     }
 
-    /* sysctl */
+    /* arp_announce 2:
+     * Ignore the source address in the IP packet and try to select local
+     * address that we prefer for talks with the target host. Such local address
+     * is selected by looking for primary IP addresses on all our subnets on the
+     * outgoing interface that include the target IP address. If no suitable
+     * local address is found we select the first local address we have on the
+     * outgoing interface or on all other interfaces, with the hope we will
+     * receive reply for our request and even sometimes no matter the source
+     * IP address we announce. */
     system("echo 2 > /proc/sys/net/ipv4/conf/all/arp_announce");
+    /* arp_ignore 1:
+     * reply only if the target IP address is local address configured on the
+     * incoming interface */
     system("echo 1 > /proc/sys/net/ipv4/conf/all/arp_ignore");
 
     PRP_T_init();

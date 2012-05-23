@@ -101,54 +101,6 @@ uinteger64 prp_time(void)
 }
 
 /**
- * @fn uinteger32 prp_htonl(uinteger32 host)
- * @brief Converts a long from host to network order
- *
- * @param   host uinteger32 host byte order
- * @retval  uinteger32 network byte order
- */
-uinteger32 prp_htonl(uinteger32 host)
-{
-    return htonl(host);
-}
-
-/**
- * @fn uinteger16 prp_htons(uinteger16 host)
- * @brief Converts a short from host to network order
- *
- * @param   host uinteger16 host byte order
- * @retval  uinteger16 network byte order
- */
-uinteger16 prp_htons(uinteger16 host)
-{
-    return htons(host);
-}
-
-/**
- * @fn uinteger32 prp_ntohl(uinteger32 net)
- * @brief Converts a long from network to host order
- *
- * @param   net network byte order
- * @retval  uinteger32 host byte order
- */
-uinteger32 prp_ntohl(uinteger32 net)
-{
-    return ntohl(net);
-}
-
-/**
- * @fn uinteger16 prp_ntohs(uinteger16 net)
- * @brief Converts a short from network to host order
- *
- * @param   net network byte order
- * @retval  uinteger16 host byte order
- */
-uinteger16 prp_ntohs(uinteger16 net)
-{
-    return ntohs(net);
-}
-
-/**
  * @fn int prp_printf(const char *format, ...)
  * @brief Prints to the output of the Kernel
  *

@@ -41,9 +41,10 @@
 # *
 # *********************************************************************/
 
-#edit this for verbosity levels of debug output (5: very verbose)
-PRP_DEBUG_LEVEL		=	0
-PRP_DISCARD_DEBUG_LEVEL	=	4
+# Edit this for verbosity levels of debug output (5: very verbose)
+# For using debug prints, uncomment the DEBUG flag
+PRP_DEBUG_LEVEL		= 1
+PRP_DISCARD_DEBUG_LEVEL	= 1
 # DEBUG   = -DPRP_DEBUG_LOG -DPRP_DEBUG_LEVEL=$(PRP_DEBUG_LEVEL) -DPRP_DISCARD_DEBUG_LEVEL=$(PRP_DISCARD_DEBUG_LEVEL)
 CFLAGS	=  -Wall -g2 $(DEBUG)
 CFLAGS	+= $(DEBFLAGS) $(CFLAGS_EXTRA)
@@ -55,14 +56,12 @@ all: clean $(TARGET)
 
 OBJ = PRP_NetItf_T_linux.o
 OBJ += PRP_OsItf_T_linux.o
-OBJ += ../prp/PRP_DiscardAlgorithm_PRP1_T.o
+OBJ += ../prp/PRP_DiscardAlgorithm_T.o
 OBJ += ../prp/PRP_Environment_T.o
 OBJ += ../prp/PRP_EnvironmentConfiguration_T.o
 OBJ += ../prp/PRP_Frames_T.o
 OBJ += ../prp/PRP_FrameAnalyser_T.o
 OBJ += ../prp/PRP_LogItf_T.o
-OBJ += ../prp/PRP_Node_T.o
-OBJ += ../prp/PRP_NodeTable_T.o
 OBJ += ../prp/PRP_RedundancyControlTrailer_T.o
 OBJ += ../prp/PRP_Supervision_T.o
 OBJ += ../prp/PRP_T.o

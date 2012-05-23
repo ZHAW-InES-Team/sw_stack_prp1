@@ -89,7 +89,6 @@ struct PRP_Supervision_T
 };
 
 void PRP_Supervision_T_print(PRP_Supervision_T* const me, uinteger32 level);
-integer32 PRP_Supervision_T_supervise(PRP_Supervision_T* const me);
 integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* data, uinteger32* length, octet lan_id);
 integer32 PRP_Supervision_T_supervision_tx(PRP_Supervision_T* const me);
 void PRP_Supervision_T_init(PRP_Supervision_T* const me, PRP_Environment_T* const environment);

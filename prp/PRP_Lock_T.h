@@ -70,9 +70,8 @@
 
 #include "PRP_Package_T.h"
 
-struct PRP_Lock_T 
+struct PRP_Lock_T
 {
-    /* Pointer to the first drop window in the table. If NULL table is empty */
     void* lock_;
 };
 
