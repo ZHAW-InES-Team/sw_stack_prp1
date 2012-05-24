@@ -70,7 +70,7 @@
 *********************************************************************
 *  14.05.12 | walh     | prp-1 modification, bridging removed
 *********************************************************************/
-#include <pthread.h>
+
 #include "PRP_Frames_T.h"
 #include "PRP_LogItf_T.h"
 #include "PRP_FrameAnalyser_T.h"
@@ -79,10 +79,13 @@
 #include "PRP_Environment_T.h"
 #include "PRP_EnvironmentConfiguration_T.h"
 #include "PRP_NetItf_T.h"
+#include "PRP_Lock_T.h"
 
 
+/* Lock for the sequence number */
+static PRP_Lock_T seqnr_lock_;
 /* send seq number */
-struct PRP_Frames_T_seq_Nr PRP_sN;
+static uinteger16 tx_seq_nr_;
 
 /**
  * @fn void PRP_Frames_T_print(PRP_Frames_T* const me, octet* data, uinteger32* length, uinteger32 level)
@@ -244,7 +247,7 @@ integer32 PRP_Frames_T_normal_tx(PRP_Frames_T* const me, octet* data, uinteger32
     /* if (((me->frame_analyser_->environment_->environment_configuration_.duplicate_discard_ == TRUE) */
     PRP_RedundancyControlTrailer_T_init(&temp_trailer);
     temp_trailer.lan_id_ = PRP_ID_LAN_A;
-    temp_trailer.seq_ = PRP_sN.tx_seq_nr_;
+    temp_trailer.seq_ = tx_seq_nr_;
     PRP_PRP_LOGOUT(2, "%s\n", "add trailer for LAN A");
     PRP_RedundancyControlTrailer_T_print(&temp_trailer,2);
     PRP_Trailer_T_add_trailer(&(me->trailer_tx_), data, length, &temp_trailer);
@@ -264,7 +267,7 @@ integer32 PRP_Frames_T_normal_tx(PRP_Frames_T* const me, octet* data, uinteger32
     /* if (((me->frame_analyser_->environment_->environment_configuration_.duplicate_discard_ == TRUE) */
         PRP_RedundancyControlTrailer_T_init(&temp_trailer);
         temp_trailer.lan_id_ = PRP_ID_LAN_B;
-        temp_trailer.seq_ = PRP_sN.tx_seq_nr_;
+        temp_trailer.seq_ = tx_seq_nr_;
         PRP_PRP_LOGOUT(2, "%s\n", "add trailer for LAN B");
         PRP_RedundancyControlTrailer_T_print(&temp_trailer,2);
         PRP_Trailer_T_add_trailer(&(me->trailer_tx_), data, length, &temp_trailer);
@@ -279,9 +282,9 @@ integer32 PRP_Frames_T_normal_tx(PRP_Frames_T* const me, octet* data, uinteger32
 
     if ((me->frame_analyser_->environment_->environment_configuration_.adapter_active_A_ == TRUE) ||
         (me->frame_analyser_->environment_->environment_configuration_.adapter_active_B_ == TRUE)) {
-        pthread_mutex_lock(&(PRP_sN.mutex_));
-        (PRP_sN.tx_seq_nr_)++;
-        pthread_mutex_unlock(&(PRP_sN.mutex_));
+        PRP_Lock_T_down(&seqnr_lock_); /* API calls are mutex */
+        tx_seq_nr_++;
+        PRP_Lock_T_up(&seqnr_lock_);
     }
 
     return(0);
@@ -305,9 +308,10 @@ void PRP_Frames_T_init(PRP_Frames_T* const me, PRP_FrameAnalyser_T* const frame_
         return;
     }
 
+    /* seq nr generating is mutex */
+    PRP_Lock_T_init(&seqnr_lock_);
     /* initialize send sequence number */
-    PRP_sN.tx_seq_nr_ = 0;
-    pthread_mutex_init(&(PRP_sN.mutex_), NULL);
+    tx_seq_nr_ = 0;
 
     me->frame_analyser_ = frame_analyser;
     PRP_Trailer_T_init(&(me->trailer_rx_));
@@ -330,5 +334,7 @@ void PRP_Frames_T_cleanup(PRP_Frames_T* const me)
     me->frame_analyser_ = NULL_PTR;
     PRP_Trailer_T_cleanup(&(me->trailer_rx_));
     PRP_Trailer_T_cleanup(&(me->trailer_tx_));
+
+    PRP_Lock_T_cleanup(&seqnr_lock_);
 }
 

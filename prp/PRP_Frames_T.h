@@ -68,7 +68,6 @@
 #ifndef PRP_Frames_T_H 
 #define PRP_Frames_T_H 
 
-#include <pthread.h>
 #include "PRP_Package_T.h"
 #include "PRP_Trailer_T.h"
 
@@ -77,12 +76,6 @@ struct PRP_Frames_T
     PRP_FrameAnalyser_T* frame_analyser_;   /* Pointer to the frame analyzer */
     PRP_Trailer_T trailer_rx_;              /* Instance of a trailer object */
     PRP_Trailer_T trailer_tx_;              /* Instance of a trailer object */
-};
-
-struct PRP_Frames_T_seq_Nr
-{
-    uinteger16 tx_seq_nr_;
-    pthread_mutex_t mutex_;
 };
 
 
