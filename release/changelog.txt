@@ -1,7 +1,7 @@
 Release 1.1b
 - PRP_Frames_T
-    - lock TX seq_number handling
-    - Send always with trailer (also in duplicate accept mode)
+    - set lock for TX sequence number
+    - Send frame always with trailer (also in duplicate accept mode)
 - PRP_Node_T
     - PRP-0 implementation removed
 - PRP_NodeTabe_T
