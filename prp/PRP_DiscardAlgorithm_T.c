@@ -69,7 +69,7 @@
 #include "PRP_DiscardAlgorithm_T.h"
 #include "PRP_LogItf_T.h"
 #include <stdio.h>
-#include <sys/time.h>
+#include <sys/time.h>       //DB
 
 static struct PRP_DiscardAlgorithm_DiscardItem_T discardalgorithm_items_[DISCARD_ITEM_COUNT];
 static struct PRP_DiscardAlgorithm_DiscardItem_T *discardalgorithm_list_[DISCARD_LIST_ENTRY_COUNT];
@@ -269,10 +269,10 @@ integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, 
     unsigned short seqnr_corr;
     unsigned short hash;
     struct PRP_DiscardAlgorithm_DiscardItem_T *item;
-    struct timeval tv; //DB
-    gettimeofday(&tv, NULL); //DB
-    printf("in:\t%lu sec %lu usec\n",(long)tv.tv_sec,(long)tv.tv_usec); //DB
-
+//     struct timeval start, drop, keep; //DB
+//     long elapsed; //DB
+//     gettimeofday(&start, NULL);    //DB
+//     printf("got frame: %lu sec %lu usec\n",(long)start.tv_sec,start.tv_usec);
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
     if (me == NULL_PTR) {
@@ -336,7 +336,9 @@ integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, 
                 #endif
 
                 PRP_DISCARD_LOGOUT(1, "DROP, %i items used\n", me->used_item_count);
-
+//                 gettimeofday(&drop, NULL);//DB
+//                 elapsed = drop.tv_usec - start.tv_usec;
+//                 printf("drop elapsed:\t %lu\n",elapsed); //DB
                 return(PRP_DROP);
             }
         }
@@ -400,9 +402,10 @@ integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, 
     PRP_DiscardAlgorithm_T_print(me);
     PRP_DiscardAlgorithm_T_check_consistency(me);
     #endif
-    gettimeofday(&tv, NULL); //DB
-    printf("out:\t%lu sec %lu usec\n",(long)tv.tv_sec,(long)tv.tv_usec); //DB
-    printf("-----------------------------------\n");
+//     gettimeofday(&keep, NULL);//DB
+//     elapsed = keep.tv_usec - start.tv_usec;
+//     printf("keep elapsed:\t %lu\n",elapsed); //DB
+//     printf("-----------------------------------\n"); //DB
     return(PRP_KEEP);
 }
 

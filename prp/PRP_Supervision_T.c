@@ -235,7 +235,7 @@ integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* d
     }
 
     if (node_valid == FALSE) {
-        PRP_PRP_LOGOUT(1, "%s\n", "Error: did not find node MAC in supervision TLVs. Dropping.");
+        PRP_PRP_LOGOUT(1,"%s\n", "Error: did not find node MAC in supervision TLV. Dropping.");
         return(-PRP_ERROR_FRAME_COR);
     }
 

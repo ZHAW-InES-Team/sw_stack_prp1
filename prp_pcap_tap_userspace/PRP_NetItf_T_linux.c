@@ -119,18 +119,6 @@ char port_a_name[IFNAMSIZ];
 char port_b_name[IFNAMSIZ];
 
 
-/**
- * @fn static void sig_term(int sig)
- * @brief Termination handling function.
- *
- * @param   sig int termination signal
- */
-static void sig_term(int sig)
-{
-    exit_prp = TRUE;
-}
-
-
 #ifdef PRP_DEBUG_LOG
     extern int debug_level;
     extern int net_itf_debug_level;

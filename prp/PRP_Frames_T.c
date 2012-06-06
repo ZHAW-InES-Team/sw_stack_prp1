@@ -203,11 +203,9 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
         PRP_Trailer_T_remove_trailer(&(me->trailer_rx_), data, length);
     }
 
-    PRP_PRP_LOGOUT(2,"%s","SRC MAC: \n");
-    for (i=0;i<6;i++) {
-        PRP_PRP_LOGOUT(2,"%x",src_mac[i]);
-    }
-    PRP_PRP_LOGOUT(2,"\nSequ. NR: %d\n",me->trailer_rx_.redundancy_control_trailer_.seq_);
+    PRP_PRP_LOGOUT(2, "SRC MAC: %02x:%02x:%02x:%02x:%02x:%02x\n",
+                   src_mac[0],src_mac[1],src_mac[2],src_mac[3],src_mac[4],src_mac[5]);
+    PRP_PRP_LOGOUT(2,"Sequ. NR: %d\n",me->trailer_rx_.redundancy_control_trailer_.seq_);
 
     /* The frame origin is a DAN, search drop table to check if frame has
      * been received previously */
