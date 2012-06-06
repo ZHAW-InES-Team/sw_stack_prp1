@@ -707,9 +707,12 @@ int main(int argc, char* argv[])
     delta.tv_sec = 0;
     delta.tv_usec = 20000;
 
+	/*
+	  Those signal handlers are more annoying than useful --RELD
     signal(SIGINT, sig_term);
     signal(SIGQUIT, sig_term);
     signal(SIGTERM, sig_term);
+	*/
 
     while(!exit_prp) {
         int retval;
