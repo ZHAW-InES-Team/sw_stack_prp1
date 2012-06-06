@@ -69,6 +69,7 @@
 #include "PRP_DiscardAlgorithm_T.h"
 #include "PRP_LogItf_T.h"
 #include <stdio.h>
+#include <sys/time.h>
 
 static struct PRP_DiscardAlgorithm_DiscardItem_T discardalgorithm_items_[DISCARD_ITEM_COUNT];
 static struct PRP_DiscardAlgorithm_DiscardItem_T *discardalgorithm_list_[DISCARD_LIST_ENTRY_COUNT];
@@ -268,6 +269,9 @@ integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, 
     unsigned short seqnr_corr;
     unsigned short hash;
     struct PRP_DiscardAlgorithm_DiscardItem_T *item;
+    struct timeval tv; //DB
+    gettimeofday(&tv, NULL); //DB
+    printf("in:\t%lu sec %lu usec\n",(long)tv.tv_sec,(long)tv.tv_usec); //DB
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
@@ -396,7 +400,9 @@ integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, 
     PRP_DiscardAlgorithm_T_print(me);
     PRP_DiscardAlgorithm_T_check_consistency(me);
     #endif
-
+    gettimeofday(&tv, NULL); //DB
+    printf("out:\t%lu sec %lu usec\n",(long)tv.tv_sec,(long)tv.tv_usec); //DB
+    printf("-----------------------------------\n");
     return(PRP_KEEP);
 }
 
