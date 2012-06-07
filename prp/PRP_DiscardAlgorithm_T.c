@@ -362,6 +362,8 @@ integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, 
 
         if (item->previous != 0) {
           item->previous->next = 0;
+        } else {
+            me->hash_list[item->hash] = 0;
         }
         /* item->next must be 0 in this case because this is the oldest item of all */
     }
