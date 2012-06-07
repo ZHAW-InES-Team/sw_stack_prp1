@@ -269,10 +269,6 @@ integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, 
     unsigned short seqnr_corr;
     unsigned short hash;
     struct PRP_DiscardAlgorithm_DiscardItem_T *item;
-//     struct timeval start, drop, keep; //DB
-//     long elapsed; //DB
-//     gettimeofday(&start, NULL);    //DB
-//     printf("got frame: %lu sec %lu usec\n",(long)start.tv_sec,start.tv_usec);
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
     if (me == NULL_PTR) {
@@ -336,9 +332,6 @@ integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, 
                 #endif
 
                 PRP_DISCARD_LOGOUT(1, "DROP, %i items used\n", me->used_item_count);
-//                 gettimeofday(&drop, NULL);//DB
-//                 elapsed = drop.tv_usec - start.tv_usec;
-//                 printf("drop elapsed:\t %lu\n",elapsed); //DB
                 return(PRP_DROP);
             }
         }
@@ -361,7 +354,7 @@ integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, 
         /* me->newest != me->chronology I dont't have to check this */
 
         if (item->previous != 0) {
-          item->previous->next = 0;
+            item->previous->next = 0;
         } else {
             me->hash_list[item->hash] = 0;
         }
@@ -406,10 +399,6 @@ integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, 
     PRP_DiscardAlgorithm_T_print(me);
     PRP_DiscardAlgorithm_T_check_consistency(me);
     #endif
-//     gettimeofday(&keep, NULL);//DB
-//     elapsed = keep.tv_usec - start.tv_usec;
-//     printf("keep elapsed:\t %lu\n",elapsed); //DB
-//     printf("-----------------------------------\n"); //DB
     return(PRP_KEEP);
 }
 
