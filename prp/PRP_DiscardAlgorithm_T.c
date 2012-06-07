@@ -360,7 +360,9 @@ integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, 
         me->chronology->previous_alt = 0;
         /* me->newest != me->chronology I dont't have to check this */
 
-        item->previous->next = 0;
+        if (item->previous != 0) {
+          item->previous->next = 0;
+        }
         /* item->next must be 0 in this case because this is the oldest item of all */
     }
 
@@ -463,7 +465,8 @@ void PRP_DiscardAlgorithm_T_do_aging(PRP_DiscardAlgorithm_T* const me)
             if (item->previous != 0)  {
                 /* It is allowed to set item->previous->next to 0 instead of
                  * item->next because item->next is older and was already
-                 * unlinked item->previous->next = 0; */
+                 * unlinked */
+                 item->previous->next = 0;
             } else {
                 /* Because we move from the oldest to the newest and
                  * me->hash_list[x] is sorted from the newest to the oldest
