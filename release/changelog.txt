@@ -1,3 +1,8 @@
+Release 1.2
+- PRP_DiscardAlgorithm_PRP1_T
+    - Segmentation fault error fixed
+    - unlinking list item bug in chronology list fixed 
+
 Release 1.1b
 - PRP_Frames_T
     - set lock for TX sequence number
@@ -6,6 +11,9 @@ Release 1.1b
     - PRP-0 implementation removed
 - PRP_NodeTabe_T
     - PRP-0 implementation removed
+- Bug Report
+    - Segmentation fault in discard algorithm
+
 
 Release 1.1
 - PRP_DiscardAlgorithm_PRP1_T
