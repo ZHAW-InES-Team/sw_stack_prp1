@@ -1,3 +1,8 @@
+Release 1.2b
+- PRP_Frames_T
+    - SANs DD check bug fixed (SAN connected to LanA oder LanB did a
+      duplicate detection check)
+
 Release 1.2
 - PRP_DiscardAlgorithm_PRP1_T
     - Segmentation fault error fixed
