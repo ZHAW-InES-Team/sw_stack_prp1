@@ -122,64 +122,6 @@ void PRP_Frames_T_print(PRP_Frames_T* const me, octet* data, uinteger32* length,
 }
 
 /**
- * @fn integer32 PRP_Frames_T_replace_src_mac(PRP_Frames_T* const me, octet* data, uinteger32* length, octet* mac)
- * @brief Replaces the source mac address in the frame with the mac passed as argument.
- * @param   me PRP_Frames_T this pointer
- * @param   data octet pointer to the beginning of the frame (dest mac)
- * @param   length uinteger32 pointer to the length in bytes of the frame
- * @param   mac octet pointer to the mac
- * @retval  0 integer32 OK
- * @retval  <0 integer32 ERROR (code)
- */
-integer32 PRP_Frames_T_replace_src_mac(PRP_Frames_T* const me, octet* data, uinteger32* length, octet* mac)
-{
-    integer32 i;
-
-    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-
-    if(me == NULL_PTR)
-    {
-        return(-PRP_ERROR_NULL_PTR);
-    }
-
-    for(i=0; i<PRP_ETH_ADDR_LENGTH; i++)
-    {
-        data[(6 + i)] = mac[i];
-    }
-
-    return(0);
-}
-
-/**
- * @fn integer32 PRP_Frames_T_replace_dest_mac(PRP_Frames_T* const me, octet* data, uinteger32* length, octet* mac)
- * @brief Replaces the destination mac address in the frame with the mac passed as argument.
- * @param   me PRP_Frames_T this pointer
- * @param   data octet pointer to the beginning of the frame (dest mac)
- * @param   length uinteger32 pointer to the length in bytes of the frame
- * @param   mac octet pointer to the mac
- * @retval  0 integer32 OK
- * @retval  <0 integer32 ERROR (code)
- */
-integer32 PRP_Frames_T_replace_dest_mac(PRP_Frames_T* const me, octet* data, uinteger32* length, octet* mac)
-{
-    integer32 i;
-
-    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
-
-    if(me == NULL_PTR)
-    {
-        return(-PRP_ERROR_NULL_PTR);
-    }
-
-    for(i=0; i<PRP_ETH_ADDR_LENGTH; i++)
-    {
-        data[i] = mac[i];
-    }
-
-    return(0);
-}
-
-/**
  * @fn integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32* length, octet lan_id)
  * @brief Actual processing of a received frame
  * @param   me PRP_Frames_T this pointer
@@ -236,12 +178,10 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
     /* update counters */
     if (lan_id == PRP_ID_LAN_A) {
         me->frame_analyser_->environment_->environment_configuration_.cnt_total_received_A_++;
-
         /* received LAN id not the adapter received the frame */
         if ((lan_id != real_lan_id)) {
-            PRP_PRP_LOGOUT(1, "LAN identifier of RCT different than the adapter(A) the frame was received on, lan_id 0x%0x\n", lan_id);
+            PRP_ERROUT("%s\n", "LAN identifier of RCT different than the adapter(A) the frame was received on");
             me->frame_analyser_->environment_->environment_configuration_.cnt_total_errors_A_++;
-            return(PRP_KEEP);
         }
     }
     /* PRP_ID_LAN_B */
@@ -249,13 +189,12 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
         me->frame_analyser_->environment_->environment_configuration_.cnt_total_received_B_++;
         /* received LAN id not the adapter receieved the frame */
     if ((lan_id != real_lan_id)) {
-        PRP_PRP_LOGOUT(1, "LAN identifier of RCT different than the adapter(B) the frame was received on, lan_id 0x%0x\n", lan_id);
+            PRP_ERROUT("%s\n", "LAN identifier of RCT different than the adapter(B) the frame was received on");
             me->frame_analyser_->environment_->environment_configuration_.cnt_total_errors_B_++;
-            return(PRP_KEEP);
         }
     }
 
-    /* If there was no trailer -> keep frame */
+    /* if there was no trailer -> keep frame */
     if (trailer == NULL_PTR) {
         PRP_PRP_LOGOUT(2, "%s\n", "SAN -> frame had no trailer");
         return(PRP_KEEP);

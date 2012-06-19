@@ -77,9 +77,9 @@ Getting started:
 2)      ifconfig prp1 <your ip>
 
 Known problems:
-* timer accuracy 
+* timer accuracy
 * linux answers on interfaces even if there is no ip assigned, there is
-  no solution for disable TCP completly for an interface !
+* no solution for disable TCP completly for an interface !
 * no restore of interface MACs and Flags once the program quits
 
 *********************************************************************/
@@ -214,7 +214,7 @@ integer32 PRP_NetItf_T_transmit(octet* data, uinteger32* length, octet lan_id)
     else if (lan_id == PRP_ID_LAN_B) {
         pcap_sendpacket(port_b,data,*length);
     } else {
-        fprintf(stderr, "Invalid lan ID in %s\n", __FUNCTION__);
+        PRP_ERROUT("Invalid Lan ID in %s\n", __FUNCTION__);
     }
     return(0);
 }
@@ -257,9 +257,9 @@ int tap_open(char *dev)
     int flags;
 
     if ((fd = open("/dev/net/tun", O_RDWR)) > 0) {
-        fprintf(stderr,"/dev/net/tun open okay\n");
+        PRP_INFOOUT("%s\n","/dev/net/tun open okay");
     } else if ((fd = open("/dev/net", O_RDWR)) > 0) {
-        fprintf(stderr,"/dev/net open okay\n");
+        PRP_INFOOUT("%s\n","/dev/net open okay");
     } else {
         goto failed;
     }
@@ -270,7 +270,7 @@ int tap_open(char *dev)
     }
 
     if (ioctl(fd, TUNSETIFF, (void *) &ifr) < 0) {
-        fprintf(stderr,"ioctl failed\n");
+        PRP_ERROUT("%s\n","ioctl failed");
         goto failed;
     }
     strcpy(dev, ifr.ifr_name);
@@ -280,7 +280,7 @@ int tap_open(char *dev)
         flags = 0;
     }
     if (fcntl(fd,F_SETFL,flags|O_NONBLOCK) == -1) {
-        fprintf(stderr,"set nonblock failed\n");
+        PRP_ERROUT("%s\n","set nonblock failed");
     }
 
     return(fd);
@@ -305,12 +305,12 @@ pcap_t*  raw_open(char *dev)
     pcap_handle = pcap_open_live(dev,ETHER_MAX_LEN,1,1,errbuf);
 
     if (pcap_handle == NULL) {
-       fprintf(stderr, "Could not open device \"%s\": %s\n", dev, errbuf);
+       PRP_ERROUT("Could not open device \"%s\": %s\n", dev, errbuf);
         return(NULL);
     }
 
     if (pcap_setnonblock(pcap_handle, 1, errbuf) == 1) {
-        fprintf(stderr, "Could not set device \"%s\" to non-blocking: %s\n", dev, errbuf);
+        PRP_ERROUT("Could not set device \"%s\" to non-blocking: %s\n", dev, errbuf);
         return(NULL);
     }
 
@@ -333,11 +333,11 @@ int set_mac_filter(pcap_t* dev,unsigned char *mac)
     sprintf(filter_string,"not ether src %02x:%02x:%02x:%02x:%02x:%02x",
             mac[0],mac[1],mac[2],mac[3],mac[4],mac[5]);
     if (pcap_compile(dev,&fp,filter_string,1,0) == -1) {
-        fprintf(stderr,"pcap compile failed %s",pcap_geterr(dev));
+        PRP_ERROUT("pcap compile failed %s",pcap_geterr(dev));
         return(-1);
     }
     if (pcap_setfilter(dev,&fp) == -1) {
-        fprintf(stderr,"pcap setfilter failed %s",pcap_geterr(dev));
+        PRP_ERROUT("pcap setfilter failed %s",pcap_geterr(dev));
         return(-1);
     }
     return(0);
@@ -548,7 +548,7 @@ int main(int argc, char* argv[])
         strncpy(port_a_name,argv[1],IFNAMSIZ);
         strncpy(port_b_name,argv[2],IFNAMSIZ);
     } else {
-        fprintf(stderr, "Usage: %s eth1 eth2 \n",argv[0]);
+        PRP_INFOOUT("Usage: %s eth1 eth2 \n",argv[0]);
         exit(-1);
     }
 
@@ -556,9 +556,9 @@ int main(int argc, char* argv[])
     errno = 0;
     nice(-20);
     if (errno == 0) {
-        fprintf(stderr,"renice: done\n");
+        PRP_INFOOUT("%s\n","renice: done");
     } else {
-        fprintf(stderr,"renice: failed");
+        PRP_ERROUT("%s\n","renice: failed");
         perror("");
         return(-1);
     }
@@ -593,18 +593,18 @@ int main(int argc, char* argv[])
     /* open tap device */
     strcpy(devname,"prp1");
     if ((tap = tap_open(devname)) > 0) {
-        fprintf(stderr,"tap open %s: done\n",devname);
+        PRP_INFOOUT("tap open %s: done\n",devname);
     } else {
-        fprintf(stderr,"tap open %s: failed\n",devname);
+        PRP_ERROUT("tap open %s: failed\n",devname);
         return(-1);
     }
 
     /* copy mac address from port a to prp1 */
     if (get_mac(port_a_name,addr_A) >= 0) {
-        fprintf(stderr,"get mac address of %s: done %02x:%02x:%02x:%02x:%02x:%02x\n",port_a_name,
+        PRP_INFOOUT("get mac address of %s: done %02x:%02x:%02x:%02x:%02x:%02x\n",port_a_name,
                 addr_A[0],addr_A[1],addr_A[2],addr_A[3],addr_A[4],addr_A[5]);
     } else {
-        fprintf(stderr,"get mac address of %s: failed\n",port_a_name);
+        PRP_ERROUT("get mac address of %s: failed\n",port_a_name);
         return(-1);
     }
 
@@ -615,70 +615,70 @@ int main(int argc, char* argv[])
     new_lamo[0] = new_lamo[0] | 2;
 
     if (set_mac(port_a_name,new_lamo) >= 0) {
-        fprintf(stderr,"set mac address of %s: done\n",port_a_name);
+        PRP_INFOOUT("set mac address of %s: done\n",port_a_name);
     } else {
-        fprintf(stderr,"set mac address of %s: failed\n",port_a_name);
+        PRP_ERROUT("set mac address of %s: failed\n",port_a_name);
         return(-1);
     }
 
     if (set_mac(port_b_name,new_lamo) >= 0) {
-        fprintf(stderr,"set mac address of %s: done\n",port_b_name);
+        PRP_INFOOUT("set mac address of %s: done\n",port_b_name);
     } else {
-        fprintf(stderr,"set mac address of %s: failed\n",port_b_name);
+        PRP_ERROUT("set mac address of %s: failed\n",port_b_name);
         return(-1);
     }
 
     if (set_mac(devname,addr_A) >= 0) {
-        fprintf(stderr,"set mac address of %s: done\n",devname);
+        PRP_INFOOUT("set mac address of %s: done\n",devname);
     } else {
-        fprintf(stderr,"set mac address of %s: failed\n",devname);
+        PRP_ERROUT("set mac address of %s: failed\n",devname);
         return(-1);
     }
 
     if (set_flags_red(port_a_name) >= 0) {
-        fprintf(stderr,"set flags of %s: done\n",port_a_name);
+        PRP_INFOOUT("set flags of %s: done\n",port_a_name);
     } else {
-        fprintf(stderr,"set flags of %s: failed\n",port_a_name);
+        PRP_ERROUT("set flags of %s: failed\n",port_a_name);
         return(-1);
     }
     if (set_flags_red(port_b_name) >= 0) {
-        fprintf(stderr,"set flags of %s: done\n",port_b_name);
+        PRP_INFOOUT("set flags of %s: done\n",port_b_name);
     } else {
-        fprintf(stderr,"set flags of %s: failed\n",port_b_name);
+        PRP_ERROUT("set flags of %s: failed\n",port_b_name);
         return(-1);
     }
     if (set_flags_prp(devname) >= 0) {
-        fprintf(stderr,"set flags of %s: done\n",devname);
+        PRP_INFOOUT("set flags of %s: done\n",devname);
     } else {
-        fprintf(stderr,"set flags of %s: failed\n",devname);
+        PRP_ERROUT("set flags of %s: failed\n",devname);
         return(-1);
     }
 
     /* open port a */
     if ((port_a = raw_open(port_a_name)) != NULL) {
-        fprintf(stderr,"port_a open %s: done\n",port_a_name);
+        PRP_INFOOUT("port_a open %s: done\n",port_a_name);
     } else {
-        fprintf(stderr,"port_a open %s: failed\n",port_a_name);
+        PRP_ERROUT("port_a open %s: failed\n",port_a_name);
         return(-1);
     }
     /* open port b */
     if ((port_b = raw_open(port_b_name)) != NULL) {
-        fprintf(stderr,"port_b open %s: done\n",port_b_name);
+        PRP_INFOOUT("port_b open %s: done\n",port_b_name);
     } else {
-        fprintf(stderr,"port_b open %s: failed\n",port_b_name);
+        PRP_ERROUT("port_b open %s: failed\n",port_b_name);
         return(-1);
     }
     /* set mac filters  */
     if (set_mac_filter(port_a,addr_A) >= 0) {
-        fprintf(stderr,"set mac filter port a: done\n");
+        PRP_INFOOUT("%s\n","set mac filter port a: done");
     } else {
-        fprintf(stderr,"set mac filter port a: failed\n");
+        PRP_ERROUT("%s\n","set mac filter port a: failed");
         return(-1);
     }
     if (set_mac_filter(port_b,addr_A) >= 0) {
-        fprintf(stderr,"set mac filter port b: done\n");
+        PRP_INFOOUT("%s\n","set mac filter port b: done");
     } else {
-        fprintf(stderr,"set mac filter port b: failed\n");
+        PRP_ERROUT("%s\n","set mac filter port b: failed");
         return(-1);
     }
 
@@ -690,17 +690,10 @@ int main(int argc, char* argv[])
     merge_layer_info.adapter_active_B_ = TRUE;
     PRP_T_set_merge_layer_info(&merge_layer_info);
 
-    fprintf(stderr,"entering main loop, press q to exit\n");
+    PRP_INFOOUT("%s\n","entering main loop, press q to exit");
     gettimeofday(&next,0);
     delta.tv_sec = 0;
     delta.tv_usec = 20000;
-
-	/*
-	  Those signal handlers are more annoying than useful --RELD
-    signal(SIGINT, sig_term);
-    signal(SIGQUIT, sig_term);
-    signal(SIGTERM, sig_term);
-	*/
 
     while(!exit_prp) {
         int retval;
@@ -762,7 +755,6 @@ int main(int argc, char* argv[])
         }
     }
     PRP_T_cleanup();
-
-    return 0;
+    return(0);
 }
 
