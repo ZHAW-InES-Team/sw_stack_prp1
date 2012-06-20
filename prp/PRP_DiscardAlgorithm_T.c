@@ -295,6 +295,9 @@ integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, 
 
                 /* duplicate found */
                 /* unlink from hash table */
+
+                /* let the aging cleaning up the hash list instead of unlinking it here */
+#if 0
                 if (item->next != 0)  {
                     item->next->previous = item->previous;
                 }
@@ -330,6 +333,7 @@ integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, 
                 PRP_DiscardAlgorithm_T_print(me);
                 PRP_DiscardAlgorithm_T_check_consistency(me);
                 #endif
+#endif
 
                 PRP_DISCARD_LOGOUT(1, "DROP, %i items used\n", me->used_item_count);
                 return(PRP_DROP);
