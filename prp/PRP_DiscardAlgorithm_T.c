@@ -320,11 +320,10 @@ integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, 
                 /* add to free list */
                 item->next_alt = me->free_list;
                 me->free_list = item;
-#endif
                 #ifdef PRP_DEBUG_LOG
                 me->used_item_count--;
                 #endif
-
+#endif
                 #ifdef PRP_DEBUG_LOG
                 PRP_DiscardAlgorithm_T_print(me);
                 PRP_DiscardAlgorithm_T_check_consistency(me);
