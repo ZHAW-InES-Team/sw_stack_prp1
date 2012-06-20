@@ -180,7 +180,8 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
         me->frame_analyser_->environment_->environment_configuration_.cnt_total_received_A_++;
         /* received LAN id not the adapter received the frame */
         if ((lan_id != real_lan_id)) {
-            PRP_ERROUT("%s\n", "LAN identifier of RCT different than the adapter(A) the frame was received on");
+            PRP_ERROUT("Wrong LAN: RCT says B, received from adapter A (SRC %02x:%02x:%02x:%02x:%02x:%02x)\n",
+					   src_mac[0],src_mac[1],src_mac[2],src_mac[3],src_mac[4],src_mac[5]);
             me->frame_analyser_->environment_->environment_configuration_.cnt_total_errors_A_++;
         }
     }
@@ -188,8 +189,9 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
     else {
         me->frame_analyser_->environment_->environment_configuration_.cnt_total_received_B_++;
         /* received LAN id not the adapter receieved the frame */
-    if ((lan_id != real_lan_id)) {
-            PRP_ERROUT("%s\n", "LAN identifier of RCT different than the adapter(B) the frame was received on");
+		if ((lan_id != real_lan_id)) {
+			PRP_ERROUT("Wrong LAN: RCT says A, received from adapter B (SRC %02x:%02x:%02x:%02x:%02x:%02x)\n",
+					   src_mac[0],src_mac[1],src_mac[2],src_mac[3],src_mac[4],src_mac[5]);
             me->frame_analyser_->environment_->environment_configuration_.cnt_total_errors_B_++;
         }
     }
