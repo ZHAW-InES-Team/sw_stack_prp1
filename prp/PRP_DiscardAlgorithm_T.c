@@ -293,38 +293,34 @@ integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, 
                 (item->src_mac[4]==mac[4]) &&
                 (item->src_mac[5]==mac[5])) {
 
-                /* duplicate found */
-                /* unlink from hash table */
-
-                /* let the aging cleaning up the hash list instead of unlinking it here */
+                /* duplicate found, unlink from hash table */
+                /* NOTE: let the aging cleaning up the hash list instead of
+                 * unlinking it here. If manually unlinked, a third duplicate
+                 * will be wrongly received. */
 #if 0
                 if (item->next != 0)  {
                     item->next->previous = item->previous;
                 }
-
                 if (item->previous != 0)  {
                     item->previous->next = item->next;
                 } else {
                     me->hash_list[hash] = item->next;
                 }
-
                 /* unlink from chronology */
                 if (item->next_alt != 0)  {
                     item->next_alt->previous_alt = item->previous_alt;
                 } else {
                     me->newest = item->previous_alt;
                 }
-
                 if (item->previous_alt != 0)  {
                     item->previous_alt->next_alt = item->next_alt;
                 } else {
                     me->chronology = item->next_alt;
                 }
-
                 /* add to free list */
                 item->next_alt = me->free_list;
                 me->free_list = item;
-
+#endif
                 #ifdef PRP_DEBUG_LOG
                 me->used_item_count--;
                 #endif
@@ -333,7 +329,6 @@ integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, 
                 PRP_DiscardAlgorithm_T_print(me);
                 PRP_DiscardAlgorithm_T_check_consistency(me);
                 #endif
-#endif
 
                 PRP_DISCARD_LOGOUT(1, "DROP, %i items used\n", me->used_item_count);
                 return(PRP_DROP);
