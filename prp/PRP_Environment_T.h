@@ -71,7 +71,6 @@
 #include "PRP_Package_T.h"
 #include "PRP_Timer_T.h"
 #include "PRP_EnvironmentConfiguration_T.h"
-// #include "PRP_NodeTable_T.h"
 #include "PRP_Supervision_T.h"
 #include "PRP_DiscardAlgorithm_T.h"
 #include "PRP_FrameAnalyser_T.h"

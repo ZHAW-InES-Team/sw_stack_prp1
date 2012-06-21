@@ -65,6 +65,8 @@
 *  17.12.07 | mesv     | file created
 *********************************************************************
 *  15.05.12 | asdo     | discard debug implemented
+* *********************************************************************
+*  21.06.12 | walh     | user log implemented
 *********************************************************************/
 
 #ifndef PRP_LogItf_T_H 
@@ -83,6 +85,27 @@
 #else
     #define PRP_LOG(format, args...) prp_printf("["DRV_NAME"]: " format, args)
 #endif
+
+/**
+ * @fn PRP_PRINTF(format, args...)
+ * @brief Log output for status information
+ * @param   format const octet pointer to the display string
+ * @param   args Variables etc.
+ * @retval  >=0 integer32 OK (nr of bytes written)
+ * @retval  <0 integer32 ERROR (code)
+ */
+#define PRP_PRINTF(format, args...) prp_printf(format, args)
+
+/**
+ * @fn PRP_USERLOG(level, format, args...)
+ * @brief Log output for level information selected by a user
+ * @param   format const octet pointer to the display string
+ * @param   args Variables etc.
+ * @retval  >=0 integer32 OK (nr of bytes written)
+ * @retval  <0 integer32 ERROR (code)
+ */
+#define PRP_USERLOG(level, format, args...) if (level) \
+    prp_printf(format, args)
 
 /**
  * @fn PRP_INFOOUT(format, args...)
@@ -144,6 +167,18 @@
     #define PRP_DISCARD_S_LOGOUT(level, format, args...)
 #endif
 
+struct PTP_LogItf_T {
+    boolean discard_;
+    boolean frame_;
+    boolean sf_;
+    boolean trailer_;
+};
+extern struct PTP_LogItf_T user_log;
+
+void PRP_LogItf_T_show_help(void);
+void PRP_LogItf_T_print_config(void);
+void PRP_LogItf_T_print_counters(void);
+void PRP_LogItf_T_init(PRP_Environment_T* const environment);
 
 #endif /* PRP_LogItf_T_H */
 

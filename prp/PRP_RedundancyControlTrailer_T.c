@@ -76,18 +76,17 @@
  * @param   me PRP_RedundancyControlTrailer_T this pointer
  * @param   level uinteger32 importance
  */
-void PRP_RedundancyControlTrailer_T_print(PRP_RedundancyControlTrailer_T* const me, uinteger32 level)
+void PRP_RedundancyControlTrailer_T_print(PRP_RedundancyControlTrailer_T* const me, const char* str)
 {
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
     if (me == NULL_PTR) {
         return;
     }
-
-    PRP_PRP_LOGOUT(level, "%s\n", "====RedundancyControlTrailer========");
-    PRP_PRP_LOGOUT(level, "lan_id_:\t\t%x\n", me->lan_id_);
-    PRP_PRP_LOGOUT(level, "seq_:\t\t\t%u\n", me->seq_);
-    PRP_PRP_LOGOUT(level, "%s\n", "====================================");
+    PRP_USERLOG(user_log.trailer_, "======== RedundancyControlTrailer (%s) ================\n",str);
+    PRP_USERLOG(user_log.trailer_, "lan_id_:\t\t%x\n", me->lan_id_);
+    PRP_USERLOG(user_log.trailer_, "seq_:\t\t\t%u\n", me->seq_);
+    PRP_USERLOG(user_log.trailer_, "%s\n", "=======================================================");
 }
 
 /**

@@ -78,7 +78,7 @@ struct PRP_RedundancyControlTrailer_T
 };
 
 
-void PRP_RedundancyControlTrailer_T_print(PRP_RedundancyControlTrailer_T* const me, uinteger32 level);
+void PRP_RedundancyControlTrailer_T_print(PRP_RedundancyControlTrailer_T* const me, const char* str);
 void PRP_RedundancyControlTrailer_T_init(PRP_RedundancyControlTrailer_T* const me);
 void PRP_RedundancyControlTrailer_T_cleanup(PRP_RedundancyControlTrailer_T* const me);
 

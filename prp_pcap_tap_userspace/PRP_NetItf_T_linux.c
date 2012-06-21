@@ -257,9 +257,9 @@ int tap_open(char *dev)
     int flags;
 
     if ((fd = open("/dev/net/tun", O_RDWR)) > 0) {
-        PRP_INFOOUT("%s\n","/dev/net/tun open okay");
+        PRP_PRP_LOGOUT(0,"%s\n","/dev/net/tun open okay");
     } else if ((fd = open("/dev/net", O_RDWR)) > 0) {
-        PRP_INFOOUT("%s\n","/dev/net open okay");
+        PRP_PRP_LOGOUT(0,"%s\n","/dev/net open okay");
     } else {
         goto failed;
     }
@@ -552,12 +552,18 @@ int main(int argc, char* argv[])
         exit(-1);
     }
 
+    /* print zhaw screen */
+    char c;
+    FILE *fp = fopen("zhaw", "rb");
+    while ((c = fgetc(fp)) != EOF) {
+        printf("%c",c);
+    }
+    fclose(fp);
+
     /* renice */
     errno = 0;
     nice(-20);
-    if (errno == 0) {
-        PRP_INFOOUT("%s\n","renice: done");
-    } else {
+    if (errno != 0) {
         PRP_ERROUT("%s\n","renice: failed");
         perror("");
         return(-1);
@@ -593,7 +599,7 @@ int main(int argc, char* argv[])
     /* open tap device */
     strcpy(devname,"prp1");
     if ((tap = tap_open(devname)) > 0) {
-        PRP_INFOOUT("tap open %s: done\n",devname);
+        PRP_PRP_LOGOUT(0,"tap open %s: done\n",devname);
     } else {
         PRP_ERROUT("tap open %s: failed\n",devname);
         return(-1);
@@ -601,7 +607,7 @@ int main(int argc, char* argv[])
 
     /* copy mac address from port a to prp1 */
     if (get_mac(port_a_name,addr_A) >= 0) {
-        PRP_INFOOUT("get mac address of %s: done %02x:%02x:%02x:%02x:%02x:%02x\n",port_a_name,
+        PRP_PRP_LOGOUT(0,"get mac address of %s: done %02x:%02x:%02x:%02x:%02x:%02x\n",port_a_name,
                 addr_A[0],addr_A[1],addr_A[2],addr_A[3],addr_A[4],addr_A[5]);
     } else {
         PRP_ERROUT("get mac address of %s: failed\n",port_a_name);
@@ -615,40 +621,40 @@ int main(int argc, char* argv[])
     new_lamo[0] = new_lamo[0] | 2;
 
     if (set_mac(port_a_name,new_lamo) >= 0) {
-        PRP_INFOOUT("set mac address of %s: done\n",port_a_name);
+        PRP_PRP_LOGOUT(0,"set mac address of %s: done\n",port_a_name);
     } else {
         PRP_ERROUT("set mac address of %s: failed\n",port_a_name);
         return(-1);
     }
 
     if (set_mac(port_b_name,new_lamo) >= 0) {
-        PRP_INFOOUT("set mac address of %s: done\n",port_b_name);
+        PRP_PRP_LOGOUT(0,"set mac address of %s: done\n",port_b_name);
     } else {
         PRP_ERROUT("set mac address of %s: failed\n",port_b_name);
         return(-1);
     }
 
     if (set_mac(devname,addr_A) >= 0) {
-        PRP_INFOOUT("set mac address of %s: done\n",devname);
+        PRP_PRP_LOGOUT(0,"set mac address of %s: done\n",devname);
     } else {
         PRP_ERROUT("set mac address of %s: failed\n",devname);
         return(-1);
     }
 
     if (set_flags_red(port_a_name) >= 0) {
-        PRP_INFOOUT("set flags of %s: done\n",port_a_name);
+        PRP_PRP_LOGOUT(0,"set flags of %s: done\n",port_a_name);
     } else {
         PRP_ERROUT("set flags of %s: failed\n",port_a_name);
         return(-1);
     }
     if (set_flags_red(port_b_name) >= 0) {
-        PRP_INFOOUT("set flags of %s: done\n",port_b_name);
+        PRP_PRP_LOGOUT(0,"set flags of %s: done\n",port_b_name);
     } else {
         PRP_ERROUT("set flags of %s: failed\n",port_b_name);
         return(-1);
     }
     if (set_flags_prp(devname) >= 0) {
-        PRP_INFOOUT("set flags of %s: done\n",devname);
+        PRP_PRP_LOGOUT(0,"set flags of %s: done\n",devname);
     } else {
         PRP_ERROUT("set flags of %s: failed\n",devname);
         return(-1);
@@ -656,27 +662,27 @@ int main(int argc, char* argv[])
 
     /* open port a */
     if ((port_a = raw_open(port_a_name)) != NULL) {
-        PRP_INFOOUT("port_a open %s: done\n",port_a_name);
+        PRP_PRP_LOGOUT(0,"port_a open %s: done\n",port_a_name);
     } else {
         PRP_ERROUT("port_a open %s: failed\n",port_a_name);
         return(-1);
     }
     /* open port b */
     if ((port_b = raw_open(port_b_name)) != NULL) {
-        PRP_INFOOUT("port_b open %s: done\n",port_b_name);
+        PRP_PRP_LOGOUT(0,"port_b open %s: done\n",port_b_name);
     } else {
         PRP_ERROUT("port_b open %s: failed\n",port_b_name);
         return(-1);
     }
     /* set mac filters  */
     if (set_mac_filter(port_a,addr_A) >= 0) {
-        PRP_INFOOUT("%s\n","set mac filter port a: done");
+        PRP_PRP_LOGOUT(0,"%s\n","set mac filter port a: done");
     } else {
         PRP_ERROUT("%s\n","set mac filter port a: failed");
         return(-1);
     }
     if (set_mac_filter(port_b,addr_A) >= 0) {
-        PRP_INFOOUT("%s\n","set mac filter port b: done");
+        PRP_PRP_LOGOUT(0,"%s\n","set mac filter port b: done");
     } else {
         PRP_ERROUT("%s\n","set mac filter port b: failed");
         return(-1);
@@ -690,7 +696,6 @@ int main(int argc, char* argv[])
     merge_layer_info.adapter_active_B_ = TRUE;
     PRP_T_set_merge_layer_info(&merge_layer_info);
 
-    PRP_INFOOUT("%s\n","entering main loop, press q to exit");
     gettimeofday(&next,0);
     delta.tv_sec = 0;
     delta.tv_usec = 20000;
@@ -728,10 +733,31 @@ int main(int argc, char* argv[])
         } else if (retval == 0) {
         /* timeout - do nothing*/
         } else {
-            if(FD_ISSET(STDIN_FILENO,&descriptors)) {
+            if (FD_ISSET(STDIN_FILENO,&descriptors)) {
                 read(STDIN_FILENO,buffer,ETHER_MAX_LEN);
-                if(buffer[0] == 'q'){
+                if (buffer[0] == 'c') {
+                    PRP_LogItf_T_print_counters();
+                }
+                if (buffer[0] == 'd') {
+                    user_log.discard_ = !user_log.discard_;
+                }
+                if (buffer[0] == 'e') {
+                    PRP_LogItf_T_print_config();
+                }
+                if (buffer[0] == 'f') {
+                    user_log.frame_ = !user_log.frame_;
+                }
+                if (buffer[0] == 'h') {
+                    PRP_LogItf_T_show_help();
+                }
+                if (buffer[0] == 'q') {
                     exit_prp = TRUE;
+                }
+                if (buffer[0] == 's') {
+                    user_log.sf_ = !user_log.sf_;
+                }
+                if (buffer[0] == 't') {
+                    user_log.trailer_ = !user_log.trailer_;
                 }
             }
 

@@ -79,7 +79,7 @@ struct PRP_Frames_T
 };
 
 
-void PRP_Frames_T_print(PRP_Frames_T* const me, octet* data, uinteger32* length, uinteger32 level);
+void PRP_Frames_T_print(PRP_Frames_T* const me, octet* data, uinteger32* length);
 integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32* length, octet lan_id);
 integer32 PRP_Frames_T_normal_tx(PRP_Frames_T* const me, octet* data, uinteger32* length, octet lan_id);
 void PRP_Frames_T_init(PRP_Frames_T* const me, PRP_FrameAnalyser_T* const frame_analyser);

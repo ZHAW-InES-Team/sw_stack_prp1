@@ -75,8 +75,7 @@ static struct PRP_DiscardAlgorithm_DiscardItem_T discardalgorithm_items_[DISCARD
 static struct PRP_DiscardAlgorithm_DiscardItem_T *discardalgorithm_list_[DISCARD_LIST_ENTRY_COUNT];
 
 
-#ifdef PRP_DEBUG_LOG
-
+// #ifdef PRP_DEBUG_LOG
 /**
  * @fn void PRP_DiscardAlgorithm_T_print(PRP_DiscardAlgorithm_T* const me)
  * @brief Print the discard table
@@ -93,27 +92,33 @@ void PRP_DiscardAlgorithm_T_print(PRP_DiscardAlgorithm_T* const me)
         return;
     }
 
-    PRP_DISCARD_LOGOUT(2, "%s\n", "======= Discard Table ================");
+//     PRP_DISCARD_LOGOUT(2, "%s\n", "======== Discard Table =================================");
+    PRP_USERLOG(user_log.discard_, "%s\n", "======== Discard Table =================================");
 
     for (i=0; i<DISCARD_LIST_ENTRY_COUNT; i++) {
         if (me->hash_list[i] != 0) {
-            PRP_DISCARD_LOGOUT(2, "entry %i: ", i);
+//             PRP_DISCARD_LOGOUT(2, "entry %i: ", i);
+            PRP_USERLOG(user_log.discard_, "entry %i: ", i);
             item = me->hash_list[i];
             while (item != 0) {
-                PRP_DISCARD_S_LOGOUT(2, "[0x%x] ", item);
+//                 PRP_DISCARD_S_LOGOUT(2, "[0x%x] ", item);
+                PRP_USERLOG(user_log.discard_, "[0x%x] ", item);
                 item = item->next;
             }
-            PRP_DISCARD_S_LOGOUT(2, "\n", i);
+//             PRP_DISCARD_S_LOGOUT(2, "\n", i);
+            PRP_USERLOG(user_log.discard_, "\n", i);
         }
     }
 
-    if (discard_debug_level >= 3) {
+//     if (discard_debug_level >= 3) {
+    if (user_log.discard_) {
         i = 0;
         item = me->free_list;
         while (item != 0) {
             i++;
             item = item->next_alt;
         }
+//         PRP_DISCARD_LOGOUT(3, "free_list: %i items\n", i);
         PRP_DISCARD_LOGOUT(3, "free_list: %i items\n", i);
 
         i = 0;
@@ -122,11 +127,14 @@ void PRP_DiscardAlgorithm_T_print(PRP_DiscardAlgorithm_T* const me)
             i++;
             item = item->next_alt;
         }
+//         PRP_DISCARD_LOGOUT(3, "chronology: %i items\n", i);
         PRP_DISCARD_LOGOUT(3, "chronology: %i items\n", i);
     }
-    PRP_DISCARD_LOGOUT(2, "%s\n", "======= END Discard Table ============");
+//     PRP_DISCARD_LOGOUT(2, "%s\n", "======== END Discard Table ============================");
+    PRP_USERLOG(user_log.discard_, "%s\n", "======== END Discard Table =============================");
 }
 
+#ifdef PRP_DEBUG_LOG
 /**
  * @fn void PRP_DiscardAlgorithm_T_check_consistency(PRP_DiscardAlgorithm_T* const me)
  * @brief Check for duplicate consistency
@@ -324,8 +332,8 @@ integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, 
                 me->used_item_count--;
                 #endif
 #endif
-                #ifdef PRP_DEBUG_LOG
                 PRP_DiscardAlgorithm_T_print(me);
+                #ifdef PRP_DEBUG_LOG
                 PRP_DiscardAlgorithm_T_check_consistency(me);
                 #endif
 
@@ -393,8 +401,8 @@ integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, 
 
     PRP_DISCARD_LOGOUT(1, "KEEP, %i items used\n", me->used_item_count);
 
-    #ifdef PRP_DEBUG_LOG
     PRP_DiscardAlgorithm_T_print(me);
+    #ifdef PRP_DEBUG_LOG
     PRP_DiscardAlgorithm_T_check_consistency(me);
     #endif
     return(PRP_KEEP);

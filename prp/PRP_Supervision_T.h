@@ -70,8 +70,7 @@
 
 #include "PRP_Package_T.h"
 
-struct PRP_Supervision_T 
-{
+struct PRP_Supervision_T {
     /* Pointer to the environment object */
     PRP_Environment_T* environment_;
     /* Destination address to send supervision frames to */
@@ -88,7 +87,16 @@ struct PRP_Supervision_T
     uinteger16 supervision_seqno_;
 };
 
-void PRP_Supervision_T_print(PRP_Supervision_T* const me, uinteger32 level);
+struct PRP_Supervision_T_params {
+    uinteger16 sup_path_;
+    uinteger16 sup_version_;
+    uinteger16 sup_sequence_number_;
+    uinteger16 tlv_type_;
+    uinteger16 tlv_length_;
+    unsigned char* src_macA_;
+    unsigned char* src_macB_;
+};
+
 integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* data, uinteger32* length, octet lan_id);
 integer32 PRP_Supervision_T_supervision_tx(PRP_Supervision_T* const me);
 void PRP_Supervision_T_init(PRP_Supervision_T* const me, PRP_Environment_T* const environment);

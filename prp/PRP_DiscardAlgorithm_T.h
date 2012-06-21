@@ -114,8 +114,9 @@ struct PRP_DiscardAlgorithm_DiscardItem_T
     struct PRP_DiscardAlgorithm_DiscardItem_T *next_alt;       /* Used only for free_list and chronology */
 };
 
-#ifdef PRP_DEBUG_LOG
+// #ifdef PRP_DEBUG_LOG
 void PRP_DiscardAlgorithm_T_print(PRP_DiscardAlgorithm_T* const me);
+#ifdef PRP_DEBUG_LOG
 void PRP_DiscardAlgorithm_T_check_consistency(PRP_DiscardAlgorithm_T* const me);
 #endif
 

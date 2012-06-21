@@ -174,6 +174,7 @@ void PRP_Environment_T_init(PRP_Environment_T* const me)
     PRP_Timer_T_start(&(me->supervision_tx_timer_), me->supervision_.life_check_interval_);
     PRP_Timer_T_init(&(me->aging_timer_));
     PRP_Timer_T_start(&(me->aging_timer_), me->supervision_.check_interval_aging_);
+    PRP_LogItf_T_init(me);
 }
 
 /**

@@ -63,6 +63,8 @@
 *  Date     | Name     | Modification
 ************|**********|*********************************************
 *  17.12.07 | mesv     | file created
+*********************************************************************
+*  21.06.12 | walh     | logging implemented
 *********************************************************************/
 
 #include "PRP_EnvironmentConfiguration_T.h"
@@ -86,30 +88,31 @@ void PRP_EnvironmentConfiguration_T_print(PRP_EnvironmentConfiguration_T* const 
         return;
     }
 
-    PRP_PRP_LOGOUT(level, "%s\n", "====EnvironmentConfiguration========");
-    PRP_PRP_LOGOUT(level, "node_:\t%s\n", me->node_);
-    PRP_PRP_LOGOUT(level, "manufacturer_:\t%s\n", me->manufacturer_);
-    PRP_PRP_LOGOUT(level, "\version_:\t%s\n", me->version_);
-    PRP_PRP_LOGOUT(level, "%s\n", "mac_address_A_:");
+    PRP_PRINTF( "%s\n", "======== EnvironmentConfiguration =====================");
+    PRP_PRINTF( "node_:\t%s\n", me->node_);
+    PRP_PRINTF( "manufacturer_:\t%s\n", me->manufacturer_);
+    PRP_PRINTF( "version_:\t%s\n", me->version_);
+    PRP_PRINTF( "%s", "mac_address_A_: ");
     for (i=0; i<PRP_ETH_ADDR_LENGTH; i++) {
-        PRP_PRP_LOGOUT(level, "%x\n", me->mac_address_A_[i]);
+        if (i < 5) {
+            PRP_PRINTF("%02x:", me->mac_address_A_[i]);
+        } else {
+            PRP_PRINTF("%02x\n", me->mac_address_A_[i]);
+        }
     }
-    PRP_PRP_LOGOUT(level, "%s\n", "mac_address_B_:");
+    PRP_PRINTF( "%s", "mac_address_B_: ");
     for (i=0; i<PRP_ETH_ADDR_LENGTH; i++) {
-        PRP_PRP_LOGOUT(level, "%x\n", me->mac_address_B_[i]);
+        if (i < 5) {
+            PRP_PRINTF("%02x:", me->mac_address_B_[i]);
+        } else {
+            PRP_PRINTF("%02x\n", me->mac_address_B_[i]);
+        }
     }
-
-    PRP_PRP_LOGOUT(level, "adapter_active_A_:\t%u\n", me->adapter_active_A_);
-    PRP_PRP_LOGOUT(level, "adapter_active_B_:\t%u\n", me->adapter_active_B_);
-    PRP_PRP_LOGOUT(level, "duplicate_discard_:\t%u\n", me->duplicate_discard_);
-    PRP_PRP_LOGOUT(level, "transparent_reception_:\t%u\n", me->transparent_reception_);
-    PRP_PRP_LOGOUT(level, "cnt_total_sent_A_:\t%u\n", me->cnt_total_sent_A_);
-    PRP_PRP_LOGOUT(level, "cnt_total_sent_B_:\t%u\n", me->cnt_total_sent_B_);
-    PRP_PRP_LOGOUT(level, "cnt_total_received_A_:\t%u\n", me->cnt_total_received_A_);
-    PRP_PRP_LOGOUT(level, "cnt_total_received_B_:\t%u\n", me->cnt_total_received_B_);
-    PRP_PRP_LOGOUT(level, "cnt_total_errors_A_:\t%u\n", me->cnt_total_errors_A_);
-    PRP_PRP_LOGOUT(level, "cnt_total_errors_B_:\t%u\n", me->cnt_total_errors_B_);
-    PRP_PRP_LOGOUT(level, "%s\n", "====================================");
+    PRP_PRINTF( "adapter_active_A_:\t%u\n", me->adapter_active_A_);
+    PRP_PRINTF( "adapter_active_B_:\t%u\n", me->adapter_active_B_);
+    PRP_PRINTF( "duplicate_discard_:\t%u\n", me->duplicate_discard_);
+    PRP_PRINTF( "transparent_reception_:\t%u\n", me->transparent_reception_);
+    PRP_PRINTF( "%s\n", "=======================================================");
 }
 
 /**

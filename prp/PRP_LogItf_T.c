@@ -17,7 +17,7 @@
 *  - Redistributions in binary form must reproduce the above 
 *    copyright notice, this list of conditions and the following 
 *    disclaimer in the documentation and/or other materials provided
-*    with the distribution. 
+*    with the distribution.
 *
 *  - Neither the name of the Zurich University of Applied Sciences
 *    nor the names of its contributors may be used to endorse or 
@@ -65,14 +65,93 @@
 *  17.12.07 | mesv     | file created
 *********************************************************************
 *  14.05.12 | asdo     | prp-1 modification
+*********************************************************************
+*  21.06.12 | walh     | logging implemented
 *********************************************************************/
 
+#include <stdio.h>
 #include "PRP_LogItf_T.h"
+#include "PRP_Environment_T.h"
+
+/* pointer to the prp environment */
+static PRP_Environment_T* environment_;
 
 #ifdef PRP_DEBUG_LOG
-    integer32 debug_level = 0;
-    integer32 net_itf_debug_level = 0;
-    integer32 prp_debug_level = 0;
-    integer32 discard_debug_level = 0;
+    integer32 debug_level           = 0;
+    integer32 net_itf_debug_level   = 0;
+    integer32 prp_debug_level       = 0;
+    integer32 discard_debug_level   = 0;
 #endif
 
+/* global struct for user interface */
+struct PTP_LogItf_T user_log;
+
+/**
+ * @fn void PRP_LogItf_T_show_help(void)
+ * @brief Help about implemented functions
+ */
+void PRP_LogItf_T_show_help(void)
+{
+    char c;
+    FILE *fp = fopen("../prp_pcap_tap_userspace/help", "rb");
+    while ((c = fgetc(fp)) != EOF) {
+        printf("%c",c);
+    }
+    fclose(fp);
+}
+
+/**
+ * @fn void PRP_LogItf_T_print_config(void)
+ * @brief Help about implemented functions
+ */
+void PRP_LogItf_T_print_config(void)
+{
+    PRP_EnvironmentConfiguration_T_print(&(environment_->environment_configuration_), 0);
+}
+
+/**
+ * @fn void PRP_LogItf_T_print_counters(void)
+ * @brief Function to print the statistic counters
+ */
+void PRP_LogItf_T_print_counters(void)
+{
+    PRP_PRINTF( "%s\n", "======== Statistic counters ===========================");
+    PRP_PRINTF( "cnt_total_sent_A_:\t%u\n", environment_->environment_configuration_.cnt_total_sent_A_);
+    PRP_PRINTF( "cnt_total_sent_B_:\t%u\n", environment_->environment_configuration_.cnt_total_sent_B_);
+    PRP_PRINTF( "cnt_total_received_A_:\t%u\n", environment_->environment_configuration_.cnt_total_received_A_);
+    PRP_PRINTF( "cnt_total_received_B_:\t%u\n", environment_->environment_configuration_.cnt_total_received_B_);
+    PRP_PRINTF( "cnt_total_errors_A_:\t%u\n", environment_->environment_configuration_.cnt_total_errors_A_);
+    PRP_PRINTF( "cnt_total_errors_B_:\t%u\n", environment_->environment_configuration_.cnt_total_errors_B_);
+    PRP_PRINTF( "%s\n", "=======================================================");
+}
+
+/**
+ * @fn void PRP_LogItf_T_init(PRP_Environment_T* const environment)
+ * @brief Initialize pointer to environment
+ * @param   environment PRP_Environment_T pointer to the environment
+ */
+void PRP_LogItf_T_init(PRP_Environment_T* const environment)
+{
+    environment_        = environment;
+    user_log.discard_   = FALSE;
+    user_log.frame_     = FALSE;
+    user_log.sf_        = FALSE;
+    user_log.trailer_   = FALSE;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+    

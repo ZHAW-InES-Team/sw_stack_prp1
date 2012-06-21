@@ -68,7 +68,7 @@
 ************|**********|*********************************************
 *  13.07.11 | itin     | integration of discard algorithm for PRP1
 *********************************************************************
-*  14.05.12 | walh     | prp-1 modification, bridging removed
+*  12.06.12 | walh     | print function modified for user log
 *********************************************************************/
 
 #include "PRP_Frames_T.h"
@@ -88,14 +88,13 @@ static PRP_Lock_T seqnr_lock_;
 static uinteger16 tx_seq_nr_;
 
 /**
- * @fn void PRP_Frames_T_print(PRP_Frames_T* const me, octet* data, uinteger32* length, uinteger32 level)
+ * @fn void PRP_Frames_T_print(PRP_Frames_T* const me, octet* data, uinteger32* length)
  * @brief Print the PRP_Frames status information
  * @param   me PRP_Frames_T this pointer
  * @param   data octet pointer to the beginning of the frame (dest mac)
  * @param   length uinteger32 pointer to the length in bytes of the frame
- * @param   level uinteger32 importance
  */
-void PRP_Frames_T_print(PRP_Frames_T* const me, octet* data, uinteger32* length, uinteger32 level)
+void PRP_Frames_T_print(PRP_Frames_T* const me, octet* data, uinteger32* length)
 {
     uinteger32 i;
 
@@ -112,13 +111,13 @@ void PRP_Frames_T_print(PRP_Frames_T* const me, octet* data, uinteger32* length,
         return;
     }
 
-    PRP_PRP_LOGOUT(level, "%s\n", "====Frame============================");
-    PRP_PRP_LOGOUT(level, "length: %u\n", *length);
-    PRP_PRP_LOGOUT(level, "%s\n", "data");
+    PRP_USERLOG(user_log.frame_, "%s\n", "======== Frame ========================================");
+    PRP_USERLOG(user_log.frame_, "length: %u\n", *length);
+    PRP_USERLOG(user_log.frame_, "%s\n", "data");
     for (i=0; i<*length; i++) {
-        PRP_PRP_LOGOUT(level, "%u: %x\n", i, data[i]);
+        PRP_USERLOG(user_log.frame_, "[%u]:\t%02x\n", i, data[i]);
     }
-    PRP_PRP_LOGOUT(level, "%s\n", "====================================");
+    PRP_USERLOG(user_log.frame_, "%s\n", "\n======== EndFrame ========================================");
 }
 
 /**
@@ -154,7 +153,7 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
     }
 
     PRP_PRP_LOGOUT(2, "%s\n", "received frame");
-    PRP_Frames_T_print(me, data, length, 4);
+    PRP_Frames_T_print(me, data, length);
 
     /* disable the ports by software */
     if ((me->frame_analyser_->environment_->environment_configuration_.adapter_active_A_ == FALSE) &&
@@ -170,6 +169,7 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
     trailer = PRP_Trailer_T_get_trailer(&(me->trailer_rx_), data, length);
     if (trailer != NULL_PTR) {              /* lan id out of the trailer */
         real_lan_id = trailer->lan_id_;
+        PRP_RedundancyControlTrailer_T_print(trailer, "RX");
     } else {
         /* lan_id from which it was received */
         real_lan_id = lan_id;
@@ -181,7 +181,7 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
         /* received LAN id not the adapter received the frame */
         if ((lan_id != real_lan_id)) {
             PRP_ERROUT("Wrong LAN: RCT says B, received from adapter A (SRC %02x:%02x:%02x:%02x:%02x:%02x)\n",
-					   src_mac[0],src_mac[1],src_mac[2],src_mac[3],src_mac[4],src_mac[5]);
+                       src_mac[0],src_mac[1],src_mac[2],src_mac[3],src_mac[4],src_mac[5]);
             me->frame_analyser_->environment_->environment_configuration_.cnt_total_errors_A_++;
         }
     }
@@ -189,9 +189,9 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
     else {
         me->frame_analyser_->environment_->environment_configuration_.cnt_total_received_B_++;
         /* received LAN id not the adapter receieved the frame */
-		if ((lan_id != real_lan_id)) {
-			PRP_ERROUT("Wrong LAN: RCT says A, received from adapter B (SRC %02x:%02x:%02x:%02x:%02x:%02x)\n",
-					   src_mac[0],src_mac[1],src_mac[2],src_mac[3],src_mac[4],src_mac[5]);
+        if ((lan_id != real_lan_id)) {
+            PRP_ERROUT("Wrong LAN: RCT says A, received from adapter B (SRC %02x:%02x:%02x:%02x:%02x:%02x)\n",
+                       src_mac[0],src_mac[1],src_mac[2],src_mac[3],src_mac[4],src_mac[5]);
             me->frame_analyser_->environment_->environment_configuration_.cnt_total_errors_B_++;
         }
     }
@@ -215,7 +215,7 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
     /* The frame origin is a DAN, search drop table to check if frame has
      * been received previously */
     ret = PRP_DiscardAlgorithm_T_search_entry(&(me->frame_analyser_->environment_->discard_algorithm_),
-                                                   src_mac, me->trailer_rx_.redundancy_control_trailer_.seq_octet_);
+                                              src_mac, me->trailer_rx_.redundancy_control_trailer_.seq_octet_);
 
     return ret;
 }
@@ -252,7 +252,7 @@ integer32 PRP_Frames_T_normal_tx(PRP_Frames_T* const me, octet* data, uinteger32
     temp_trailer.lan_id_ = PRP_ID_LAN_A;
     temp_trailer.seq_ = tx_seq_nr_;
     PRP_PRP_LOGOUT(2, "%s\n", "add trailer for LAN A");
-    PRP_RedundancyControlTrailer_T_print(&temp_trailer,2);
+    PRP_RedundancyControlTrailer_T_print(&temp_trailer, "TX");
     PRP_Trailer_T_add_trailer(&(me->trailer_tx_), data, length, &temp_trailer);
 
     /* send it to LAN A or not */
@@ -260,7 +260,7 @@ integer32 PRP_Frames_T_normal_tx(PRP_Frames_T* const me, octet* data, uinteger32
         PRP_PRP_LOGOUT(2, "%s\n", "send frame on LAN A");
         PRP_NetItf_T_transmit(data, length, PRP_ID_LAN_A);
         me->frame_analyser_->environment_->environment_configuration_.cnt_total_sent_A_++;
-        PRP_Frames_T_print(me, data, length, 4);
+        PRP_Frames_T_print(me, data, length);
     }
 
     /* add trailer again therefore remove it first*/
@@ -272,7 +272,7 @@ integer32 PRP_Frames_T_normal_tx(PRP_Frames_T* const me, octet* data, uinteger32
         temp_trailer.lan_id_ = PRP_ID_LAN_B;
         temp_trailer.seq_ = tx_seq_nr_;
         PRP_PRP_LOGOUT(2, "%s\n", "add trailer for LAN B");
-        PRP_RedundancyControlTrailer_T_print(&temp_trailer,2);
+        PRP_RedundancyControlTrailer_T_print(&temp_trailer, "TX");
         PRP_Trailer_T_add_trailer(&(me->trailer_tx_), data, length, &temp_trailer);
 
     /* send it to LAN B or not */
@@ -280,7 +280,7 @@ integer32 PRP_Frames_T_normal_tx(PRP_Frames_T* const me, octet* data, uinteger32
         PRP_PRP_LOGOUT(2, "%s\n", "send frame on LAN B");
         PRP_NetItf_T_transmit(data, length, PRP_ID_LAN_B);
         me->frame_analyser_->environment_->environment_configuration_.cnt_total_sent_B_++;
-        PRP_Frames_T_print(me, data, length, 4);
+        PRP_Frames_T_print(me, data, length);
     }
 
     if ((me->frame_analyser_->environment_->environment_configuration_.adapter_active_A_ == TRUE) ||
