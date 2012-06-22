@@ -100,18 +100,28 @@ void PRP_Supervision_T_print(PRP_Supervision_T* const me, struct PRP_Supervision
         return;
     }
 
-    PRP_USERLOG(user_log.sf_, "%s\n", "======== Supervision ==================================");
+    PRP_USERLOG(user_log.sf_, "%s\n", "======== Supervision RX ===============================");
     PRP_USERLOG(user_log.sf_, "sup_path:\t\t%u\n", sf_params->sup_path_);
     PRP_USERLOG(user_log.sf_, "sup_version:\t\t%u\n", sf_params->sup_version_);
     PRP_USERLOG(user_log.sf_, "sup_sequence_number:\t%u\n", sf_params->sup_sequence_number_);
     PRP_USERLOG(user_log.sf_, "tlv_type:\t\t%u\n", sf_params->tlv_type_);
     PRP_USERLOG(user_log.sf_, "tlv_length:\t\t%u\n", sf_params->tlv_length_);
-    PRP_USERLOG(user_log.sf_, "%s", "source_mac_A_: ");
+    PRP_USERLOG(user_log.sf_, "%s", "source_mac_A_:\t\t");
     for (i=0; i<PRP_ETH_ADDR_LENGTH; i++) {
         if (i < 5) {
             PRP_USERLOG(user_log.sf_, "%02x:",*(sf_params->src_macA_ + i));
         } else {
             PRP_USERLOG(user_log.sf_, "%02x\n",*(sf_params->src_macA_));
+        }
+    }
+    if (sf_params->tlv_length_ > PRP_ETH_ADDR_LENGTH) {
+        PRP_USERLOG(user_log.sf_, "%s", "source_mac_B_:\t\t");
+        for (i=0; i<PRP_ETH_ADDR_LENGTH; i++) {
+            if (i < 5) {
+                PRP_USERLOG(user_log.sf_, "%02x:",*(sf_params->src_macB_ + i));
+            } else {
+                PRP_USERLOG(user_log.sf_, "%02x\n",*(sf_params->src_macB_));
+            }
         }
     }
     PRP_USERLOG(user_log.sf_, "%s\n", "=======================================================");
@@ -138,6 +148,7 @@ integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* d
     uinteger16 sup_sequence_number;
     octet tlv_type;
     octet tlv_length;
+    octet src_mac[6];
     struct PRP_Supervision_T_params* sf_params_ = NULL_PTR;
     sf_params_ = prp_malloc(sizeof(struct PRP_Supervision_T_params));
 
@@ -147,8 +158,13 @@ integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* d
         return(-PRP_ERROR_NULL_PTR);
     }
 
+    for (i=0; i<PRP_ETH_ADDR_LENGTH; i++) {
+        src_mac[i] = data[(6 + i)];
+    }
+
     if (*length < 60) {
-        PRP_PRP_LOGOUT(0, "%s\n", "frame too short for supervision");
+        PRP_USERLOG(user_log.verbose_,"frame too short for supervision (SRC %02x:%02x:%02x:%02x:%02x:%02x)\n",
+                    src_mac[0],src_mac[1],src_mac[2],src_mac[3],src_mac[4],src_mac[5]);
         return(-PRP_ERROR_FRAME_COR);
     }
 
@@ -174,12 +190,13 @@ integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* d
     sf_params_->sup_sequence_number_ = sup_sequence_number;
 
     if (sup_version == 0) {
-        PRP_ERROUT("%s\n", "PRP-0 supervision frame received, should not happen in PRP-1 network! Dropping.");
+        PRP_USERLOG(user_log.verbose_,"PRP-0 supervision frame received, should not happen in PRP-1 network! Dropping. (SRC %02x:%02x:%02x:%02x:%02x:%02x)\n",
+                    src_mac[0],src_mac[1],src_mac[2],src_mac[3],src_mac[4],src_mac[5]);
         return(-PRP_ERROR_FRAME_COR);
     }
 
     if (sup_version > 1) {
-        PRP_PRP_LOGOUT(1, "%s\n", "Warning: parsing supervision frame with version more recent than 1.");
+        PRP_USERLOG(user_log.verbose_,"%s\n", "Warning: parsing supervision frame with version more recent than 1.");
         /* "Implementation of version X of the protocol shall interpret
          * version >X as if they were version X" */
     }
@@ -189,13 +206,12 @@ integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* d
     while (1) {
         tlv_type   = data[pos++];
         tlv_length = data[pos++];
-        sf_params_->tlv_type_   = tlv_type;
-        sf_params_->tlv_length_ = tlv_length;
-
         if (tlv_type == 0) {
             /* end of TLV list */
             break;
         }
+        sf_params_->tlv_type_   = tlv_type;
+        sf_params_->tlv_length_ = tlv_length;
 
         /* check TLV: duplicate discard or duplicate accept */
         if (tlv_type == 20 || tlv_type == 21 || tlv_type == 23) {
@@ -204,30 +220,24 @@ integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* d
                 PRP_PRP_LOGOUT(2, "%s\n", "node is running in duplicate discard mode");
             } else {
                 /* PRP node with duplicate accept (ONLY USED for debugging) */
-                PRP_ERROUT("%s\n", "node is running in duplicate accept mode");
+                PRP_USERLOG(user_log.verbose_,"node is running in duplicate accept mode (SRC %02x:%02x:%02x:%02x:%02x:%02x)\n",
+                            src_mac[0],src_mac[1],src_mac[2],src_mac[3],src_mac[4],src_mac[5]);
             }
 
             /* HSR or PRP node MAC address */
             if (tlv_length == PRP_ETH_ADDR_LENGTH || tlv_length == 2*PRP_ETH_ADDR_LENGTH) {
                 node_valid = TRUE;
                 sf_params_->src_macA_ = &data[pos];
-                PRP_PRP_LOGOUT(3, "%s\n", "source_mac_A_:");
-                for (i=0; i<PRP_ETH_ADDR_LENGTH; i++) {
-                    PRP_PRP_LOGOUT(3, "%x\n", data[pos+i]);
-                }
                 if (tlv_length > PRP_ETH_ADDR_LENGTH) {
                     sf_params_->src_macB_ = &data[pos+PRP_ETH_ADDR_LENGTH+i];
-                    PRP_PRP_LOGOUT(3, "%s\n", "source_mac_B_:");
-                    for (i=0; i<PRP_ETH_ADDR_LENGTH; i++) {
-                        PRP_PRP_LOGOUT(3, "%x\n", data[pos+PRP_ETH_ADDR_LENGTH+i]);
-                    }
                 }
                 else {
                     PRP_PRP_LOGOUT(3, "%s\n", "source_mac_B_: not given (assuming same as source_mac_A_)");
                 }
             }
             else {
-                PRP_ERROUT("%s\n", "Supervision with unknown MAC address format, ignoring node.");
+                PRP_USERLOG(user_log.verbose_,"Supervision with unknown MAC address format, ignoring node. (SRC %02x:%02x:%02x:%02x:%02x:%02x)\n",
+                            src_mac[0],src_mac[1],src_mac[2],src_mac[3],src_mac[4],src_mac[5]);
             }
         }
         else {
@@ -237,13 +247,15 @@ integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* d
         pos += tlv_length;
         if (pos >= *length) {
             /* next TLV would start beyond end of frame */
-            PRP_ERROUT("%s\n", "Received supervision with TLV pointing beyond end of frame. Ignoring.");
+            PRP_USERLOG(user_log.verbose_,"Received supervision with TLV pointing beyond end of frame. Ignoring. (SRC %02x:%02x:%02x:%02x:%02x:%02x)\n",
+                        src_mac[0],src_mac[1],src_mac[2],src_mac[3],src_mac[4],src_mac[5]);
             break;
         }
     }
 
     if (node_valid == FALSE) {
-        PRP_ERROUT("%s\n", "Did not find node MAC in supervision TLV. Dropping.");
+        PRP_USERLOG(user_log.verbose_,"Did not find node MAC in supervision TLV. Dropping. (SRC %02x:%02x:%02x:%02x:%02x:%02x)\n",
+                    src_mac[0],src_mac[1],src_mac[2],src_mac[3],src_mac[4],src_mac[5]);
         return(-PRP_ERROR_FRAME_COR);
     }
 

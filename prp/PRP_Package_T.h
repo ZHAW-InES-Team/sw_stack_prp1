@@ -70,7 +70,8 @@
 
 #include "PRP_DataTypes_T.h"
 
-#define PRP_TIMER_TICK_INTERVAL         20 /* in ms */
+#define PRP_TIMER_TICK_INTERVAL         20      /* in ms */
+#define PRP_TIMER_STATISTIC_INTERVAL    1000    /* in ms */
 
 #define PRP_RCT_LENGTH                  4
 #define PRP_MTU                         1496

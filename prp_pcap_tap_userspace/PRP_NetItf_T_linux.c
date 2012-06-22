@@ -736,7 +736,7 @@ int main(int argc, char* argv[])
             if (FD_ISSET(STDIN_FILENO,&descriptors)) {
                 read(STDIN_FILENO,buffer,ETHER_MAX_LEN);
                 if (buffer[0] == 'c') {
-                    PRP_LogItf_T_print_counters();
+                    user_log.counter_ = !user_log.counter_;
                 }
                 if (buffer[0] == 'd') {
                     user_log.discard_ = !user_log.discard_;
@@ -758,6 +758,12 @@ int main(int argc, char* argv[])
                 }
                 if (buffer[0] == 't') {
                     user_log.trailer_ = !user_log.trailer_;
+                }
+                if (buffer[0] == 'v') {
+                    user_log.verbose_ = !user_log.verbose_;
+                }
+                if (buffer[0] == 'x') {
+                    PRP_LogItf_T_reset();
                 }
             }
 

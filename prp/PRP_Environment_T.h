@@ -77,12 +77,12 @@
 
 struct PRP_Environment_T
 {
-    /* Instance to check of the link, for bridging */
-    PRP_Timer_T bridging_timer_;
     /* Instance to invoke the sending of the supervision frame */
     PRP_Timer_T supervision_tx_timer_;
     /* Instance of the aging timer */
     PRP_Timer_T aging_timer_;
+    /* Instance to log statistic information */
+    PRP_Timer_T statistic_timer_;
     /* Instance of the environment configuration */
     PRP_EnvironmentConfiguration_T environment_configuration_;
     /* Instance of the supervision part of the protocol engine */

@@ -135,14 +135,18 @@ void PRP_Trailer_T_add_trailer(PRP_Trailer_T* const me, octet* data, uinteger32*
  */
 PRP_RedundancyControlTrailer_T* PRP_Trailer_T_get_trailer(PRP_Trailer_T* const me, octet* data, uinteger32* length)
 {
-    uinteger16 size_offset;
     octet lan_id;
-    uinteger16 lsdu_size;
+    octet src_mac[6];
+    uinteger16 i, size_offset, lsdu_size;
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
     if (me == NULL_PTR) {
         return(NULL_PTR);
+    }
+
+    for (i=0; i<PRP_ETH_ADDR_LENGTH; i++) {
+        src_mac[i] = data[(6 + i)];
     }
 
     /* PRP-1 frames are not allowed to be shorter than 60 bytes (without CRC) */
@@ -177,9 +181,10 @@ PRP_RedundancyControlTrailer_T* PRP_Trailer_T_get_trailer(PRP_Trailer_T* const m
         me->redundancy_control_trailer_.lan_id_ = lan_id;
         return(&(me->redundancy_control_trailer_));
     }
-    PRP_PRP_LOGOUT(2, "frame with PRP-1 suffix, but no valid PRP-1 trailer, last 6 bytes: %x %x %x %x\n",
-                   data[(*length-6)],data[(*length-5)], data[(*length-4)],
-                   data[(*length-3)], data[(*length-2)], data[(*length-1)]);
+    PRP_USERLOG(user_log.verbose_,"frame with PRP-1 suffix, but no valid PRP-1 trailer, last 6 bytes: %x %x %x %x\n(SRC %02x:%02x:%02x:%02x:%02x:%02x)",
+                data[(*length-6)],data[(*length-5)], data[(*length-4)],
+                data[(*length-3)], data[(*length-2)], data[(*length-1)],
+                src_mac[0],src_mac[1],src_mac[2],src_mac[3],src_mac[4],src_mac[5]);
 
     /* no trailer found */
     return(NULL_PTR);

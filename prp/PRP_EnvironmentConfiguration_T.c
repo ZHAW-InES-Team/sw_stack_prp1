@@ -89,10 +89,10 @@ void PRP_EnvironmentConfiguration_T_print(PRP_EnvironmentConfiguration_T* const 
     }
 
     PRP_PRINTF( "%s\n", "======== EnvironmentConfiguration =====================");
-    PRP_PRINTF( "node_:\t%s\n", me->node_);
-    PRP_PRINTF( "manufacturer_:\t%s\n", me->manufacturer_);
-    PRP_PRINTF( "version_:\t%s\n", me->version_);
-    PRP_PRINTF( "%s", "mac_address_A_: ");
+    PRP_PRINTF( "node_:\t\t\t%s\n", me->node_);
+    PRP_PRINTF( "manufacturer_:\t\t%s\n", me->manufacturer_);
+    PRP_PRINTF( "version_:\t\t%s\n", me->version_);
+    PRP_PRINTF( "%s", "mac_address_A_:\t\t");
     for (i=0; i<PRP_ETH_ADDR_LENGTH; i++) {
         if (i < 5) {
             PRP_PRINTF("%02x:", me->mac_address_A_[i]);
@@ -100,7 +100,7 @@ void PRP_EnvironmentConfiguration_T_print(PRP_EnvironmentConfiguration_T* const 
             PRP_PRINTF("%02x\n", me->mac_address_A_[i]);
         }
     }
-    PRP_PRINTF( "%s", "mac_address_B_: ");
+    PRP_PRINTF( "%s", "mac_address_B_:\t\t");
     for (i=0; i<PRP_ETH_ADDR_LENGTH; i++) {
         if (i < 5) {
             PRP_PRINTF("%02x:", me->mac_address_B_[i]);

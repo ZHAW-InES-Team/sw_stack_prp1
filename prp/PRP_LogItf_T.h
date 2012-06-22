@@ -104,9 +104,13 @@
  * @retval  >=0 integer32 OK (nr of bytes written)
  * @retval  <0 integer32 ERROR (code)
  */
-#define PRP_USERLOG(level, format, args...) if (level) \
-    prp_printf(format, args)
-
+#ifdef PRP_DEBUG_LOG
+    #define PRP_USERLOG(level, format, args...) \
+        PRP_LOG("<PRP_LOG> " format, args)
+#else
+    #define PRP_USERLOG(level, format, args...) if (level) \
+        prp_printf(format, args)
+#endif
 /**
  * @fn PRP_INFOOUT(format, args...)
  * @brief Informational output
@@ -168,13 +172,16 @@
 #endif
 
 struct PTP_LogItf_T {
+    boolean counter_;
     boolean discard_;
     boolean frame_;
     boolean sf_;
     boolean trailer_;
+    boolean verbose_;
 };
 extern struct PTP_LogItf_T user_log;
 
+void PRP_LogItf_T_reset(void);
 void PRP_LogItf_T_show_help(void);
 void PRP_LogItf_T_print_config(void);
 void PRP_LogItf_T_print_counters(void);

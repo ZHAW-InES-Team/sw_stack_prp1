@@ -1,9 +1,11 @@
 ======== SW Stack PRP1 Help ===========================
-    c       - print statistic counters
-    d       - print duplicate detection status (toggle on/off)
-    e       - read environment configuration
-    f       - print frames (toggle on/off)
-    q       - quit application
-    s       - print supervisions (toggle on/off)
-    t       - print trailer (toggle on/off)
+    c   -   print statistic counters
+    d   -   print duplicate detection status (toggle on/off)
+    e   -   read environment configuration
+    f   -   print frames (toggle on/off)
+    q   -   quit application
+    s   -   print supervisions (toggle on/off)
+    t   -   print trailer (toggle on/off)
+    v   -   verbose log (toggle on/off)
+    x   -   reset all log settings
 =======================================================

@@ -155,7 +155,7 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
     PRP_PRP_LOGOUT(2, "%s\n", "received frame");
     PRP_Frames_T_print(me, data, length);
 
-    /* disable the ports by software */
+    /* check if the ports are disabled by software */
     if ((me->frame_analyser_->environment_->environment_configuration_.adapter_active_A_ == FALSE) &&
         (lan_id == PRP_ID_LAN_A)) {
         return(PRP_DROP);
@@ -180,7 +180,7 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
         me->frame_analyser_->environment_->environment_configuration_.cnt_total_received_A_++;
         /* received LAN id not the adapter received the frame */
         if ((lan_id != real_lan_id)) {
-            PRP_ERROUT("Wrong LAN: RCT says B, received from adapter A (SRC %02x:%02x:%02x:%02x:%02x:%02x)\n",
+            PRP_USERLOG(user_log.verbose_,"Wrong LAN: RCT says B, received from adapter A (SRC %02x:%02x:%02x:%02x:%02x:%02x)\n",
                        src_mac[0],src_mac[1],src_mac[2],src_mac[3],src_mac[4],src_mac[5]);
             me->frame_analyser_->environment_->environment_configuration_.cnt_total_errors_A_++;
         }
@@ -190,7 +190,7 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
         me->frame_analyser_->environment_->environment_configuration_.cnt_total_received_B_++;
         /* received LAN id not the adapter receieved the frame */
         if ((lan_id != real_lan_id)) {
-            PRP_ERROUT("Wrong LAN: RCT says A, received from adapter B (SRC %02x:%02x:%02x:%02x:%02x:%02x)\n",
+            PRP_USERLOG(user_log.verbose_,"Wrong LAN: RCT says A, received from adapter B (SRC %02x:%02x:%02x:%02x:%02x:%02x)\n",
                        src_mac[0],src_mac[1],src_mac[2],src_mac[3],src_mac[4],src_mac[5]);
             me->frame_analyser_->environment_->environment_configuration_.cnt_total_errors_B_++;
         }
@@ -198,7 +198,8 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
 
     /* if there was no trailer -> keep frame */
     if (trailer == NULL_PTR) {
-        PRP_PRP_LOGOUT(2, "%s\n", "SAN -> frame had no trailer");
+        PRP_USERLOG(user_log.verbose_,"SAN -> frame had no trailer (SRC %02x:%02x:%02x:%02x:%02x:%02x)\n",
+                    src_mac[0],src_mac[1],src_mac[2],src_mac[3],src_mac[4],src_mac[5]);
         return(PRP_KEEP);
     }
 

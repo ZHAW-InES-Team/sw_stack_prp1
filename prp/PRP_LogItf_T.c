@@ -115,24 +115,62 @@ void PRP_LogItf_T_print_config(void)
  */
 void PRP_LogItf_T_print_counters(void)
 {
+    uinteger32 tx_diff;
+    uinteger32 rx_diff;
+    if (environment_->environment_configuration_.cnt_total_sent_A_>
+        environment_->environment_configuration_.cnt_total_sent_B_
+    ) {
+        tx_diff = environment_->environment_configuration_.cnt_total_sent_A_
+        - environment_->environment_configuration_.cnt_total_sent_B_;
+    } else {
+        tx_diff = environment_->environment_configuration_.cnt_total_sent_B_
+        - environment_->environment_configuration_.cnt_total_sent_A_;
+    }
+    if (environment_->environment_configuration_.cnt_total_received_A_>
+        environment_->environment_configuration_.cnt_total_received_B_
+    ) {
+        rx_diff = environment_->environment_configuration_.cnt_total_received_A_
+                - environment_->environment_configuration_.cnt_total_received_B_;
+    } else {
+        rx_diff = environment_->environment_configuration_.cnt_total_received_B_
+                - environment_->environment_configuration_.cnt_total_received_A_;
+    }
+
     PRP_PRINTF( "%s\n", "======== Statistic counters ===========================");
     PRP_PRINTF( "cnt_total_sent_A_:\t%u\n", environment_->environment_configuration_.cnt_total_sent_A_);
     PRP_PRINTF( "cnt_total_sent_B_:\t%u\n", environment_->environment_configuration_.cnt_total_sent_B_);
+    PRP_PRINTF( "cnt_tx_difference:\t%u\n", tx_diff);
     PRP_PRINTF( "cnt_total_received_A_:\t%u\n", environment_->environment_configuration_.cnt_total_received_A_);
     PRP_PRINTF( "cnt_total_received_B_:\t%u\n", environment_->environment_configuration_.cnt_total_received_B_);
+    PRP_PRINTF( "cnt_rx_difference:\t%u\n", rx_diff);
     PRP_PRINTF( "cnt_total_errors_A_:\t%u\n", environment_->environment_configuration_.cnt_total_errors_A_);
     PRP_PRINTF( "cnt_total_errors_B_:\t%u\n", environment_->environment_configuration_.cnt_total_errors_B_);
     PRP_PRINTF( "%s\n", "=======================================================");
 }
 
 /**
+ * @fn void PRP_LogItf_T_reset(void)
+ * @brief Reset all log settings
+ */
+void PRP_LogItf_T_reset(void)
+{
+    user_log.counter_   = FALSE;
+    user_log.discard_   = FALSE;
+    user_log.frame_     = FALSE;
+    user_log.sf_        = FALSE;
+    user_log.trailer_   = FALSE;
+    PRP_PRINTF("%s\n","all log settings are reset");
+}
+
+/**
  * @fn void PRP_LogItf_T_init(PRP_Environment_T* const environment)
- * @brief Initialize pointer to environment
+ * @brief Initialize pointer to environment and reset status flags
  * @param   environment PRP_Environment_T pointer to the environment
  */
 void PRP_LogItf_T_init(PRP_Environment_T* const environment)
 {
     environment_        = environment;
+    user_log.counter_   = FALSE;
     user_log.discard_   = FALSE;
     user_log.frame_     = FALSE;
     user_log.sf_        = FALSE;

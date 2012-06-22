@@ -88,11 +88,6 @@ void PRP_Environment_T_process_timer(PRP_Environment_T* const me)
         return;
     }
 
-    if (TRUE == PRP_Timer_T_tick(&(me->bridging_timer_))) {
-        /* to detect link down fast */
-        PRP_Timer_T_start(&(me->bridging_timer_), (PRP_TIMER_TICK_INTERVAL*5)); 
-    }
-
     if (TRUE == PRP_Timer_T_tick(&(me->supervision_tx_timer_))) {
         /* send a new supervision frame */
         PRP_Supervision_T_supervision_tx(&(me->supervision_)); 
@@ -103,6 +98,14 @@ void PRP_Environment_T_process_timer(PRP_Environment_T* const me)
         /* execute aging*/
         PRP_DiscardAlgorithm_T_do_aging(&(me->discard_algorithm_));
         PRP_Timer_T_start(&(me->aging_timer_), me->supervision_.check_interval_aging_);
+    }
+
+    if (TRUE == PRP_Timer_T_tick(&(me->statistic_timer_))) {
+        /* print log status */
+        if (user_log.counter_) {
+            PRP_LogItf_T_print_counters();
+        }
+        PRP_Timer_T_start(&(me->statistic_timer_), PRP_TIMER_STATISTIC_INTERVAL);
     }
 }
 
@@ -168,12 +171,12 @@ void PRP_Environment_T_init(PRP_Environment_T* const me)
     PRP_Supervision_T_init(&(me->supervision_), me);
     PRP_DiscardAlgorithm_T_init(&(me->discard_algorithm_));
     PRP_FrameAnalyser_T_init(&(me->frame_analyser_), me);
-    PRP_Timer_T_init(&(me->bridging_timer_));
-    PRP_Timer_T_start(&(me->bridging_timer_), 0);
     PRP_Timer_T_init(&(me->supervision_tx_timer_));
     PRP_Timer_T_start(&(me->supervision_tx_timer_), me->supervision_.life_check_interval_);
     PRP_Timer_T_init(&(me->aging_timer_));
     PRP_Timer_T_start(&(me->aging_timer_), me->supervision_.check_interval_aging_);
+    PRP_Timer_T_init(&(me->statistic_timer_));
+    PRP_Timer_T_start(&(me->statistic_timer_), PRP_TIMER_STATISTIC_INTERVAL);
     PRP_LogItf_T_init(me);
 }
 
@@ -191,9 +194,9 @@ void PRP_Environment_T_cleanup(PRP_Environment_T* const me)
     }
 
     /* stop all the modules */
-    PRP_Timer_T_cleanup(&(me->bridging_timer_));
     PRP_Timer_T_cleanup(&(me->supervision_tx_timer_));
     PRP_Timer_T_cleanup(&(me->aging_timer_));
+    PRP_Timer_T_cleanup(&(me->statistic_timer_));
     PRP_EnvironmentConfiguration_T_cleanup(&(me->environment_configuration_));
     PRP_Supervision_T_cleanup(&(me->supervision_));
     PRP_FrameAnalyser_T_cleanup(&(me->frame_analyser_));
