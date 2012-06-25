@@ -1,3 +1,9 @@
+Release 1.3
+- PPR_LogItf_T
+    - HMI for simple logging implemented
+- PRP_DiscardAlgorithm_T
+    - Do not remove node out of hash list any more, let the aging doing this job
+
 Release 1.2b
 - PRP_Frames_T
     - SANs DD check bug fixed (SAN connected to LanA oder LanB did a
