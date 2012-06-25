@@ -84,8 +84,8 @@ void PRP_RedundancyControlTrailer_T_print(PRP_RedundancyControlTrailer_T* const 
         return;
     }
     PRP_USERLOG(user_log.trailer_, "======== RedundancyControlTrailer (%s) ================\n",str);
-    PRP_USERLOG(user_log.trailer_, "lan_id_:\t\t%x\n", me->lan_id_);
-    PRP_USERLOG(user_log.trailer_, "seq_:\t\t\t%u\n", me->seq_);
+    PRP_USERLOG(user_log.trailer_, "lan_id_:\t%x\n", me->lan_id_);
+    PRP_USERLOG(user_log.trailer_, "seq_:\t\t%u\n", me->seq_);
     PRP_USERLOG(user_log.trailer_, "%s\n", "=======================================================");
 }
 

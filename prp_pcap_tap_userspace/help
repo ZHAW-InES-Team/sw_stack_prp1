@@ -1,11 +1,12 @@
 ======== SW Stack PRP1 Help ===========================
-    c   -   print statistic counters
-    d   -   print duplicate detection status (toggle on/off)
-    e   -   read environment configuration
-    f   -   print frames (toggle on/off)
-    q   -   quit application
-    s   -   print supervisions (toggle on/off)
-    t   -   print trailer (toggle on/off)
-    v   -   verbose log (toggle on/off)
-    x   -   reset all log settings
+    c   -   Print statistic counters    (enable/disable)
+    d   -   Discard list logging        (enable/disable)
+    D   -   Discard consistency check   (enable/disable)
+    e   -   Print environment configuration
+    f   -   Print RX frame content      (enable/disable)
+    q   -   Quit application
+    s   -   Print RX supervision status (enable/disable)
+    t   -   Print RCT                   (enable/disable)
+    v   -   Verbose log                 (enable/disable)
+    x   -   Reset all log settings to default
 =======================================================

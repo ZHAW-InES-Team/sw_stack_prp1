@@ -154,12 +154,34 @@ void PRP_LogItf_T_print_counters(void)
  */
 void PRP_LogItf_T_reset(void)
 {
-    user_log.counter_   = FALSE;
-    user_log.discard_   = FALSE;
-    user_log.frame_     = FALSE;
-    user_log.sf_        = FALSE;
-    user_log.trailer_   = FALSE;
-    PRP_PRINTF("%s\n","all log settings are reset");
+    if (user_log.counter_) {
+        user_log.counter_       = FALSE;
+        PRP_PRINTF("%s\n","==== Statistic counter logging disabled");
+    }
+    if (user_log.consistency_) {
+        user_log.consistency_   = FALSE;
+        PRP_PRINTF("%s\n","==== Discard consistency check disabled");
+    }
+    if (user_log.discard_) {
+        user_log.discard_       = FALSE;
+        PRP_PRINTF("%s\n","==== Discard list logging disabled");
+    }
+    if (user_log.frame_) {
+        user_log.frame_         = FALSE;
+        PRP_PRINTF("%s\n","==== RX frame content logging disabled");
+    }
+    if (user_log.sf_) {
+        user_log.sf_            = FALSE;
+        PRP_PRINTF("%s\n","====  RX supervision status logging disabled");
+    }
+    if (user_log.trailer_) {
+        user_log.trailer_       = FALSE;
+        PRP_PRINTF("%s\n","====  RTC logging disabled");
+    }
+    if (user_log.verbose_) {
+        user_log.verbose_       = FALSE;
+        PRP_PRINTF("%s\n","====  Verbose log disabled");
+    }
 }
 
 /**
@@ -170,11 +192,13 @@ void PRP_LogItf_T_reset(void)
 void PRP_LogItf_T_init(PRP_Environment_T* const environment)
 {
     environment_        = environment;
-    user_log.counter_   = FALSE;
-    user_log.discard_   = FALSE;
-    user_log.frame_     = FALSE;
-    user_log.sf_        = FALSE;
-    user_log.trailer_   = FALSE;
+    user_log.counter_       = FALSE;
+    user_log.consistency_   = FALSE;
+    user_log.discard_       = FALSE;
+    user_log.frame_         = FALSE;
+    user_log.sf_            = FALSE;
+    user_log.trailer_       = FALSE;
+    user_log.verbose_       = FALSE;
 }
 
 

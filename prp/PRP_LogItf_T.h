@@ -173,6 +173,7 @@
 
 struct PTP_LogItf_T {
     boolean counter_;
+    boolean consistency_;
     boolean discard_;
     boolean frame_;
     boolean sf_;

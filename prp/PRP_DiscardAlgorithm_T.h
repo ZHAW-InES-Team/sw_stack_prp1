@@ -80,7 +80,6 @@
 #define DISCARD_TICK_COUNT          20       /* 20ms -> 400ms */
 
 
-
 struct PRP_DiscardAlgorithm_T
 {
     /* first list orded by hash, second list orded from newest to oldest
@@ -114,11 +113,8 @@ struct PRP_DiscardAlgorithm_DiscardItem_T
     struct PRP_DiscardAlgorithm_DiscardItem_T *next_alt;       /* Used only for free_list and chronology */
 };
 
-// #ifdef PRP_DEBUG_LOG
-void PRP_DiscardAlgorithm_T_print(PRP_DiscardAlgorithm_T* const me);
-#ifdef PRP_DEBUG_LOG
+void PRP_DiscardAlgorithm_T_print(PRP_DiscardAlgorithm_T* const me, const char* drop_or_keep);
 void PRP_DiscardAlgorithm_T_check_consistency(PRP_DiscardAlgorithm_T* const me);
-#endif
 
 integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, octet* mac, octet* seq_nr);
 void PRP_DiscardAlgorithm_T_do_aging(PRP_DiscardAlgorithm_T* const me);

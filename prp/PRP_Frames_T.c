@@ -96,28 +96,57 @@ static uinteger16 tx_seq_nr_;
  */
 void PRP_Frames_T_print(PRP_Frames_T* const me, octet* data, uinteger32* length)
 {
-    uinteger32 i;
+    if (user_log.frame_) {
+        uinteger32 i;
+        octet dst_mac[6];
+        octet src_mac[6];
 
-    PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
+        PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
-    /* basic argument checks */
-    if (me == NULL_PTR) {
-        return;
-    }
-    if (data == NULL_PTR) {
-        return;
-    }
-    if (length == NULL_PTR) {
-        return;
-    }
+        /* basic argument checks */
+        if (me == NULL_PTR) {
+            return;
+        }
+        if (data == NULL_PTR) {
+            return;
+        }
+        if (length == NULL_PTR) {
+            return;
+        }
 
-    PRP_USERLOG(user_log.frame_, "%s\n", "======== Frame ========================================");
-    PRP_USERLOG(user_log.frame_, "length: %u\n", *length);
-    PRP_USERLOG(user_log.frame_, "%s\n", "data");
-    for (i=0; i<*length; i++) {
-        PRP_USERLOG(user_log.frame_, "[%u]:\t%02x\n", i, data[i]);
+        for (i=0; i<PRP_ETH_ADDR_LENGTH; i++) {
+            dst_mac[i] = data[i];
+        }
+        for (i=0; i<PRP_ETH_ADDR_LENGTH; i++) {
+            src_mac[i] = data[(6 + i)];
+        }
+        PRP_PRINTF("%s\n", "======== Frame ========================================");
+        PRP_PRINTF("length: %u\n", *length);
+        PRP_PRINTF("%s", "dst_mac: ");
+        for (i=0;i<PRP_ETH_ADDR_LENGTH;i++) {
+            if (i < 5) {
+                PRP_PRINTF("%02x:", dst_mac[i]);
+            } else {
+                PRP_PRINTF("%02x\n", dst_mac[i]);
+            }
+        }
+        PRP_PRINTF("%s", "src_mac: ");
+        for (i=0;i<PRP_ETH_ADDR_LENGTH;i++) {
+            if (i < 5) {
+                PRP_PRINTF("%02x:", src_mac[i]);
+            } else {
+                PRP_PRINTF("%02x\n", src_mac[i]);
+            }
+        }
+        for (i=0; i<*length; i++) {
+            if (!(i % 0x10)) {
+                PRP_PRINTF("\n%04x  %02x ", i, data[i]);
+            } else {
+                PRP_PRINTF("%02x ", data[i]);
+            }
+        }
+        PRP_PRINTF("%s\n", "\n=======================================================");
     }
-    PRP_USERLOG(user_log.frame_, "%s\n", "\n======== EndFrame ========================================");
 }
 
 /**
@@ -198,7 +227,7 @@ integer32 PRP_Frames_T_normal_rx(PRP_Frames_T* const me, octet* data, uinteger32
 
     /* if there was no trailer -> keep frame */
     if (trailer == NULL_PTR) {
-        PRP_USERLOG(user_log.verbose_,"SAN -> frame had no trailer (SRC %02x:%02x:%02x:%02x:%02x:%02x)\n",
+        PRP_PRP_LOGOUT(2,"SAN -> frame had no trailer (SRC %02x:%02x:%02x:%02x:%02x:%02x)\n",
                     src_mac[0],src_mac[1],src_mac[2],src_mac[3],src_mac[4],src_mac[5]);
         return(PRP_KEEP);
     }
