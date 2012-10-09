@@ -1,8 +1,8 @@
 Parallel Redundancy Protocol (PRP) Software Implementation
 ----------------------------------------------------------
 
-This is the [Zurich University][1] software implementation
-of a [PRP][2] end-node.
+This is the [Zurich University of Applied Sciences][1] software
+implementation of a [PRP][2] end-node.
 
 There is a platform independent part and a Linux userspace
 adaption (using the Linux TUN/TAP device). PRP is implemented
