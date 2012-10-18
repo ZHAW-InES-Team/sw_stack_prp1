@@ -502,8 +502,8 @@ int set_flags_prp(char *dev)
         return(-1);
     }
 
-    /* set mtu to 1496 */
-    ifr.ifr_mtu = 1496;
+    /* set mtu to 1494 */
+    ifr.ifr_mtu = 1494;
     if (ioctl(sd, SIOCSIFMTU, &ifr) < 0) {
         perror("ioctl SIOCSIFMTU");
         close(sd);
