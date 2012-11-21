@@ -125,7 +125,6 @@ void PRP_Supervision_T_print(PRP_Supervision_T* const me, struct PRP_Supervision
         }
     }
     PRP_USERLOG(user_log.sf_, "%s\n", "=======================================================");
-    prp_free(sf_params);
 }
 
 /**
@@ -149,8 +148,8 @@ integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* d
     octet tlv_type;
     octet tlv_length;
     octet src_mac[6];
-    struct PRP_Supervision_T_params* sf_params_ = NULL_PTR;
-    sf_params_ = prp_malloc(sizeof(struct PRP_Supervision_T_params));
+    struct PRP_Supervision_T_params sf_params;
+	prp_memset(&sf_params, 0, sizeof(sf_params));
 
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
@@ -183,11 +182,11 @@ integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* d
     sup_path = data[pos] >> 4;
     sup_version = (data[pos++] & 0xF) << 8;
     sup_version |= data[pos++];
-    sf_params_->sup_path_ = sup_path;
-    sf_params_->sup_version_ = sup_version;
+    sf_params.sup_path_ = sup_path;
+    sf_params.sup_version_ = sup_version;
     sup_sequence_number  = data[pos++] << 8;
     sup_sequence_number |= data[pos++];
-    sf_params_->sup_sequence_number_ = sup_sequence_number;
+    sf_params.sup_sequence_number_ = sup_sequence_number;
 
     if (sup_version == 0) {
         PRP_USERLOG(user_log.verbose_,"PRP-0 supervision frame received, should not happen in PRP-1 network! Dropping. (SRC %02x:%02x:%02x:%02x:%02x:%02x)\n",
@@ -210,8 +209,8 @@ integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* d
             /* end of TLV list */
             break;
         }
-        sf_params_->tlv_type_   = tlv_type;
-        sf_params_->tlv_length_ = tlv_length;
+        sf_params.tlv_type_   = tlv_type;
+        sf_params.tlv_length_ = tlv_length;
 
         /* check TLV: duplicate discard or duplicate accept */
         if (tlv_type == 20 || tlv_type == 21 || tlv_type == 23) {
@@ -227,9 +226,9 @@ integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* d
             /* HSR or PRP node MAC address */
             if (tlv_length == PRP_ETH_ADDR_LENGTH || tlv_length == 2*PRP_ETH_ADDR_LENGTH) {
                 node_valid = TRUE;
-                sf_params_->src_macA_ = &data[pos];
+                sf_params.src_macA_ = &data[pos];
                 if (tlv_length > PRP_ETH_ADDR_LENGTH) {
-                    sf_params_->src_macB_ = &data[pos+PRP_ETH_ADDR_LENGTH+i];
+                    sf_params.src_macB_ = &data[pos+PRP_ETH_ADDR_LENGTH+i];
                 }
                 else {
                     PRP_PRP_LOGOUT(3, "%s\n", "source_mac_B_: not given (assuming same as source_mac_A_)");
@@ -265,7 +264,7 @@ integer32 PRP_Supervision_T_supervision_rx(PRP_Supervision_T* const me, octet* d
      * not (second TLV), not necessary for algorithm */
 
     /* print supervision frame status information */
-    PRP_Supervision_T_print(me, sf_params_);
+    PRP_Supervision_T_print(me, &sf_params);
 
     /* always drop supervision frames because they are allready proceeded */
     return(PRP_DROP);
