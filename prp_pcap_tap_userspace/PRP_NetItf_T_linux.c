@@ -553,10 +553,10 @@ int main(int argc, char* argv[])
     }
 
     /* print zhaw screen */
-    char c;
+    int c;
     FILE *fp = fopen("zhaw", "rb");
     while ((c = fgetc(fp)) != EOF) {
-        printf("%c",c);
+        printf("%c",(char)c);
     }
     fclose(fp);
 

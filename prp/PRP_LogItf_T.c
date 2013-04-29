@@ -92,10 +92,10 @@ struct PTP_LogItf_T user_log;
  */
 void PRP_LogItf_T_show_help(void)
 {
-    char c;
+    int c;
     FILE *fp = fopen("../prp_pcap_tap_userspace/help", "rb");
     while ((c = fgetc(fp)) != EOF) {
-        printf("%c",c);
+        printf("%c",(char)c);
     }
     fclose(fp);
 }
