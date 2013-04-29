@@ -219,6 +219,8 @@ integer32 PRP_T_get_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
     merge_layer->link_time_out_ = environment_.supervision_.link_time_out_;
     merge_layer->cnt_total_sent_A_ = environment_.environment_configuration_.cnt_total_sent_A_;
     merge_layer->cnt_total_sent_B_ = environment_.environment_configuration_.cnt_total_sent_B_;
+    merge_layer->cnt_total_received_A_ = environment_.environment_configuration_.cnt_total_received_A_;
+    merge_layer->cnt_total_received_B_ = environment_.environment_configuration_.cnt_total_received_B_;
     merge_layer->cnt_total_errors_A_ = environment_.environment_configuration_.cnt_total_errors_A_;
     merge_layer->cnt_total_errors_B_ = environment_.environment_configuration_.cnt_total_errors_B_;
 

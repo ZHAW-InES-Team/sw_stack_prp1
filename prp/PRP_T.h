@@ -88,6 +88,8 @@ struct PRP_MergeLayerInfo_T
     uinteger16 link_time_out_;
     uinteger32 cnt_total_sent_A_;
     uinteger32 cnt_total_sent_B_;
+    uinteger32 cnt_total_received_A_;
+    uinteger32 cnt_total_received_B_;
     uinteger32 cnt_total_errors_A_;
     uinteger32 cnt_total_errors_B_;
 };
