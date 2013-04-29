@@ -82,7 +82,7 @@
  * source_mac_A_ Source mac of adapter A of the local node
  * source_mac_B_ Source mac of adapter B of the local node
  */
-octet supervision_frame_[64];
+octet supervision_frame_[66];
 
 /**
  * @fn void PRP_Supervision_T_print(PRP_Supervision_T* const me, uinteger32 level)
