@@ -1,6 +1,6 @@
 #!/bin/bash
 # @author   walh@zhaw.ch
-# @date     16-05-2012
+# @date     2013-09-16
 # @brief    release build script for sw_stack PRP-1
 ### ----------------------------------------------------------------------------
 set -e
@@ -38,28 +38,28 @@ if [ -f changelog.txt ] ; then
 fi
 echo
 
-### SVN version ----------------------------------------------------------------
-if [ -d .svn ] ; then
-    echo "### Get SVN version"
-    SVN_REVISION=$(svnversion ..)
-    SVN_URL=$(svn info ..|grep ^URL $hdl|sed -e 's/^URL: //')
-    echo "SVN version: $SVN_REVISION"
+### GIT revision ---------------------------------------------------------------
+if [ -d ../.git ] ; then
+    echo "### Get GIT revision number"
+    GIT_REVISION=$(git rev-parse HEAD)
+    GIT_URL=$(git remote show origin | grep 'Fetch URL' | sed -e 's/Fetch URL: //')
+    echo "GIT revision: $GIT_REVISION"
     echo "Releases in changelog.txt:"
     grep -i ^release changelog.txt | head -n 3
 fi
 echo
 
-### SVN exports ----------------------------------------------------------------
-echo "### Export SVN repository"
+### Copy directories -----------------------------------------------------------
+echo "### Archive GIT repository"
 echo "-> prp"
-svn export --force ../prp/ build/sw_stack_prp1_v_${VERSION}/prp
+cp -r ../prp/ build/sw_stack_prp1_v_${VERSION}/prp
 echo "-> prp_pcap_tap_userspace"
-svn export --force ../prp_pcap_tap_userspace build/sw_stack_prp1_v_${VERSION}/prp_pcap_tap_userspace
+cp -r ../prp_pcap_tap_userspace build/sw_stack_prp1_v_${VERSION}/prp_pcap_tap_userspace
 echo
 
-### SVN logfile ----------------------------------------------------------------
+### GIT logfile ----------------------------------------------------------------
 echo "Release version : $VERSION" > build/sw_stack_prp1_v_${VERSION}/release_version.txt
-echo "SVN revision    : $SVN_REVISION ($SVN_URL)" >> build/sw_stack_prp1_v_${VERSION}/release_version.txt
+echo "GIT revision    : $GIT_REVISION ($GIT_URL)" >> build/sw_stack_prp1_v_${VERSION}/release_version.txt
 echo "Packaging date  : $(LANG=C date) " >> build/sw_stack_prp1_v_${VERSION}/release_version.txt
 echo >> build/sw_stack_prp1_v_${VERSION}/release_version.txt
 

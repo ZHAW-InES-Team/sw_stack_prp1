@@ -1,3 +1,9 @@
+Release 1.4
+- MTU Size bug fixed (maximally sized frames were not sent)
+- memory leak fixed (supervision_rx())
+- powerpc bug fixed (infinite loop after fgetc)
+- size of supervision_fram[] fixed
+
 Release 1.3
 - PPR_LogItf_T
     - HMI for simple logging implemented
