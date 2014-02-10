@@ -6,7 +6,7 @@ implementation of a [PRP][2] end-node.
 
 There is a platform independent part and a Linux userspace
 adaption (using the Linux TUN/TAP device). PRP is implemented
-according to the 2010 version of IEC 62439-3, also known as
+according to the 2012 version of IEC 62439-3, also known as
 PPR-1.
 
 It is distributed under a BSD license.
