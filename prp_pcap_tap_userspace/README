@@ -89,4 +89,4 @@ sudo ./prp_pcap_tap_userspace eth0 eth1
 
 # on another terminal:
 # (replace 192.168.1.100 with an ip address of your choice)
-sudo ifconfig prp0 192.168.1.100
+sudo ifconfig prp1 192.168.1.100
