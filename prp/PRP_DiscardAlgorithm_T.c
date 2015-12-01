@@ -64,12 +64,11 @@
 ************|**********|*********************************************
 *  17.06.11 | itin     | file created
 *  11.05.12 | asdo     | discard algorithm improved (hash table)
+*  30.11.15 | beti     | adopted for Linux version 4.2
 ************|**********|*********************************************/
 
 #include "PRP_DiscardAlgorithm_T.h"
 #include "PRP_LogItf_T.h"
-#include <stdio.h>
-#include <sys/time.h>       //DB
 
 static struct PRP_DiscardAlgorithm_DiscardItem_T discardalgorithm_items_[DISCARD_ITEM_COUNT];
 static struct PRP_DiscardAlgorithm_DiscardItem_T *discardalgorithm_list_[DISCARD_LIST_ENTRY_COUNT];
@@ -409,7 +408,7 @@ void PRP_DiscardAlgorithm_T_do_aging(PRP_DiscardAlgorithm_T* const me)
     me->ageing_counter++;
     me->time++;
 
-    if (me->ageing_counter < 5) {
+    if (me->ageing_counter < AGING_COUNT) {
         return;
     }
 

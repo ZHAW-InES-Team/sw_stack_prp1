@@ -68,6 +68,8 @@
  *  18.03.10 | gunz     | rewrite for single thread, pcap and tun/tap
  *********************************************************************
  *  18.03.10 | rlh      | restore interface settings
+ *********************************************************************
+ *  30.11.15 | beti     | moved Operation system specific help
  *********************************************************************/
 
 
@@ -601,6 +603,19 @@ void signalHandler(int sig_nr)
 	exit( sig_nr );
 }
 
+/**
+ * @fn void PRP_LogItf_T_show_help(void)
+ * @brief Help about implemented functions
+ */
+void show_help(void)
+{
+	int c;
+	FILE *fp = fopen("help", "rb");
+	while ((c = fgetc(fp)) != EOF) {
+		printf("%c",(char)c);
+	}
+	fclose(fp);
+}
 
 /**
  * @fn int main(int argc, char* argv[])
@@ -862,7 +877,7 @@ int main(int argc, char* argv[])
 					}
 				}
 				if (buffer[0] == 'h') {
-					PRP_LogItf_T_show_help();
+					show_help();
 				}
 				if (buffer[0] == 'q') {
 					exit_prp = TRUE;

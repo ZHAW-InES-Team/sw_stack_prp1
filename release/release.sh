@@ -55,6 +55,8 @@ echo "-> prp"
 cp -r ../prp/ build/sw_stack_prp1_v_${VERSION}/prp
 echo "-> prp_pcap_tap_userspace"
 cp -r ../prp_pcap_tap_userspace build/sw_stack_prp1_v_${VERSION}/prp_pcap_tap_userspace
+echo "-> prp_linux_kernel_space"
+cp -r ../prp_linux_kernel_space build/sw_stack_prp1_v_${VERSION}/prp_linux_kernel_space
 echo
 
 ### GIT logfile ----------------------------------------------------------------

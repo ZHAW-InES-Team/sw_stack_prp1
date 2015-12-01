@@ -67,9 +67,10 @@
 *  14.05.12 | asdo     | prp-1 modification
 *********************************************************************
 *  21.06.12 | walh     | logging implemented
+*********************************************************************
+*  30.11.15 | beti     | adopted for Linux version 4.2
 *********************************************************************/
 
-#include <stdio.h>
 #include "PRP_LogItf_T.h"
 #include "PRP_Environment_T.h"
 
@@ -85,20 +86,6 @@ static PRP_Environment_T* environment_;
 
 /* global struct for user interface */
 struct PTP_LogItf_T user_log;
-
-/**
- * @fn void PRP_LogItf_T_show_help(void)
- * @brief Help about implemented functions
- */
-void PRP_LogItf_T_show_help(void)
-{
-    int c;
-    FILE *fp = fopen("../prp_pcap_tap_userspace/help", "rb");
-    while ((c = fgetc(fp)) != EOF) {
-        printf("%c",(char)c);
-    }
-    fclose(fp);
-}
 
 /**
  * @fn void PRP_LogItf_T_print_config(void)

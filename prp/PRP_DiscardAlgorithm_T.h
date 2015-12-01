@@ -64,6 +64,7 @@
 ************|**********|*********************************************
 *  17.06.11 | itin     | file created
 *  11.05.12 | asdo     | discard algorithm modification
+*  30.11.15 | beti     | adopted for Linux version 4.2
 *********************************************************************/
 
 #ifndef PRP_DiscardAlgorithm_T_H
@@ -72,12 +73,12 @@
 #include "PRP_Package_T.h"
 #include "PRP_RedundancyControlTrailer_T.h"
 #include "PRP_DataTypes_T.h"
-#include <sys/time.h>
 
 #define DISCARD_ITEM_COUNT          1024
 #define DISCARD_LIST_ENTRY_COUNT    256      /* 2^n, n is 8 in this case */
 #define DISCARD_HASH_MASK           0x00FF   /* Must select n bit in a range from 1 to 16 */
 #define DISCARD_TICK_COUNT          20       /* 20ms -> 400ms */
+#define AGING_COUNT					5		 /* do aging all 100ms */
 
 
 struct PRP_DiscardAlgorithm_T
