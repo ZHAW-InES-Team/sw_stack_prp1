@@ -128,6 +128,8 @@ int main(int argc, char* argv[])
 			printf("cnt_total_received_B_:\t\t\t%u\n", merge_layer_info.cnt_total_received_B_);
 			printf("cnt_total_errors_A_:\t\t\t%u\n", merge_layer_info.cnt_total_errors_A_);
 			printf("cnt_total_errors_B_:\t\t\t%u\n", merge_layer_info.cnt_total_errors_B_);
+			printf("cnt_total_missing_duplicates_:\t\t%u\n", merge_layer_info.cnt_total_missing_duplicates_);
+			printf("max_duplicate_delay_:\t\t\t%ums\n", merge_layer_info.max_duplicate_delay_);
 		}
 		printf("==========================================================================\n");		
 

@@ -69,6 +69,8 @@
 *  13.07.11 | itin     | integration of discard algorithm for PRP1
 ************|**********|*********************************************
 *  11.05.12 | asdo     | discard algorithm improvement
+************|**********|*********************************************
+*  30.11.15 | beti     | added new statistic values
 *********************************************************************/
 
 #include "PRP_Environment_T.h"
@@ -169,7 +171,7 @@ void PRP_Environment_T_init(PRP_Environment_T* const me)
     /* start all the modules */
     PRP_EnvironmentConfiguration_T_init(&(me->environment_configuration_));
     PRP_Supervision_T_init(&(me->supervision_), me);
-    PRP_DiscardAlgorithm_T_init(&(me->discard_algorithm_));
+    PRP_DiscardAlgorithm_T_init(&(me->discard_algorithm_), me);
     PRP_FrameAnalyser_T_init(&(me->frame_analyser_), me);
     PRP_Timer_T_init(&(me->supervision_tx_timer_));
     PRP_Timer_T_start(&(me->supervision_tx_timer_), me->supervision_.life_check_interval_);

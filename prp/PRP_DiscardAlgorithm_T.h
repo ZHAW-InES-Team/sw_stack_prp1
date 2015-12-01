@@ -65,6 +65,7 @@
 *  17.06.11 | itin     | file created
 *  11.05.12 | asdo     | discard algorithm modification
 *  30.11.15 | beti     | adopted for Linux version 4.2
+*  30.11.15 | beti     | added new statistic values
 *********************************************************************/
 
 #ifndef PRP_DiscardAlgorithm_T_H
@@ -97,6 +98,8 @@ struct PRP_DiscardAlgorithm_T
     uinteger8 ageing_counter;
 
     int used_item_count;
+
+    PRP_Environment_T* environment_;
 };
 
 struct PRP_DiscardAlgorithm_DiscardItem_T
@@ -112,6 +115,8 @@ struct PRP_DiscardAlgorithm_DiscardItem_T
 
     struct PRP_DiscardAlgorithm_DiscardItem_T *previous_alt;   /* Used only for chronology */
     struct PRP_DiscardAlgorithm_DiscardItem_T *next_alt;       /* Used only for free_list and chronology */
+
+    unsigned short cnt_duplicates_arrived_;
 };
 
 void PRP_DiscardAlgorithm_T_print(PRP_DiscardAlgorithm_T* const me, const char* drop_or_keep);
@@ -119,7 +124,7 @@ void PRP_DiscardAlgorithm_T_check_consistency(PRP_DiscardAlgorithm_T* const me);
 
 integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, octet* mac, octet* seq_nr);
 void PRP_DiscardAlgorithm_T_do_aging(PRP_DiscardAlgorithm_T* const me);
-void PRP_DiscardAlgorithm_T_init(PRP_DiscardAlgorithm_T* const me);
+void PRP_DiscardAlgorithm_T_init(PRP_DiscardAlgorithm_T* const me, PRP_Environment_T* const environment);
 void PRP_DiscardAlgorithm_T_cleanup(PRP_DiscardAlgorithm_T* const me);
 
 #endif /* PRP_DiscardAlgorithm_T_H */

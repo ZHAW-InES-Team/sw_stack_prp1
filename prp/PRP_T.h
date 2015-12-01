@@ -63,6 +63,7 @@
 *  Date     | Name     | Modification
 ************|**********|*********************************************
 *  17.12.07 | mesv     | file created
+*  30.11.15 | beti     | added new statistic values
 *********************************************************************/
 
 #ifndef PRP_T_H 
@@ -92,6 +93,8 @@ struct PRP_MergeLayerInfo_T
     uinteger32 cnt_total_received_B_;
     uinteger32 cnt_total_errors_A_;
     uinteger32 cnt_total_errors_B_;
+    uinteger32 cnt_total_missing_duplicates_;
+    uinteger32 max_duplicate_delay_;
 };
 
 integer32 PRP_T_receive(octet* data, uinteger32* length, octet lan_id);
