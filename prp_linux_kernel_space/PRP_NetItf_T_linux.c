@@ -441,6 +441,10 @@ integer32 PRP_NetItf_T_transmit(octet* data, uinteger32* length, octet lan_id)
 	}
 
 	skb->priority = 1;
+	/* Fix against message – “protocol xxx is buggy”  */
+	skb_set_network_header(skb, 0);
+	skb_set_mac_header(skb, 0);
+	skb->mac_len = ETH_HLEN;
 	rcu_read_unlock();		
 		
 	dev_priv->stats.tx_packets++;
@@ -900,7 +904,7 @@ static int PRP_Dev_T_receive(struct sk_buff *skb, struct net_device *dev, struct
 	if(res == PRP_KEEP)
 	{
 		skb->dev = prp_dev;
-		kfree_skb(skb);
+		netif_rx(skb);	// forward frame to virtual prp device
 		rcu_read_unlock();
 		return(NET_RX_SUCCESS);
 	}
