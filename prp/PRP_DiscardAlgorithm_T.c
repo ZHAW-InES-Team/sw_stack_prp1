@@ -64,12 +64,13 @@
 ************|**********|*********************************************
 *  17.06.11 | itin     | file created
 *  11.05.12 | asdo     | discard algorithm improved (hash table)
+*  30.11.15 | beti     | adopted for Linux version 4.2
+*  30.11.15 | beti     | added new statistic values
 ************|**********|*********************************************/
 
 #include "PRP_DiscardAlgorithm_T.h"
 #include "PRP_LogItf_T.h"
-#include <stdio.h>
-#include <sys/time.h>       //DB
+#include "PRP_Environment_T.h"
 
 static struct PRP_DiscardAlgorithm_DiscardItem_T discardalgorithm_items_[DISCARD_ITEM_COUNT];
 static struct PRP_DiscardAlgorithm_DiscardItem_T *discardalgorithm_list_[DISCARD_LIST_ENTRY_COUNT];
@@ -258,6 +259,7 @@ integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, 
 {
     unsigned short seqnr_corr;
     unsigned short hash;
+    uinteger32 delay;
     struct PRP_DiscardAlgorithm_DiscardItem_T *item;
     PRP_PRP_LOGOUT(3, "[%s] entering \n", __FUNCTION__);
 
@@ -316,6 +318,12 @@ integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, 
 #endif
                 PRP_DiscardAlgorithm_T_print(me, "DROP");
                 PRP_DiscardAlgorithm_T_check_consistency(me);
+
+                item->cnt_duplicates_arrived_++;
+                delay = (me->time - item->timestamp) * AGING_COUNT * DISCARD_TICK_COUNT;
+                if(delay > me->environment_->environment_configuration_.max_duplicate_delay_){
+                	me->environment_->environment_configuration_.max_duplicate_delay_ = delay;
+                }
 
                 return(PRP_DROP);
             }
@@ -378,6 +386,8 @@ integer32 PRP_DiscardAlgorithm_T_search_entry(PRP_DiscardAlgorithm_T* const me, 
 
     item->hash = hash;
 
+    item->cnt_duplicates_arrived_ = 0;
+
     PRP_DiscardAlgorithm_T_print(me, "KEEP");
     PRP_DiscardAlgorithm_T_check_consistency(me);
 
@@ -409,7 +419,7 @@ void PRP_DiscardAlgorithm_T_do_aging(PRP_DiscardAlgorithm_T* const me)
     me->ageing_counter++;
     me->time++;
 
-    if (me->ageing_counter < 5) {
+    if (me->ageing_counter < AGING_COUNT) {
         return;
     }
 
@@ -447,6 +457,11 @@ void PRP_DiscardAlgorithm_T_do_aging(PRP_DiscardAlgorithm_T* const me)
                  * still means - this is the first entry of the hash entry */
                 me->hash_list[item->hash] = 0;
             }
+
+            if(item->cnt_duplicates_arrived_ == 0){
+            	me->environment_->environment_configuration_.cnt_total_missing_duplicates_++;
+            }
+
             #ifdef PRP_DEBUG_LOG
             i++;
             #endif
@@ -494,7 +509,7 @@ void PRP_DiscardAlgorithm_T_do_aging(PRP_DiscardAlgorithm_T* const me)
  * @brief Initialize the PRP_DiscardAlgorithm_T interface
  * @param   me PRP_DiscardAlgorithm_T this pointer
  */
-void PRP_DiscardAlgorithm_T_init(PRP_DiscardAlgorithm_T* const me)
+void PRP_DiscardAlgorithm_T_init(PRP_DiscardAlgorithm_T* const me, PRP_Environment_T* const environment)
 {
     int i;
 
@@ -526,6 +541,8 @@ void PRP_DiscardAlgorithm_T_init(PRP_DiscardAlgorithm_T* const me)
     me->ageing_counter = 0;
 
     me->used_item_count = 0;
+
+    me->environment_ = environment;
 }
 
 /**

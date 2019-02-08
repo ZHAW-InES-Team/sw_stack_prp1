@@ -65,5 +65,3 @@
 *  07.09.07 | mesv     | file created
 *********************************************************************/
 
-8.1.2008 check ARP-MAC Adress Substitution staff
-9.1.2008 What values should be readable over SNMP, draft inconsistent 

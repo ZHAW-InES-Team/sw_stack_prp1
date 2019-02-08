@@ -65,6 +65,8 @@
 *  17.12.07 | mesv     | file created
 *********************************************************************
 *  21.06.12 | walh     | logging implemented
+*********************************************************************
+*  30.11.15 | beti     | added new statistic values
 *********************************************************************/
 
 #include "PRP_EnvironmentConfiguration_T.h"
@@ -143,6 +145,8 @@ void PRP_EnvironmentConfiguration_T_init(PRP_EnvironmentConfiguration_T* const m
     me->cnt_total_received_B_ = 0;
     me->cnt_total_errors_A_ = 0;
     me->cnt_total_errors_B_ = 0;
+    me->cnt_total_missing_duplicates_ = 0;
+    me->max_duplicate_delay_ = 0;
 }
 
 /**
