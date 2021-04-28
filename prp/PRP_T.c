@@ -65,6 +65,8 @@
 *  17.12.07 | mesv     | file created, this is the API
 ************|**********|*********************************************
 *  14.01.08 | mesv     | added some comments
+*********************************************************************
+*  30.11.15 | beti     | added new statistic values
 *********************************************************************/
 
 #include "PRP_T.h"
@@ -223,6 +225,8 @@ integer32 PRP_T_get_merge_layer_info(PRP_MergeLayerInfo_T* merge_layer)
     merge_layer->cnt_total_received_B_ = environment_.environment_configuration_.cnt_total_received_B_;
     merge_layer->cnt_total_errors_A_ = environment_.environment_configuration_.cnt_total_errors_A_;
     merge_layer->cnt_total_errors_B_ = environment_.environment_configuration_.cnt_total_errors_B_;
+    merge_layer->cnt_total_missing_duplicates_ = environment_.environment_configuration_.cnt_total_missing_duplicates_;
+    merge_layer->max_duplicate_delay_ = environment_.environment_configuration_.max_duplicate_delay_;
 
     PRP_Lock_T_up(&lock_);
 

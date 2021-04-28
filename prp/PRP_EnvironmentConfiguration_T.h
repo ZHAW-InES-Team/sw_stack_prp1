@@ -63,6 +63,8 @@
 *  Date     | Name     | Modification
 ************|**********|*********************************************
 *  17.12.07 | mesv     | file created
+*********************************************************************
+*  30.11.15 | beti     | added new statistic values
 *********************************************************************/
 
 #ifndef PRP_EnvironmentConfiguration_T_H 
@@ -102,6 +104,10 @@ struct PRP_EnvironmentConfiguration_T
     uinteger32 cnt_total_errors_A_;
     /* Total number of errors on adapter B */
     uinteger32 cnt_total_errors_B_;
+    /* Total missing duplicate frames */
+    uinteger32 cnt_total_missing_duplicates_;
+    /* Max duplicate delay */
+    uinteger32 max_duplicate_delay_;
 };
 
 void PRP_EnvironmentConfiguration_T_print(PRP_EnvironmentConfiguration_T* const me, uinteger32 level);
